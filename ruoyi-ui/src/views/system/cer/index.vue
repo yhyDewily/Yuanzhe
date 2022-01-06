@@ -36,6 +36,14 @@
           placeholder="选择失效时间">
         </el-date-picker>
       </el-form-item>
+      <el-form-item label="变动时间" prop="finalDate">
+        <el-date-picker clearable size="small"
+                        v-model="queryParams.finalDate"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择变动时间">
+        </el-date-picker>
+      </el-form-item>
       <el-form-item label="使用者" prop="subjectDn">
         <el-input
           v-model="queryParams.subjectDn"
@@ -126,6 +134,11 @@
           <span>{{ parseTime(scope.row.finalDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="变动时间" align="center" prop="modifyDate" width="180">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.modifyDate, '{y}-{m}-{d}') }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="使用者" align="center" prop="subjectDn" />
       <el-table-column label="签名算法" align="center" prop="signatureAlgorithm">
         <template slot-scope="scope">
@@ -134,6 +147,7 @@
       </el-table-column>
       <el-table-column label="证书签名" align="center" prop="signature" />
       <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="撤销理由" align="center" prop="revokeReason" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -223,7 +237,7 @@
               v-for="dict in dict.type.sys_signature_algorithm"
               :key="dict.value"
               :label="dict.label"
-:value="dict.value"
+              :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
@@ -274,6 +288,7 @@ export default {
         issuerDn: null,
         startDate: null,
         finalDate: null,
+        modifyDate: null,
         subjectDn: null,
         signatureAlgorithm: null,
       },
@@ -292,6 +307,9 @@ export default {
         ],
         finalDate: [
           { required: true, message: "失效时间不能为空", trigger: "blur" }
+        ],
+        modifyDate: [
+          { required: true, message: "变动时间不能为空", trigger: "blur" }
         ],
         subjectDn: [
           { required: true, message: "使用者不能为空", trigger: "blur" }
@@ -328,6 +346,7 @@ export default {
         issuerDn: null,
         startDate: null,
         finalDate: null,
+        modifyDate: null,
         subjectDn: null,
         publicKey: null,
         signatureAlgorithm: null,

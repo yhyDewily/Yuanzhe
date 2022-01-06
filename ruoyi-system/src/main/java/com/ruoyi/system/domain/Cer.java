@@ -39,6 +39,11 @@ public class Cer extends BaseEntity
     @Excel(name = "失效时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date finalDate;
 
+    /** 变动时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "变动时间", width = 30, dateFormat = "yyyy-MM-dd")
+    private Date modifyDate;
+
     /** 使用者 */
     @Excel(name = "使用者")
     private String subjectDn;
@@ -57,6 +62,10 @@ public class Cer extends BaseEntity
     /** 状态 */
     @Excel(name = "状态")
     private Long status;
+
+    /** 撤销理由 */
+    @Excel(name= "撤销理由")
+    private String revokeReason;
 
     public void setVersion(Long version) 
     {
