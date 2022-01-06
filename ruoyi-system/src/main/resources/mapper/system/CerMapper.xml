@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CerMapper">
+    
+    <resultMap type="Cer" id="CerResult">
+        <result property="version"    column="version"    />
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="issuerDn"    column="issuer_DN"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="finalDate"    column="final_date"    />
+        <result property="subjectDn"    column="subject_DN"    />
+        <result property="publicKey"    column="public_key"    />
+        <result property="signatureAlgorithm"    column="signature_algorithm"    />
+        <result property="signature"    column="signature"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectCerVo">
+        select version, serial_number, issuer_DN, start_date, final_date, subject_DN, public_key, signature_algorithm, signature, status from cer
+    </sql>
+
+    <select id="selectCerList" parameterType="Cer" resultMap="CerResult">
+        <include refid="selectCerVo"/>
+        <where>  
+            <if test="version != null "> and version = #{version}</if>
+            <if test="serialNumber != null  and serialNumber != ''"> and serial_number = #{serialNumber}</if>
+            <if test="issuerDn != null  and issuerDn != ''"> and issuer_DN = #{issuerDn}</if>
+            <if test="startDate != null "> and start_date &gt;= #{startDate}</if>
+            <if test="finalDate != null "> and final_date &gt;= #{finalDate}</if>
+            <if test="subjectDn != null  and subjectDn != ''"> and subject_DN like concat('%', #{subjectDn}, '%')</if>
+            <if test="publicKey != null  and publicKey != ''"> and public_key = #{publicKey}</if>
+            <if test="signatureAlgorithm != null  and signatureAlgorithm != ''"> and signature_algorithm = #{signatureAlgorithm}</if>
+            <if test="signature != null  and signature != ''"> and signature = #{signature}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectCerByVersion" parameterType="Long" resultMap="CerResult">
+        <include refid="selectCerVo"/>
+        where version = #{version}
+    </select>
+        
+    <insert id="insertCer" parameterType="Cer">
+        insert into cer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="version != null">version,</if>
+            <if test="serialNumber != null and serialNumber != ''">serial_number,</if>
+            <if test="issuerDn != null and issuerDn != ''">issuer_DN,</if>
+            <if test="startDate != null">start_date,</if>
+            <if test="finalDate != null">final_date,</if>
+            <if test="subjectDn != null and subjectDn != ''">subject_DN,</if>
+            <if test="publicKey != null">public_key,</if>
+            <if test="signatureAlgorithm != null and signatureAlgorithm != ''">signature_algorithm,</if>
+            <if test="signature != null">signature,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="version != null">#{version},</if>
+            <if test="serialNumber != null and serialNumber != ''">#{serialNumber},</if>
+            <if test="issuerDn != null and issuerDn != ''">#{issuerDn},</if>
+            <if test="startDate != null">#{startDate},</if>
+            <if test="finalDate != null">#{finalDate},</if>
+            <if test="subjectDn != null and subjectDn != ''">#{subjectDn},</if>
+            <if test="publicKey != null">#{publicKey},</if>
+            <if test="signatureAlgorithm != null and signatureAlgorithm != ''">#{signatureAlgorithm},</if>
+            <if test="signature != null">#{signature},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCer" parameterType="Cer">
+        update cer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="serialNumber != null and serialNumber != ''">serial_number = #{serialNumber},</if>
+            <if test="issuerDn != null and issuerDn != ''">issuer_DN = #{issuerDn},</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="finalDate != null">final_date = #{finalDate},</if>
+            <if test="subjectDn != null and subjectDn != ''">subject_DN = #{subjectDn},</if>
+            <if test="publicKey != null">public_key = #{publicKey},</if>
+            <if test="signatureAlgorithm != null and signatureAlgorithm != ''">signature_algorithm = #{signatureAlgorithm},</if>
+            <if test="signature != null">signature = #{signature},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where version = #{version}
+    </update>
+
+    <delete id="deleteCerByVersion" parameterType="Long">
+        delete from cer where version = #{version}
+    </delete>
+
+    <delete id="deleteCerByVersions" parameterType="String">
+        delete from cer where version in 
+        <foreach item="version" collection="array" open="(" separator="," close=")">
+            #{version}
+        </foreach>
+    </delete>
+</mapper>

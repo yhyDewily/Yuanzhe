@@ -1,0 +1,44 @@
+import request from '@/utils/request'
+
+// 查询证书管理列表
+export function listCer(query) {
+  return request({
+    url: '/system/cer/list',
+    method: 'get',
+    params: query
+  })
+}
+
+// 查询证书管理详细
+export function getCer(version) {
+  return request({
+    url: '/system/cer/' + version,
+    method: 'get'
+  })
+}
+
+// 新增证书管理
+export function addCer(data) {
+  return request({
+    url: '/system/cer',
+    method: 'post',
+    data: data
+  })
+}
+
+// 修改证书管理
+export function updateCer(data) {
+  return request({
+    url: '/system/cer',
+    method: 'put',
+    data: data
+  })
+}
+
+// 删除证书管理
+export function delCer(version) {
+  return request({
+    url: '/system/cer/' + version,
+    method: 'delete'
+  })
+}
