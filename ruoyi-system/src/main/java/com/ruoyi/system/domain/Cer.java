@@ -148,12 +148,12 @@ public class Cer extends BaseEntity
     {
         return signature;
     }
-    public void setStatus(Long status) 
+    public void setStatus(Long status)
     {
         this.status = status;
     }
 
-    public Long getStatus() 
+    public Long getStatus()
     {
         return status;
     }

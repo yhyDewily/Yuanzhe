@@ -120,9 +120,9 @@
       <el-table-column label="版本号" align="center" prop="version" />
       <el-table-column label="序列号" align="center" prop="serialNumber" />
       <el-table-column label="颁发者" align="center" prop="issuerDn">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_issuers" :value="scope.row.issuerDn"/>
-        </template>
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.sys_issuers" :value="scope.row.issuerDn"/>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="生效时间" align="center" prop="startDate" width="180">
         <template slot-scope="scope">
@@ -141,12 +141,24 @@
       </el-table-column>
       <el-table-column label="使用者" align="center" prop="subjectDn" />
       <el-table-column label="签名算法" align="center" prop="signatureAlgorithm">
-        <template slot-scope="scope">
-          <dict-tag :options="dict.type.sys_signature_algorithm" :value="scope.row.signatureAlgorithm"/>
-        </template>
+<!--        <template slot-scope="scope">-->
+<!--          <dict-tag :options="dict.type.sys_signature_algorithm" :value="scope.row.signatureAlgorithm"/>-->
+<!--        </template>-->
       </el-table-column>
       <el-table-column label="证书签名" align="center" prop="signature" />
-      <el-table-column label="状态" align="center" prop="status" />
+      <el-table-column label="状态" align="center" prop="status"
+                       :filters="[{text: '正常', value: '正常'},
+                                  {text: '撤销', value: '撤销'},
+                                  {text: '挂起', value: '挂起'}]"
+                       :filter-method="filterTag"
+      >
+        <template slot-scope="scope">
+          <el-tag
+            :type="handleType(scope.row.status)"
+            disable-transitions
+          >{{ scope.row.status }}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="撤销理由" align="center" prop="revokeReason" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -329,6 +341,9 @@ export default {
       this.loading = true;
       listCer(this.queryParams).then(response => {
         this.cerList = response.rows;
+        for (let i =0; i<this.cerList.length; i++) {
+          this.cerList[i].status = this.getStatusByCode(this.cerList[i].status)
+        }
         this.total = response.total;
         this.loading = false;
       });
@@ -422,6 +437,31 @@ export default {
       this.download('system/cer/export', {
         ...this.queryParams
       }, `cer_${new Date().getTime()}.xlsx`)
+    },
+    /** 根据状态码获取状态信息*/
+    getStatusByCode(code) {
+      switch (code) {
+        case 1:
+          return "正常"
+        case 2:
+          return "撤销"
+        case 3:
+          return "挂起"
+      }
+    },
+    /** 过滤器标签*/
+    filterTag(value, row) {
+      return row.tag === value;
+    },
+    handleType(type) {
+      switch (type) {
+        case "正常":
+          return "success"
+        case "撤销":
+          return "danger"
+        case "挂起":
+          return "warning"
+      }
     }
   }
 };
