@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.common.ObjectView.CerView;
 import com.ruoyi.common.utils.CerUtils;
 import com.ruoyi.system.service.impl.CerServiceImpl;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +38,15 @@ public class CerController extends BaseController
 {
     @Autowired
     private ICerService cerService;
+
+    /**
+     * 生成证书列表
+     */
+    @PreAuthorize("ss.hasPermi('system:cer:gen_cer')")
+    @GetMapping("/gen_cer")
+    public AjaxResult genCer() {
+        return AjaxResult.success();
+    }
 
     /**
      * 查询证书管理列表

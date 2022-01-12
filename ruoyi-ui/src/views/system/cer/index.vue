@@ -267,7 +267,7 @@
 </template>
 
 <script>
-import { listCer, getCer, delCer, addCer, updateCer } from "@/api/system/cer";
+import { listCer, getCer, delCer, addCer, updateCer, genCer } from "@/api/system/cer";
 
 export default {
   name: "Cer",
@@ -388,9 +388,9 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
-      this.open = true;
-      this.title = "添加证书管理";
+      genCer().then(response=>{
+        console.log(response)
+      })
     },
     /** 修改按钮操作 */
     handleUpdate(row) {

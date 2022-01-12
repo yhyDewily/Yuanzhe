@@ -1,5 +1,13 @@
 import request from '@/utils/request'
 
+// 生成证书列表
+export function genCer() {
+  return request({
+    url: '/system/cer/gen_cer',
+    method: 'get'
+  })
+}
+
 // 查询证书管理列表
 export function listCer(query) {
   return request({
