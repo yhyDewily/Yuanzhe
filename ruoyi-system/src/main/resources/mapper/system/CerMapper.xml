@@ -27,8 +27,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCerVo"/>
         <where>  
             <if test="version != null "> and version = #{version}</if>
-            <if test="serialNumber != null  and serialNumber != ''"> and serial_number = #{serialNumber}</if>
-            <if test="issuerDn != null  and issuerDn != ''"> and issuer_DN = #{issuerDn}</if>
+            <if test="serialNumber != null  and serialNumber != ''"> and serial_number like concat('%',#{serialNumber},'%') </if>
+            <if test="issuerDn != null  and issuerDn != ''"> and issuer_DN like concat('%', #{issuerDn}, '%') </if>
             <if test="startDate != null "> and start_date &gt;= #{startDate}</if>
             <if test="finalDate != null "> and final_date &gt;= #{finalDate}</if>
             <if test="modifyDate != null "> and modify_date >= #{modifyDate}</if>
@@ -105,5 +105,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <foreach item="version" collection="array" open="(" separator="," close=")">
             #{version}
         </foreach>
+    </delete>
+
+    <delete id="deleteAll">
+        delete from cer
     </delete>
 </mapper>

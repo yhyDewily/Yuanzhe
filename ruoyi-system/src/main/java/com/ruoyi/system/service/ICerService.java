@@ -12,6 +12,11 @@ import com.ruoyi.system.domain.Cer;
 public interface ICerService 
 {
     /**
+     * 同步远程数据库
+     */
+    public void synchronousData();
+
+    /**
      * 查询证书管理
      * 
      * @param version 证书管理主键

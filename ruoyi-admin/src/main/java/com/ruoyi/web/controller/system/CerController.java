@@ -3,10 +3,8 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ruoyi.common.ObjectView.CerView;
-import com.ruoyi.common.utils.CerUtils;
-import com.ruoyi.system.service.impl.CerServiceImpl;
-import org.aspectj.weaver.loadtime.Aj;
+import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
+import com.ruoyi.framework.web.domain.server.Sys;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +26,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 证书管理Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-01-05
  */
@@ -42,9 +40,11 @@ public class CerController extends BaseController
     /**
      * 生成证书列表
      */
-    @PreAuthorize("ss.hasPermi('system:cer:gen_cer')")
     @GetMapping("/gen_cer")
     public AjaxResult genCer() {
+        System.out.println("生成请求");
+        //System.out.println(DynamicDataSourceContextHolder.getDataSourceType());
+        cerService.synchronousData();
         return AjaxResult.success();
     }
 
@@ -84,30 +84,14 @@ public class CerController extends BaseController
     }
 
     /**
-     * 新增证书管理
+     * 同步
      */
-    @PreAuthorize("@ss.hasPermi('system:cer:add')")
     @Log(title = "证书管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Cer cer)
+    public AjaxResult add()
     {
-        // 保存cer文件到固定位置
-
-
-        Cer newCer = new Cer();
-        // 传入文件名即可
-        CerView cerView = CerUtils.readCerFromFile("test.sm2.cer");
-        newCer.setVersion(Long.valueOf(cerView.getVersion()));
-        newCer.setSerialNumber(String.valueOf(cerView.getSerialNumber()));
-        newCer.setIssuerDn(cerView.getIssuerDn());
-        newCer.setStartDate(cerView.getStartDate());
-        newCer.setFinalDate(cerView.getFinalDate());
-        newCer.setSubjectDn(cerView.getSubjectDn());
-        newCer.setPublicKey(cerView.getPublicKey());
-        newCer.setSignatureAlgorithm(cerView.getSignatureAlgorithm());
-        newCer.setSignature(cerView.getSignature());
-        newCer.setStatus(cerView.getStatus());
-        return toAjax(cerService.insertCer(newCer));
+        System.out.println("哈哈哈哈");
+        return toAjax(1);
     }
 
     /**
@@ -126,7 +110,7 @@ public class CerController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:cer:remove')")
     @Log(title = "证书管理", businessType = BusinessType.DELETE)
-	@DeleteMapping("/{versions}")
+    @DeleteMapping("/{versions}")
     public AjaxResult remove(@PathVariable Long[] versions)
     {
         return toAjax(cerService.deleteCerByVersions(versions));

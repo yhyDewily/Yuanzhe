@@ -67,7 +67,23 @@ public class Cer extends BaseEntity
     @Excel(name= "撤销理由")
     private String revokeReason;
 
-    public void setVersion(Long version) 
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(Date modifyDate) {
+        this.modifyDate = modifyDate;
+    }
+
+    public String getRevokeReason() {
+        return revokeReason;
+    }
+
+    public void setRevokeReason(String revokeReason) {
+        this.revokeReason = revokeReason;
+    }
+
+    public void setVersion(Long version)
     {
         this.version = version;
     }

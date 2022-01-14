@@ -58,4 +58,9 @@ public interface CerMapper
      * @return 结果
      */
     public int deleteCerByVersions(Long[] versions);
+
+    /**
+     * 删除全部
+     */
+    public int deleteAll();
 }

@@ -22,18 +22,18 @@
       </el-form-item>
       <el-form-item label="生效时间" prop="startDate">
         <el-date-picker clearable size="small"
-          v-model="queryParams.startDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择生效时间">
+                        v-model="queryParams.startDate"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择生效时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="失效时间" prop="finalDate">
         <el-date-picker clearable size="small"
-          v-model="queryParams.finalDate"
-          type="date"
-          value-format="yyyy-MM-dd"
-          placeholder="选择失效时间">
+                        v-model="queryParams.finalDate"
+                        type="date"
+                        value-format="yyyy-MM-dd"
+                        placeholder="选择失效时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="变动时间" prop="finalDate">
@@ -78,7 +78,7 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['system:cer:add']"
-        >导入</el-button>
+        >同步</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -120,32 +120,32 @@
       <el-table-column label="版本号" align="center" prop="version" />
       <el-table-column label="序列号" align="center" prop="serialNumber" />
       <el-table-column label="颁发者" align="center" prop="issuerDn">
-<!--        <template slot-scope="scope">-->
-<!--          <dict-tag :options="dict.type.sys_issuers" :value="scope.row.issuerDn"/>-->
-<!--        </template>-->
+        <!--        <template slot-scope="scope">-->
+        <!--          <dict-tag :options="dict.type.sys_issuers" :value="scope.row.issuerDn"/>-->
+        <!--        </template>-->
       </el-table-column>
-      <el-table-column label="生效时间" align="center" prop="startDate" width="180">
+      <el-table-column label="生效时间" align="center" prop="startDate" width="180" sortable>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.startDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="失效时间" align="center" prop="finalDate" width="180">
+      <el-table-column label="失效时间" align="center" prop="finalDate" width="180" sortable>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.finalDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="变动时间" align="center" prop="modifyDate" width="180">
+      <el-table-column label="变动时间" align="center" prop="modifyDate" width="180" sortable>
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.modifyDate, '{y}-{m}-{d}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="使用者" align="center" prop="subjectDn" />
       <el-table-column label="签名算法" align="center" prop="signatureAlgorithm">
-<!--        <template slot-scope="scope">-->
-<!--          <dict-tag :options="dict.type.sys_signature_algorithm" :value="scope.row.signatureAlgorithm"/>-->
-<!--        </template>-->
+        <!--        <template slot-scope="scope">-->
+        <!--          <dict-tag :options="dict.type.sys_signature_algorithm" :value="scope.row.signatureAlgorithm"/>-->
+        <!--        </template>-->
       </el-table-column>
-      <el-table-column label="证书签名" align="center" prop="signature" />
+<!--      <el-table-column label="证书签名" align="center" prop="signature" />-->
       <el-table-column label="状态" align="center" prop="status"
                        :filters="[{text: '正常', value: '正常'},
                                   {text: '撤销', value: '撤销'},
@@ -217,24 +217,24 @@
               v-for="dict in dict.type.sys_issuers"
               :key="dict.value"
               :label="dict.label"
-:value="dict.value"
+              :value="dict.value"
             ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="生效时间" prop="startDate">
           <el-date-picker clearable size="small"
-            v-model="form.startDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择生效时间">
+                          v-model="form.startDate"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="选择生效时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="失效时间" prop="finalDate">
           <el-date-picker clearable size="small"
-            v-model="form.finalDate"
-            type="date"
-            value-format="yyyy-MM-dd"
-            placeholder="选择失效时间">
+                          v-model="form.finalDate"
+                          type="date"
+                          value-format="yyyy-MM-dd"
+                          placeholder="选择失效时间">
           </el-date-picker>
         </el-form-item>
         <el-form-item label="使用者" prop="subjectDn">
@@ -267,202 +267,203 @@
 </template>
 
 <script>
-import { listCer, getCer, delCer, addCer, updateCer, genCer } from "@/api/system/cer";
+  import { listCer, getCer, delCer, addCer, updateCer, genCer } from "@/api/system/cer";
 
-export default {
-  name: "Cer",
-  dicts: ['sys_issuers', 'sys_signature_algorithm'],
-  data() {
-    return {
-      // 遮罩层
-      loading: true,
-      // 选中数组
-      ids: [],
-      // 非单个禁用
-      single: true,
-      // 非多个禁用
-      multiple: true,
-      // 显示搜索条件
-      showSearch: true,
-      // 总条数
-      total: 0,
-      // 证书管理表格数据
-      cerList: [],
-      // 弹出层标题
-      title: "",
-      // 是否显示弹出层
-      open: false,
-      // 查询参数
-      queryParams: {
-        pageNum: 1,
-        pageSize: 10,
-        serialNumber: null,
-        issuerDn: null,
-        startDate: null,
-        finalDate: null,
-        modifyDate: null,
-        subjectDn: null,
-        signatureAlgorithm: null,
-      },
-      // 表单参数
-      form: {},
-      // 表单校验
-      rules: {
-        serialNumber: [
-          { required: true, message: "序列号不能为空", trigger: "blur" }
-        ],
-        issuerDn: [
-          { required: true, message: "颁发者不能为空", trigger: "change" }
-        ],
-        startDate: [
-          { required: true, message: "生效时间不能为空", trigger: "blur" }
-        ],
-        finalDate: [
-          { required: true, message: "失效时间不能为空", trigger: "blur" }
-        ],
-        modifyDate: [
-          { required: true, message: "变动时间不能为空", trigger: "blur" }
-        ],
-        subjectDn: [
-          { required: true, message: "使用者不能为空", trigger: "blur" }
-        ],
-        signatureAlgorithm: [
-          { required: true, message: "签名算法不能为空", trigger: "change" }
-        ],
-      }
-    };
-  },
-  created() {
-    this.getList();
-  },
-  methods: {
-    /** 查询证书管理列表 */
-    getList() {
-      this.loading = true;
-      listCer(this.queryParams).then(response => {
-        this.cerList = response.rows;
-        for (let i =0; i<this.cerList.length; i++) {
-          this.cerList[i].status = this.getStatusByCode(this.cerList[i].status)
+  export default {
+    name: "Cer",
+    dicts: ['sys_issuers', 'sys_signature_algorithm'],
+    data() {
+      return {
+        // 遮罩层
+        loading: true,
+        // 选中数组
+        ids: [],
+        // 非单个禁用
+        single: true,
+        // 非多个禁用
+        multiple: true,
+        // 显示搜索条件
+        showSearch: true,
+        // 总条数
+        total: 0,
+        // 证书管理表格数据
+        cerList: [],
+        // 弹出层标题
+        title: "",
+        // 是否显示弹出层
+        open: false,
+        // 查询参数
+        queryParams: {
+          pageNum: 1,
+          pageSize: 10,
+          serialNumber: null,
+          issuerDn: null,
+          startDate: null,
+          finalDate: null,
+          modifyDate: null,
+          subjectDn: null,
+          signatureAlgorithm: null,
+        },
+        // 表单参数
+        form: {},
+        // 表单校验
+        rules: {
+          serialNumber: [
+            { required: true, message: "序列号不能为空", trigger: "blur" }
+          ],
+          issuerDn: [
+            { required: true, message: "颁发者不能为空", trigger: "change" }
+          ],
+          startDate: [
+            { required: true, message: "生效时间不能为空", trigger: "blur" }
+          ],
+          finalDate: [
+            { required: true, message: "失效时间不能为空", trigger: "blur" }
+          ],
+          modifyDate: [
+            { required: true, message: "变动时间不能为空", trigger: "blur" }
+          ],
+          subjectDn: [
+            { required: true, message: "使用者不能为空", trigger: "blur" }
+          ],
+          signatureAlgorithm: [
+            { required: true, message: "签名算法不能为空", trigger: "change" }
+          ],
         }
-        this.total = response.total;
-        this.loading = false;
-      });
-    },
-    // 取消按钮
-    cancel() {
-      this.open = false;
-      this.reset();
-    },
-    // 表单重置
-    reset() {
-      this.form = {
-        version: null,
-        serialNumber: null,
-        issuerDn: null,
-        startDate: null,
-        finalDate: null,
-        modifyDate: null,
-        subjectDn: null,
-        publicKey: null,
-        signatureAlgorithm: null,
-        signature: null,
-        status: 0
       };
-      this.resetForm("form");
     },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.queryParams.pageNum = 1;
+    created() {
       this.getList();
     },
-    /** 重置按钮操作 */
-    resetQuery() {
-      this.resetForm("queryForm");
-      this.handleQuery();
-    },
-    // 多选框选中数据
-    handleSelectionChange(selection) {
-      this.ids = selection.map(item => item.version)
-      this.single = selection.length!==1
-      this.multiple = !selection.length
-    },
-    /** 新增按钮操作 */
-    handleAdd() {
-      genCer().then(response=>{
-        console.log(response)
-      })
-    },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const version = row.version || this.ids
-      getCer(version).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改证书管理";
-      });
-    },
-    /** 提交按钮 */
-    submitForm() {
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.version != null) {
-            updateCer(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addCer(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+    methods: {
+      /** 查询证书管理列表 */
+      getList() {
+        this.loading = true;
+        listCer(this.queryParams).then(response => {
+          this.cerList = response.rows;
+          for (let i =0; i<this.cerList.length; i++) {
+            this.cerList[i].status = this.getStatusByCode(this.cerList[i].status)
           }
-        }
-      });
-    },
-    /** 删除按钮操作 */
-    handleDelete(row) {
-      const versions = row.version || this.ids;
-      this.$modal.confirm('是否确认删除证书管理编号为"' + versions + '"的数据项？').then(function() {
-        return delCer(versions);
-      }).then(() => {
+          this.total = response.total;
+          this.loading = false;
+        });
+      },
+      // 取消按钮
+      cancel() {
+        this.open = false;
+        this.reset();
+      },
+      // 表单重置
+      reset() {
+        this.form = {
+          version: null,
+          serialNumber: null,
+          issuerDn: null,
+          startDate: null,
+          finalDate: null,
+          modifyDate: null,
+          subjectDn: null,
+          publicKey: null,
+          signatureAlgorithm: null,
+          signature: null,
+          status: 0
+        };
+        this.resetForm("form");
+      },
+      /** 搜索按钮操作 */
+      handleQuery() {
+        this.queryParams.pageNum = 1;
         this.getList();
-        this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    },
-    /** 导出按钮操作 */
-    handleExport() {
-      this.download('system/cer/export', {
-        ...this.queryParams
-      }, `cer_${new Date().getTime()}.xlsx`)
-    },
-    /** 根据状态码获取状态信息*/
-    getStatusByCode(code) {
-      switch (code) {
-        case 1:
-          return "正常"
-        case 2:
-          return "撤销"
-        case 3:
-          return "挂起"
-      }
-    },
-    /** 过滤器标签*/
-    filterTag(value, row) {
-      return row.tag === value;
-    },
-    handleType(type) {
-      switch (type) {
-        case "正常":
-          return "success"
-        case "撤销":
-          return "danger"
-        case "挂起":
-          return "warning"
+      },
+      /** 重置按钮操作 */
+      resetQuery() {
+        this.resetForm("queryForm");
+        this.handleQuery();
+      },
+      // 多选框选中数据
+      handleSelectionChange(selection) {
+        this.ids = selection.map(item => item.version)
+        this.single = selection.length!==1
+        this.multiple = !selection.length
+      },
+      /** 新增按钮操作 */
+      handleAdd() {
+        genCer().then(response=>{
+          console.log(response)
+          this.getList();
+        })
+      },
+      /** 修改按钮操作 */
+      handleUpdate(row) {
+        this.reset();
+        const version = row.version || this.ids
+        getCer(version).then(response => {
+          this.form = response.data;
+          this.open = true;
+          this.title = "修改证书管理";
+        });
+      },
+      /** 提交按钮 */
+      submitForm() {
+        this.$refs["form"].validate(valid => {
+          if (valid) {
+            if (this.form.version != null) {
+              updateCer(this.form).then(response => {
+                this.$modal.msgSuccess("修改成功");
+                this.open = false;
+                this.getList();
+              });
+            } else {
+              addCer(this.form).then(response => {
+                this.$modal.msgSuccess("新增成功");
+                this.open = false;
+                this.getList();
+              });
+            }
+          }
+        });
+      },
+      /** 删除按钮操作 */
+      handleDelete(row) {
+        const versions = row.version || this.ids;
+        this.$modal.confirm('是否确认删除证书管理编号为"' + versions + '"的数据项？').then(function() {
+          return delCer(versions);
+        }).then(() => {
+          this.getList();
+          this.$modal.msgSuccess("删除成功");
+        }).catch(() => {});
+      },
+      /** 导出按钮操作 */
+      handleExport() {
+        this.download('system/cer/export', {
+          ...this.queryParams
+        }, `cer_${new Date().getTime()}.xlsx`)
+      },
+      /** 根据状态码获取状态信息*/
+      getStatusByCode(code) {
+        switch (code) {
+          case 1:
+            return "正常"
+          case 2:
+            return "撤销"
+          case 3:
+            return "挂起"
+        }
+      },
+      /** 过滤器标签*/
+      filterTag(value, row) {
+        return row.tag === value;
+      },
+      handleType(type) {
+        switch (type) {
+          case "正常":
+            return "success"
+          case "撤销":
+            return "danger"
+          case "挂起":
+            return "warning"
+        }
       }
     }
-  }
-};
+  };
 </script>
