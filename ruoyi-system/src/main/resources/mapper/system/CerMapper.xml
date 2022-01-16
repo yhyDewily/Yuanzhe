@@ -29,9 +29,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="version != null "> and version = #{version}</if>
             <if test="serialNumber != null  and serialNumber != ''"> and serial_number like concat('%',#{serialNumber},'%') </if>
             <if test="issuerDn != null  and issuerDn != ''"> and issuer_DN like concat('%', #{issuerDn}, '%') </if>
-            <if test="startDate != null "> and start_date &gt;= #{startDate}</if>
-            <if test="finalDate != null "> and final_date &gt;= #{finalDate}</if>
-            <if test="modifyDate != null "> and modify_date >= #{modifyDate}</if>
+            <if test="params.beginStartDate != null and params.beginStartDate != '' and params.endStartDate != null and params.endStartDate != ''"> and start_date between #{params.beginStartDate} and #{params.endStartDate}</if>
+            <if test="params.beginFinalDate != null and params.beginFinalDate != '' and params.endFinalDate != null and params.endFinalDate != ''"> and final_date between #{params.beginFinalDate} and #{params.endFinalDate}</if>
+            <if test="params.beginModifyDate != null and params.beginModifyDate != '' and params.endModifyDate != null and params.endModifyDate != ''"> and modify_date between #{params.beginModifyDate} and #{params.endModifyDate}</if>
             <if test="subjectDn != null  and subjectDn != ''"> and subject_DN like concat('%', #{subjectDn}, '%')</if>
             <if test="publicKey != null  and publicKey != ''"> and public_key = #{publicKey}</if>
             <if test="signatureAlgorithm != null  and signatureAlgorithm != ''"> and signature_algorithm = #{signatureAlgorithm}</if>
