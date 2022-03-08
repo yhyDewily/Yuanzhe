@@ -1,5 +1,12 @@
 import request from '@/utils/request'
 
+export function fuck() {
+  return request({
+    url: '/ocsp/fuck',
+    method: 'get'
+  })
+}
+
 // 生成证书列表
 export function genCer() {
   return request({
