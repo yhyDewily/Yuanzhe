@@ -43,15 +43,26 @@ public class ocspController {
     @Value("${ocspConfiguration.keyPath}")
     private String keyPath;
 
-    @PostMapping(value = "/check")
+    @PostMapping(value = "/check_by_serial_number")
     @ResponseBody
-    public byte[] check(@RequestBody byte[] ocsp_request) {
+    public byte[] checkById(int serialNumber) {
+        /**
+         * Todo
+         * 通过序列号从数据库orCRL列表检测证书是否有效
+         */
+        return null;
+    }
+
+    @PostMapping(value = "/check_by_request")
+    @ResponseBody
+    public byte[] checkByRequest(@RequestBody byte[] ocsp_request) {
         OCSPResp ocspResp = null;
         try {
             System.out.println("收到ocsp请求");
             OCSPReq ocspReq = new OCSPReq(ocsp_request);
             ocspResp = makeOcspResponse(getCert(CAPath), readPrivateKeySecondApproach(keyPath), ocspReq);
             System.out.println("返回ocsp响应");
+            assert ocspResp != null;
             return ocspResp.getEncoded();
         } catch (IOException e) {
             e.printStackTrace();

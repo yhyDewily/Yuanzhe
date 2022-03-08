@@ -1,6 +1,5 @@
 <template>
   <div class="app-container">
-    <el-button @click="fuck">fuck</el-button>
     <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
       <el-form-item label="序列号" prop="serialNumber">
         <el-input
@@ -271,7 +270,7 @@
 </template>
 
 <script>
-  import { listCer, getCer, delCer, addCer, updateCer, genCer, fuck } from "@/api/system/cer";
+  import { listCer, getCer, delCer, addCer, updateCer, genCer } from "@/api/system/cer";
 
   export default {
     name: "Cer",
@@ -354,11 +353,6 @@
       this.getList();
     },
     methods: {
-      fuck () {
-        fuck().then(response => {
-          console.log(response)
-        })
-      },
       /** 查询证书管理列表 */
       getList() {
         this.loading = true;
