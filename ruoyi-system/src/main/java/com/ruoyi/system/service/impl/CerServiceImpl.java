@@ -16,6 +16,7 @@ import com.ruoyi.system.domain.Signs;
 import com.ruoyi.system.mapper.SignsMapper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.CerMapper;
 import com.ruoyi.system.domain.Cer;
@@ -34,6 +35,8 @@ public class CerServiceImpl implements ICerService
     private CerMapper cerMapper;
     @Autowired
     private SignsMapper signsMapper;
+    @Value("${ocspConfiguration.synUrl}")
+    private String synUrl;
 
     /**
      * 查询证书管理
@@ -109,6 +112,7 @@ public class CerServiceImpl implements ICerService
 
     @Override
     public void synchronousData(){
+        System.out.println("哈哈哈"+synUrl);
         // 远程数据列表
         List<Signs> signsList = signsMapper.selectSigns();
 
@@ -133,13 +137,15 @@ public class CerServiceImpl implements ICerService
         Iterator<Long> statusIterator = statusList.iterator();
 
         for(String url:fileUrlList){
-            Cer cer = loadFileFromURL("http://192.168.8.202:4130/cipher/public/" + url);
+            Cer cer = loadFileFromURL(synUrl + url);
             // set 证书中没有的数据
-            assert cer != null;
-            cer.setModifyDate(dateIterator.next());
-            cer.setStatus(statusIterator.next());
-            System.out.println(cer.getSignature());
-            cerMapper.insertCer(cer);
+            // assert cer != null;
+            if(cer != null){
+                cer.setModifyDate(dateIterator.next());
+                cer.setStatus(statusIterator.next());
+                System.out.println(cer.getSignature());
+                cerMapper.insertCer(cer);
+            }
         }
     }
 
