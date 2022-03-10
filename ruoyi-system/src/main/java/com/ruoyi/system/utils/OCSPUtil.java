@@ -76,14 +76,16 @@ public class OCSPUtil {
                     caCert.getPublicKey(), digCalProv.get(RespID.HASH_SHA1)
             );
             CertificateID certID = ocspReq.getRequestList()[0].getCertID();
-
             /**
              * Todo
              * Check Certificate Status
              * 通过数据库
              */
             respGen.addResponse(certID,CertificateStatus.GOOD);
-            System.out.println(caCert.getSigAlgName());
+            //添加nonce防止replay攻击
+            Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false,
+                    ocspReq.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnValue());
+            respGen.setResponseExtensions(new Extensions(new Extension[]{ext}));
             //JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA384withECDSA").setProvider("BC");
             ContentSigner signer = new JcaContentSignerBuilder(caCert.getSigAlgName()).setProvider("BC").build(caPrivateKey);
                     BasicOCSPResp resp = respGen.build(

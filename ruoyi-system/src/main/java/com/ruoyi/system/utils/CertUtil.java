@@ -1,5 +1,6 @@
 package com.ruoyi.system.utils;
 
+import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.io.pem.PemObject;
@@ -8,6 +9,8 @@ import org.bouncycastle.x509.extension.X509ExtensionUtil;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.KeyFactory;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
@@ -32,6 +35,12 @@ public class CertUtil {
     public static PrivateKey readPrivateKeySecondApproach(String path) throws Exception {
         KeyFactory factory = KeyFactory.getInstance("RSA");
         File file = new File(path);
+        if (FilenameUtils.getExtension(path).equals("key")) {
+            byte[] keyBytes = Files.readAllBytes(Paths.get(path));
+            PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(keyBytes);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return kf.generatePrivate(spec);
+        }
         try (FileReader keyReader = new FileReader(file)) {
             PemReader pemReader = new PemReader(keyReader);
             PemObject pemObject = pemReader.readPemObject();

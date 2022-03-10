@@ -35,10 +35,8 @@ public class OCSPServiceImpl implements IOcspService {
     public byte[] checkByRequest(byte[] ocsp_request) {
         OCSPResp ocspResp = null;
         try {
-            System.out.println("收到ocsp请求");
             OCSPReq ocspReq = new OCSPReq(ocsp_request);
             ocspResp = makeOcspResponse(getCert(CAPath), readPrivateKeySecondApproach(keyPath), ocspReq);
-            System.out.println("返回ocsp响应");
             assert ocspResp != null;
             return ocspResp.getEncoded();
         } catch (IOException e) {
