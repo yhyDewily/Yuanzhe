@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.RevokeCerMapper">
+
+<resultMap type="RevokeCer" id="CerResult">
+    <result property="crtUrl"    column="crt_url"    />
+    <result property="revokeReason"    column="revoke_reason"    />
+</resultMap>
+
+<select id = "selectRevokeCerList" parameterType="RevokeCer" resultMap="CerResult">
+    select crt_url, revoke_reason from signs where revote_status = 2
+</select>
+
+</mapper>
