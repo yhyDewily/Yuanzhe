@@ -2,6 +2,7 @@ package com.ruoyi.system.domain;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.common.annotation.DataSource;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
@@ -19,7 +20,7 @@ public class Cer extends BaseEntity
 
     /** 版本号 */
     @Excel(name = "版本号")
-    private Long version;
+    private Integer version;
 
     /** 序列号 */
     @Excel(name = "序列号")
@@ -61,7 +62,7 @@ public class Cer extends BaseEntity
 
     /** 状态 */
     @Excel(name = "状态")
-    private Long status;
+    private Integer status;
 
     /** 撤销理由 */
     @Excel(name= "撤销理由")
@@ -83,12 +84,12 @@ public class Cer extends BaseEntity
         this.revokeReason = revokeReason;
     }
 
-    public void setVersion(Long version)
+    public void setVersion(Integer version)
     {
         this.version = version;
     }
 
-    public Long getVersion() 
+    public Integer getVersion()
     {
         return version;
     }
@@ -164,12 +165,12 @@ public class Cer extends BaseEntity
     {
         return signature;
     }
-    public void setStatus(Long status)
+    public void setStatus(Integer status)
     {
         this.status = status;
     }
 
-    public Long getStatus()
+    public Integer getStatus()
     {
         return status;
     }

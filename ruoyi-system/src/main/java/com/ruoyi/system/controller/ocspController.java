@@ -1,5 +1,7 @@
 package com.ruoyi.system.controller;
 
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.system.service.IOcspService;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.cert.ocsp.*;
@@ -37,44 +39,23 @@ public class ocspController {
     @Autowired
     private Environment env;
 
-    @Value("${ocspConfiguration.CAPath}")
-    private String CAPath;
-
-    @Value("${ocspConfiguration.keyPath}")
-    private String keyPath;
+    @Autowired
+    private IOcspService ocspService;
 
     @PostMapping(value = "/check_by_serial_number")
     @ResponseBody
-    public byte[] checkById(int serialNumber) {
+    public AjaxResult checkById(String serialNumber) {
         /**
          * Todo
          * 通过序列号从数据库orCRL列表检测证书是否有效
          */
-        return null;
+        Integer result = ocspService.checkBySerialNumber(serialNumber);
+        return AjaxResult.success(result);
     }
 
     @PostMapping(value = "/check_by_request")
     @ResponseBody
     public byte[] checkByRequest(@RequestBody byte[] ocsp_request) {
-        OCSPResp ocspResp = null;
-        try {
-            System.out.println("收到ocsp请求");
-            OCSPReq ocspReq = new OCSPReq(ocsp_request);
-            ocspResp = makeOcspResponse(getCert(CAPath), readPrivateKeySecondApproach(keyPath), ocspReq);
-            System.out.println("返回ocsp响应");
-            assert ocspResp != null;
-            return ocspResp.getEncoded();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    @GetMapping(value = "/fuck")
-    public String fuck() {
-        return "fuck: " + CAPath;
-
+        return ocspService.checkByRequest(ocsp_request);
     }
 }

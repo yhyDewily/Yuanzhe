@@ -115,12 +115,12 @@ public class CerServiceImpl implements ICerService
         // 读取远程数据：文件路径、状态、变动时间、注销原因
         List<String> fileUrlList = new ArrayList<>(); // 文件路径列表
         List<Date> modifyDateList = new ArrayList<>(); // 变动时间列表
-        List<Long> statusList = new ArrayList<>(); // 状态列表
+        List<Integer> statusList = new ArrayList<>(); // 状态列表
 
         for(Signs signs:signsList){
             fileUrlList.add(signs.getCrtUrl());
             modifyDateList.add(signs.getUpdateTime());
-            statusList.add(signs.getRevoteStatus());
+            statusList.add(signs.getRevokeStatus());
         }
 
         /**
@@ -130,7 +130,7 @@ public class CerServiceImpl implements ICerService
         cerMapper.deleteAll();
         // 插入新数据
         Iterator<Date> dateIterator = modifyDateList.iterator();
-        Iterator<Long> statusIterator = statusList.iterator();
+        Iterator<Integer> statusIterator = statusList.iterator();
 
         for(String url:fileUrlList){
             Cer cer = loadFileFromURL("http://192.168.8.202:4130/cipher/public/" + url);
@@ -160,7 +160,7 @@ public class CerServiceImpl implements ICerService
             PublicKey publicKey = cer.getPublicKey();
             byte [] pkenc = publicKey.getEncoded();
 
-            newCer.setVersion((long) cer.getVersion());
+            newCer.setVersion(cer.getVersion());
             newCer.setSerialNumber(String.valueOf(cer.getSerialNumber()));
             newCer.setIssuerDn(cer.getIssuerDN().toString());
             newCer.setStartDate(cer.getNotBefore());
@@ -170,7 +170,7 @@ public class CerServiceImpl implements ICerService
             newCer.setPublicKey(Base64.getEncoder().encodeToString(pkenc));
             newCer.setSignatureAlgorithm(cer.getSigAlgName());
             newCer.setSignature(Base64.getEncoder().encodeToString(cer.getSignature()));
-            newCer.setStatus(1L);
+            newCer.setStatus(1);
             newCer.setRevokeReason("");
 
         } catch(Exception e){

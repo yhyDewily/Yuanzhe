@@ -7,7 +7,9 @@ import com.ruoyi.system.domain.Signs;
 import java.util.List;
 
 @DataSource(DataSourceType.SLAVE)
-public interface SignsMapper {
+public interface SignsMapper{
 
     List<Signs> selectSigns();
+
+    Integer selectRevokeStatusBySerialNumberAfter(String serial_number);
 }

@@ -80,11 +80,13 @@ public class OCSPUtil {
             /**
              * Todo
              * Check Certificate Status
+             * 通过数据库
              */
             respGen.addResponse(certID,CertificateStatus.GOOD);
+            System.out.println(caCert.getSigAlgName());
             //JcaContentSignerBuilder signerBuilder = new JcaContentSignerBuilder("SHA384withECDSA").setProvider("BC");
-            ContentSigner signer = new JcaContentSignerBuilder("SHA3-384WITHRSA").setProvider("BC").build(caPrivateKey);
-            BasicOCSPResp resp = respGen.build(
+            ContentSigner signer = new JcaContentSignerBuilder(caCert.getSigAlgName()).setProvider("BC").build(caPrivateKey);
+                    BasicOCSPResp resp = respGen.build(
                     signer,
                     new X509CertificateHolder[]{new JcaX509CertificateHolder(caCert)},
                     new Date()

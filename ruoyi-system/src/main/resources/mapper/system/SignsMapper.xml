@@ -5,13 +5,16 @@
 
 <mapper namespace="com.ruoyi.system.mapper.SignsMapper">
     <select id="selectSigns" resultMap="Signs">
-        select crt_url, update_time, revote_status from signs
+        select crt_url, update_time, revoke_status from signs
+    </select>
+    <select id="selectRevokeStatusBySerialNumberAfter" parameterType="String" resultType="java.lang.Integer">
+        select revoke_status from signs where serial_number= #{serial_number}
     </select>
 
     <resultMap id="Signs" type="com.ruoyi.system.domain.Signs">
         <result column="crt_url" property="crtUrl" jdbcType="VARCHAR" />
         <result column="update_time" property="updateTime" jdbcType="DATE" />
-        <result column="revote_status" property="revoteStatus" jdbcType="TINYINT" />
+        <result column="revoke_status" property="revokeStatus" jdbcType="TINYINT" />
     </resultMap>
 
 </mapper>
