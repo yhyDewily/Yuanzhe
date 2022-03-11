@@ -4,12 +4,34 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ruoyi.system.mapper.SignsMapper">
+
+    <resultMap type="Signs" id="SignsResult">
+        <result property="id"     column="id"      />
+        <result property="serialNumber"     column="serial_number"     />
+        <result property="signer"     column="signer"     />
+        <result property="applysUser"     column="applys_user"     />
+        <result property="equipmentName"     column="equipment_name"     />
+        <result property="equipmentType"     column="equipment_type"     />
+        <result property="equipmentNumber"     column="equipment_number"     />
+        <result property="crtName"     column="crt_name"     />
+        <result property="crtUrl"     column="crt_url"     />
+        <result property="signType"     column="sign_type"     />
+        <result property="revokeStatus"     column="revoke_status"     />
+        <result property="revokeTime"     column="revoke_time"     />
+        <result property="revokeReason"     column="revoke_reason"     />
+        <result property="effecTime"     column="effec_time"     />
+        <result property="createTime"     column="create_time"     />
+        <result property="updateTime"     column="update_time"     />
+    </resultMap>
+
     <select id="selectSigns" resultMap="Signs">
         select crt_url, update_time, revoke_status from signs
     </select>
     <select id="selectRevokeStatusBySerialNumberAfter" parameterType="String" resultType="java.lang.Integer">
         select revoke_status from signs where serial_number= #{serial_number}
     </select>
+
+
 
     <resultMap id="Signs" type="com.ruoyi.system.domain.Signs">
         <result column="crt_url" property="crtUrl" jdbcType="VARCHAR" />

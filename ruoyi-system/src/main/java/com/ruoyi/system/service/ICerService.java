@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.system.domain.Cer;
+import com.ruoyi.system.domain.Signs;
 
 /**
  * 证书管理Service接口
@@ -15,6 +16,8 @@ public interface ICerService
      * 同步远程数据库
      */
     public void synchronousData();
+
+    int selectCerBySerialNumber(String serialNumber);
 
     /**
      * 查询证书管理
@@ -63,4 +66,6 @@ public interface ICerService
      * @return 结果
      */
     public int deleteCerByVersion(Long version);
+
+    public List<Signs> testSigns();
 }

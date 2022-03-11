@@ -45,7 +45,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCerVo"/>
         where version = #{version}
     </select>
-        
+    <select id="selectCerBySerialNumber" parameterType="String" resultType="java.lang.Integer">
+        select count(*) from cer where cer.serial_number=#{serialNumber}
+    </select>
+
     <insert id="insertCer" parameterType="Cer">
         insert into cer
         <trim prefix="(" suffix=")" suffixOverrides=",">

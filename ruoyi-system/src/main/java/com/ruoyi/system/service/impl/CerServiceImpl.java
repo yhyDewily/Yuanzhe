@@ -15,6 +15,7 @@ import java.util.*;
 import com.ruoyi.system.domain.Signs;
 import com.ruoyi.system.mapper.SignsMapper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,11 @@ public class CerServiceImpl implements ICerService
     }
 
     @Override
+    public List<Signs> testSigns() {
+        return signsMapper.selectSigns();
+    }
+
+    @Override
     public void synchronousData(){
         System.out.println("哈哈哈"+synUrl);
         // 远程数据列表
@@ -137,16 +143,23 @@ public class CerServiceImpl implements ICerService
         Iterator<Integer> statusIterator = statusList.iterator();
 
         for(String url:fileUrlList){
+            System.out.println("synUrl:" + synUrl);
             Cer cer = loadFileFromURL(synUrl + url);
             // set 证书中没有的数据
             // assert cer != null;
             if(cer != null){
                 cer.setModifyDate(dateIterator.next());
                 cer.setStatus(statusIterator.next());
-                System.out.println(cer.getSignature());
-                cerMapper.insertCer(cer);
+                if (cerMapper.selectCerBySerialNumber(cer.getSerialNumber())!=1) {
+                    cerMapper.insertCer(cer);
+                }
             }
         }
+    }
+
+    @Override
+    public int selectCerBySerialNumber(String serialNumber) {
+        return cerMapper.selectCerBySerialNumber(serialNumber);
     }
 
     // 读取证书
@@ -218,8 +231,9 @@ public class CerServiceImpl implements ICerService
         } finally {
             try {
                 // 对流对象进行关闭，对Http连接对象进行关闭。以便释放资源。
-                assert bis != null;
-                bis.close();
+                if (bis != null) {
+                    bis.close();
+                }
                 httpConn.disconnect();
             } catch (IOException e) {
                 e.printStackTrace();

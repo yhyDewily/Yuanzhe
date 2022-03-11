@@ -63,4 +63,6 @@ public interface CerMapper
      * 删除全部
      */
     public int deleteAll();
+
+    int selectCerBySerialNumber(String serialNumber);
 }

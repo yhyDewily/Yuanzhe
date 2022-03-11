@@ -1,5 +1,8 @@
 package com.ruoyi.system.domain;
 
+import com.ruoyi.common.annotation.DataSource;
+import com.ruoyi.common.enums.DataSourceType;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -86,6 +89,9 @@ public class Signs implements Serializable {
      * 变动时间
      */
     private Date updateTime;
+
+    public Signs() {
+    }
 
     public Signs(Integer id, String serialNumber, String signer, String applysUser, String equipmentName, String equipmentType, String equipmentNumber, String crtName, String crtUrl, Integer signType, Integer revokeStatus, Date revokeTime, Integer revokeReason, Date effecTime, Date createTime, Date updateTime) {
         this.id = id;
