@@ -1,5 +1,9 @@
 package com.ruoyi.system.service.impl;
 
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.SftpException;
+import com.ruoyi.common.utils.SFTPChannel;
 import com.ruoyi.system.domain.RevokeCer;
 import com.ruoyi.system.mapper.RevokeCerMapper;
 import com.ruoyi.system.service.IrevokeCerService;
@@ -22,12 +26,13 @@ import java.security.cert.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 
 import static com.ruoyi.common.utils.BCECUtil.convertSEC1ToBCECPrivateKey;
 
 
 /**
- * @Author: min
+ * @Author: ruoyi
  * @Date: 2022/3/9
  * @Time: 11:17
  * @Description:
@@ -43,7 +48,7 @@ public class revokeCerImpl implements IrevokeCerService {
         return cerMapper.selectRevokeCerList();
     }
 
-   //产生CRL证书
+    //产生CRL证书
     @Override
     public void GeCRL(int days) throws CertificateException, IOException {
         X509Certificate TemCer = null;
@@ -193,6 +198,15 @@ public class revokeCerImpl implements IrevokeCerService {
         //保存CRL文件
         writeFile("D:\\AllCRL.crl", crl.getEncoded());
 
+        //将上面writeFile路径产生的ALLCRL.crl文件上传到远程服务器指定的目录中
+        try {
+            RemoteUplod("D:\\AllCRL.crl");
+        } catch (JSchException e) {
+            e.printStackTrace();
+        } catch (SftpException e) {
+            e.printStackTrace();
+        }
+
     }
 
     //保存文件到某个路径
@@ -207,6 +221,28 @@ public class revokeCerImpl implements IrevokeCerService {
             }
         }
     }
+
+    //将产生的CRL文件上传到远程服务器指定目录
+    public void RemoteUplod(String FilePathString) throws JSchException, SftpException {
+        //远程服务器：Ip、Root、Password、[Port(默认是22) 可选参数]
+        SFTPChannel sftpChannel = new SFTPChannel("192.168.8.202", "root", "197154");
+        //直接将本地文件名为src的文件上传到目标服务器，目标文件名为dst。
+        //（注：使用这个方法时，dst可以是目录，当dst是目录时，上传后的目标文件名将与src文件名相同）
+        String src = FilePathString;
+        //  String dst = "/opt/csv/";
+        String dst = "/var/www/html/cipher/public/revokelist/";
+        ChannelSftp channelSftp = sftpChannel.getChannel(sftpChannel);
+        System.out.println("创建链接");
+        channelSftp.put(src, dst, ChannelSftp.OVERWRITE);
+        System.out.println("上传文件成功");
+        //展示上传文件目录下的所有文件
+        Vector vector = channelSftp.ls(dst);
+        System.out.println(vector.toString());
+        //关闭连接
+        channelSftp.quit();
+        sftpChannel.closeChannel();
+    }
+
 
 
 }
