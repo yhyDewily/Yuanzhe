@@ -37,6 +37,7 @@ server:
 ocspConfiguration:
   CAPath: ruoyi-system\\src\\main\\resources\\cert\\rootCA-digicert-der.cer
   keyPath: ruoyi-system\\src\\main\\resources\\cert\\key.pem
+  CRLPath: ruoyi-system\\src\\main\\resources\\AllCRL.crl
   synUrl: http://192.168.8.202:4130/cipher/public/
 
 # 日志配置

@@ -15,6 +15,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -42,6 +43,9 @@ public class revokeCerImpl implements IrevokeCerService {
 
     @Autowired
     private RevokeCerMapper cerMapper;
+
+    @Autowired
+    private Environment env;
 
     @Override
     public List<RevokeCer> selectRevokeCerList() {
@@ -196,11 +200,11 @@ public class revokeCerImpl implements IrevokeCerService {
         converter.setProvider("BC");
         X509CRL crl = converter.getCRL(crlHolder);
         //保存CRL文件
-        writeFile("D:\\AllCRL.crl", crl.getEncoded());
+        writeFile(env.getProperty("ocspConfiguration.CRLPath"), crl.getEncoded());
 
         //将上面writeFile路径产生的ALLCRL.crl文件上传到远程服务器指定的目录中
         try {
-            RemoteUplod("D:\\AllCRL.crl");
+            RemoteUplod(env.getProperty("ocspConfiguration.CRLPath"));
         } catch (JSchException e) {
             e.printStackTrace();
         } catch (SftpException e) {
