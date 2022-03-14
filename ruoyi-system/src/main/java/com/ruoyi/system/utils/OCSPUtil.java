@@ -1,5 +1,6 @@
 package com.ruoyi.system.utils;
 
+import com.ruoyi.system.mapper.SignsMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -19,6 +20,7 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.bc.BcDigestCalculatorProvider;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -35,6 +37,8 @@ import static com.ruoyi.system.utils.CertUtil.getIssuerCert;
  * @date 2022-03-06 18:36
  */
 public class OCSPUtil {
+
+
 
     /**
      * 根据传入的证书获取ocsp url
@@ -68,7 +72,7 @@ public class OCSPUtil {
      * @param ocspReq
      * @return
      */
-    public static OCSPResp makeOcspResponse(X509Certificate caCert, PrivateKey caPrivateKey, OCSPReq ocspReq) {
+    public static OCSPResp makeOcspResponse(X509Certificate caCert, PrivateKey caPrivateKey, OCSPReq ocspReq, CertificateStatus status) {
         DigestCalculatorProvider digCalProv = null;
         try {
             digCalProv = new JcaDigestCalculatorProviderBuilder().setProvider("BC").build();
@@ -76,12 +80,7 @@ public class OCSPUtil {
                     caCert.getPublicKey(), digCalProv.get(RespID.HASH_SHA1)
             );
             CertificateID certID = ocspReq.getRequestList()[0].getCertID();
-            /**
-             * Todo
-             * Check Certificate Status
-             * 通过数据库
-             */
-            respGen.addResponse(certID,CertificateStatus.GOOD);
+            respGen.addResponse(certID,status);
             //添加nonce防止replay攻击
             Extension ext = new Extension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce, false,
                     ocspReq.getExtension(OCSPObjectIdentifiers.id_pkix_ocsp_nonce).getExtnValue());

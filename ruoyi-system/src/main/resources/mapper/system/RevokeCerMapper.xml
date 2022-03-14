@@ -10,7 +10,7 @@
 </resultMap>
 
 <select id = "selectRevokeCerList" parameterType="RevokeCer" resultMap="CerResult">
-    select crt_url, revoke_reason from signs where revote_status = 2
+    select crt_url, revoke_reason from signs where revoke_status = 2
 </select>
 
 </mapper>

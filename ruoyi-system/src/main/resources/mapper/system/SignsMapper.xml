@@ -27,7 +27,7 @@
     <select id="selectSigns" resultMap="Signs">
         select crt_url, update_time, revoke_status from signs
     </select>
-    <select id="selectRevokeStatusBySerialNumberAfter" parameterType="String" resultType="java.lang.Integer">
+    <select id="selectRevokeStatusBySerialNumber" parameterType="String" resultType="java.lang.Integer">
         select revoke_status from signs where serial_number= #{serial_number}
     </select>
 

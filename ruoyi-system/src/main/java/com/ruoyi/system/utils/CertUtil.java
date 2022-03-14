@@ -1,5 +1,6 @@
 package com.ruoyi.system.utils;
 
+import com.ruoyi.common.exception.OCSPCheckException;
 import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -67,7 +68,11 @@ public class CertUtil {
             cf = CertificateFactory.getInstance("X.509", "BC");
             cert = (X509Certificate)cf.generateCertificate(in);
             //puk = cert.getPublicKey().toString();
-        } catch (CertificateException | NoSuchProviderException | FileNotFoundException e) {
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            throw new OCSPCheckException("根证书不存在");
+        } catch (NoSuchProviderException e) {
             e.printStackTrace();
         }
         return cert;

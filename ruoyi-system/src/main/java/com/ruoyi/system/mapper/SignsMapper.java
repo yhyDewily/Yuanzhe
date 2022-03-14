@@ -11,5 +11,5 @@ public interface SignsMapper{
 
     List<Signs> selectSigns();
 
-    Integer selectRevokeStatusBySerialNumberAfter(String serial_number);
+    Integer selectRevokeStatusBySerialNumber(String serial_number);
 }
