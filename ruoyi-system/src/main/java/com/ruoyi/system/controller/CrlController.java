@@ -3,10 +3,8 @@ package com.ruoyi.system.controller;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.system.service.IrevokeCerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.cert.CertificateException;
@@ -26,7 +24,16 @@ import java.util.Date;
 public class CrlController {
     @Autowired
     IrevokeCerService irevokeCerService;
+    @Value("${ocspConfiguration.crlUrl}")
+    private String crlUrl;
 
+    /**
+     * crl 下载地址
+     */
+    @GetMapping("/get_crl_url")
+    public AjaxResult getCrlUrl(){
+        return AjaxResult.success("crlurl获取成功", crlUrl);
+    }
     /**
      * 创建crl
      */

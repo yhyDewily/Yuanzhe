@@ -17,3 +17,11 @@ export function setUpdateSpan(data){
     params: data
   })
 }
+
+// 获取crl下载地址
+export function getCrlUrl(){
+  return request({
+    url: '/system/crl/get_crl_url',
+    method: 'get'
+  })
+}
