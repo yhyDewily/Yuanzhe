@@ -24,10 +24,7 @@ import java.net.URL;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 import static com.ruoyi.common.utils.BCECUtil.convertSEC1ToBCECPrivateKey;
 
@@ -55,27 +52,37 @@ public class revokeCerImpl implements IrevokeCerService {
     //产生CRL证书
     @Override
     public void GeCRL(int days) throws CertificateException, IOException {
-        X509Certificate TemCer = null;
-        List<RevokeCer> revokeCers = cerMapper.selectRevokeCerList();
-        System.out.println("qqqqqqqqqqqqq:"+revokeCers.size());
-        List<X509Certificate> CersList = new ArrayList<>(); // 文件路径列表
-        List<Integer> reasonList = new ArrayList<>(); // 状态列表
-        for (RevokeCer cer : revokeCers) {
-            TemCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + cer.getCrtUrl());
-            CersList.add(TemCer); //传入的撤销证书集合
-            reasonList.add(cer.getRevokeReason()); //传入的证书撤销原因集合
-        }
-        //产生证书吊销列表CRL时传入的第一个参数：CA证书
-        X509Certificate CaCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + "/signlist/test01/test.mid.ca.certSm2.crt");
-        //产生证书吊销列表CRL时传入的第二个参数：CaPrivate密钥
-        PrivateKey CaPrivateKey = loadFileFromURLToKey("http://192.168.8.202:4130/cipher/public/"+ "./signlist/test01/test.mid.ca.pri");
-        try {
-            generateCRL(CaCer,CaPrivateKey,CersList,reasonList, days);  //产生证书
-        } catch (CRLException e) {
-            e.printStackTrace();
-        } catch (OperatorCreationException e) {
-            e.printStackTrace();
-        }
+        Timer timer = new Timer();
+        TimerTask task =new TimerTask() {
+            @Override
+            public void run() {
+                X509Certificate TemCer = null;
+                List<RevokeCer> revokeCers = cerMapper.selectRevokeCerList();
+                List<X509Certificate> CersList = new ArrayList<>(); // 文件路径列表
+                List<Integer> reasonList = new ArrayList<>(); // 状态列表
+                for (RevokeCer cer : revokeCers) {
+                    TemCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + cer.getCrtUrl());
+                    CersList.add(TemCer); //传入的撤销证书集合
+                    reasonList.add(cer.getRevokeReason()); //传入的证书撤销原因集合
+                }
+                //产生证书吊销列表CRL时传入的第一个参数：CA证书
+                X509Certificate CaCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + "/signlist/test01/test.mid.ca.certSm2.crt");
+                //产生证书吊销列表CRL时传入的第二个参数：CaPrivate密钥
+                PrivateKey CaPrivateKey = loadFileFromURLToKey("http://192.168.8.202:4130/cipher/public/"+ "./signlist/test01/test.mid.ca.pri");
+                try {
+                    try {
+                        generateCRL(CaCer,CaPrivateKey,CersList,reasonList, days);  //产生证书 ,并上传远程服务器
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (CRLException e) {
+                    e.printStackTrace();
+                } catch (OperatorCreationException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        timer.schedule(task,0,86400000*days);  //重复循环更新,间隔days天
     }
 
 
