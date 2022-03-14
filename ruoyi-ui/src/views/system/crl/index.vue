@@ -39,18 +39,17 @@
       </el-col>
     </el-row>
 
-    <el-input
-      v-model="crlInput"
-      clearable
-      size="big"
-      readonly
-    />
+    <div style="margin-top: 15px;" width="30px">
+      <el-input v-model="crlInput" class="input-with-button" size="big" readonly>
+        <el-button slot="append" icon="el-icon-download" @click="downloadCrlButton()"></el-button>
+      </el-input>
+    </div>
 
   </div>
 </template>
 
 <script>
-import { createCrl, setUpdateSpan } from "@/api/system/crl";
+import { createCrl, setUpdateSpan, getCrlUrl } from "@/api/system/crl";
 
 export default {
   name: "Crl",
@@ -61,7 +60,7 @@ export default {
       loading: true,
       // 弹出层标题
       title: "",
-      crlInput: "crl地址：https://test.yuanzhe.com/yuanzhe.crl",
+      crlInput: "",
       queryParamset: {
         order: 1,
         time: undefined,//日期以及时间
@@ -113,10 +112,19 @@ export default {
     setInterval(() => {
       this.getNowTime();
     }, 500);
+    getCrlUrl().then((response) => {
+      this.crlInput = response.data;
+    });
   },
 
   methods: {
 
+    // 下载crl文件
+    downloadCrlButton(){
+      let a = document.createElement('a')
+      a.href =this.crlInput
+      a.click();
+    },
     // 新建 crl 按钮
     createCrlButton(){
       const time = this.queryParamset.time;
@@ -232,3 +240,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.input-with-button {
+  width: 460px;
+}
+</style>

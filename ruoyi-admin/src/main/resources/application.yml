@@ -39,6 +39,7 @@ ocspConfiguration:
   keyPath: ruoyi-system\\src\\main\\resources\\cert\\key.pem
   CRLPath: ruoyi-system\\src\\main\\resources\\cert\\AllCRL.crl
   synUrl: http://192.168.8.202:4130/cipher/public/
+  crlUrl: http://192.168.8.169/cipher/public/revokelist/AllCRL.crl
 
 # 日志配置
 logging:
