@@ -34,9 +34,11 @@
       <el-col :span="1.5">
         <el-button type="primary" @click="createCrlButton()">产生</el-button>
       </el-col>
+      <!--
       <el-col :span="1.5">
         <el-button type="primary" @click="updateSpanButton()" disabled>保存</el-button>
       </el-col>
+      -->
     </el-row>
 
     <div style="margin-top: 15px;" width="30px">
