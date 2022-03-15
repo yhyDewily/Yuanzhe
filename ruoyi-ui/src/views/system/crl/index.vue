@@ -95,9 +95,6 @@ export default {
       }, {
         value: '14',
         label: '14天'
-      }, {
-        value: '30',
-        label: '30天'
       }],
       timeSelect:"7",
       // 表单参数

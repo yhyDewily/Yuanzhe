@@ -30,7 +30,8 @@ public class ocspController {
     @ResponseBody
     public AjaxResult checkById(String serialNumber) {
         Integer result = ocspService.checkBySerialNumber(serialNumber);
-        return AjaxResult.success(result);
+        if (result != 4) return AjaxResult.success(result);
+        else return AjaxResult.error("证书不存在");
     }
 
     /**

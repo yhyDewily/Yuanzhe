@@ -24,13 +24,28 @@
         <result property="updateTime"     column="update_time"     />
     </resultMap>
 
+    <sql id="selectSignsVo">
+        select id, serial_number, signer, applys_user, equipment_name,
+               equipment_type, equipment_number, crt_name, crt_url, sign_type, revoke_status,
+               revoke_time, revoke_reason, effec_time, create_time, update_time from signs
+    </sql>
+
     <select id="selectSigns" resultMap="Signs">
-        select crt_url, update_time, revoke_status from signs
+        <include refid="selectSignsVo" />
     </select>
+
     <select id="selectRevokeStatusBySerialNumber" parameterType="String" resultType="java.lang.Integer">
         select revoke_status from signs where serial_number= #{serial_number}
     </select>
 
+    <select id="selectBySerialNumber" resultMap="SignsResult">
+        <include refid="selectSignsVo"/>
+        where serial_number = #{serial_number}
+    </select>
+
+    <select id="selectRevokeReasonBySerialNumber" resultType="java.lang.Integer">
+        select revoke_reason from signs where serial_number=#{serial_number}
+    </select>
 
 
     <resultMap id="Signs" type="com.ruoyi.system.domain.Signs">

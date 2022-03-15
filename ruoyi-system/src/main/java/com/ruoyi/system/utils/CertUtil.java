@@ -64,6 +64,7 @@ public class CertUtil {
         X509Certificate cert = null;
         try {
             //将文件流转换为X509证书
+            System.out.println(filePath);
             FileInputStream in = new FileInputStream(filePath);
             cf = CertificateFactory.getInstance("X.509", "BC");
             cert = (X509Certificate)cf.generateCertificate(in);

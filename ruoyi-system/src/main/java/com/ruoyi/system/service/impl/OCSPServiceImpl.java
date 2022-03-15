@@ -1,16 +1,14 @@
 package com.ruoyi.system.service.impl;
 
-import com.ruoyi.system.domain.Cer;
+import com.ruoyi.system.domain.Signs;
 import com.ruoyi.system.mapper.SignsMapper;
 import com.ruoyi.system.service.IOcspService;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.ocsp.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.Date;
 
 import static com.ruoyi.system.utils.CertUtil.getCert;
@@ -57,14 +55,27 @@ public class OCSPServiceImpl implements IOcspService {
      */
     public CertificateStatus check_status(OCSPReq ocspReq) {
         String serial_number = String.valueOf(ocspReq.getRequestList()[0].getCertID().getSerialNumber());
-        int status = signsMapper.selectRevokeStatusBySerialNumber(serial_number);
-        if (status == 1) return CertificateStatus.GOOD;
-        else if (status == 2) return new RevokedStatus(new Date(), 2);
-        else return new UnknownStatus();
+        System.out.println(serial_number);
+        Signs result = signsMapper.selectBySerialNumber(serial_number);
+
+        if (null != result) {
+            int status = result.getRevokeStatus();
+            if (status == 1) return CertificateStatus.GOOD;
+            else if (status == 2) {
+                int reason = signsMapper.selectRevokeReasonBySerialNumber(serial_number);
+                return new RevokedStatus(new Date(), reason);
+            }
+        }
+        return new UnknownStatus();
     }
 
     @Override
     public Integer checkBySerialNumber(String serial_number) {
-        return signsMapper.selectRevokeStatusBySerialNumber(serial_number);
+        Signs result  = signsMapper.selectBySerialNumber(serial_number);
+        if (null != result) {
+            return result.getRevokeStatus();
+        } else {
+            return 4;
+        }
     }
 }
