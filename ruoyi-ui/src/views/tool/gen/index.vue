@@ -164,13 +164,13 @@
     <el-dialog :title="preview.title" :visible.sync="preview.open" width="80%" top="5vh" append-to-body class="scrollbar">
       <el-tabs v-model="preview.activeName">
         <el-tab-pane
-          v-for="(value, key) in preview.data"
-          :label="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-          :name="key.substring(key.lastIndexOf('/')+1,key.indexOf('.vm'))"
-          :key="key"
+          v-for="(value, secretKey) in preview.data"
+          :label="secretKey.substring(secretKey.lastIndexOf('/')+1,secretKey.indexOf('.vm'))"
+          :name="secretKey.substring(secretKey.lastIndexOf('/')+1,secretKey.indexOf('.vm'))"
+          :secretKey="secretKey"
         >
           <el-link :underline="false" icon="el-icon-document-copy" v-clipboard:copy="value" v-clipboard:success="clipboardSuccess" style="float:right">复制</el-link>
-          <pre><code class="hljs" v-html="highlightedCode(value, key)"></code></pre>
+          <pre><code class="hljs" v-html="highlightedCode(value, secretKey)"></code></pre>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -301,8 +301,8 @@ export default {
       });
     },
     /** 高亮显示 */
-    highlightedCode(code, key) {
-      const vmName = key.substring(key.lastIndexOf("/") + 1, key.indexOf(".vm"));
+    highlightedCode(code, secretKey) {
+      const vmName = secretKey.substring(secretKey.lastIndexOf("/") + 1, secretKey.indexOf(".vm"));
       var language = vmName.substring(vmName.indexOf(".") + 1, vmName.length);
       const result = hljs.highlight(language, code || "", true);
       return result.value || '&nbsp;';

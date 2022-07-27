@@ -21,7 +21,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_job_group"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -37,7 +37,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_common_status"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />

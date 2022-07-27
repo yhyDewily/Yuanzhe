@@ -20,5 +20,30 @@ public enum OperatorType
     /**
      * 手机端用户
      */
-    MOBILE
+    MOBILE,
+
+    /**
+     * 超级管理员
+     */
+    SUPER_ADMIN,
+
+    /**
+     * 业务管理员
+     */
+    BUSINESS_ADMIN,
+
+    /**
+     * 业务操作员
+     */
+    BUSINESS_OPERATOR,
+
+    /**
+     * 审计管理员
+     */
+    AUDIT_ADMIN,
+
+    /**
+     * 审计操作员
+     */
+    AUDIT_OPERATOR
 }

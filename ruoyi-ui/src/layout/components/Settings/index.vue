@@ -41,7 +41,7 @@
       <el-divider/>
 
       <h3 class="drawer-title">系统布局配置</h3>
-      
+
       <div class="drawer-item">
         <span>开启 TopNav</span>
         <el-switch v-model="topNav" class="drawer-switch" />
@@ -93,7 +93,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'fixedHeader',
+          secretKey: 'fixedHeader',
           value: val
         })
       }
@@ -104,7 +104,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'topNav',
+          secretKey: 'topNav',
           value: val
         })
         if (!val) {
@@ -118,7 +118,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'tagsView',
+          secretKey: 'tagsView',
           value: val
         })
       }
@@ -129,7 +129,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'sidebarLogo',
+          secretKey: 'sidebarLogo',
           value: val
         })
       }
@@ -140,7 +140,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'dynamicTitle',
+          secretKey: 'dynamicTitle',
           value: val
         })
       }
@@ -149,14 +149,14 @@ export default {
   methods: {
     themeChange(val) {
       this.$store.dispatch('settings/changeSetting', {
-        key: 'theme',
+        secretKey: 'theme',
         value: val
       })
       this.theme = val;
     },
     handleTheme(val) {
       this.$store.dispatch('settings/changeSetting', {
-        key: 'sideTheme',
+        secretKey: 'sideTheme',
         value: val
       })
       this.sideTheme = val;

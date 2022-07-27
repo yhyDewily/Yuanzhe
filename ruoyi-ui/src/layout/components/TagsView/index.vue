@@ -4,7 +4,7 @@
       <router-link
         v-for="tag in visitedViews"
         ref="tag"
-        :key="tag.path"
+        :secretKey="tag.path"
         :class="isActive(tag)?'active':''"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
         tag="span"

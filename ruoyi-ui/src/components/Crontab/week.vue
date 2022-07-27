@@ -18,20 +18,20 @@
 				<el-select clearable v-model="cycle01">
 					<el-option
 						v-for="(item,index) of weekList"
-						:key="index"
+						:secretKey="index"
 						:label="item.value"
-						:value="item.key"
-						:disabled="item.key === 1"
+						:value="item.secretKey"
+						:disabled="item.secretKey === 1"
 					>{{item.value}}</el-option>
 				</el-select>
 				-
 				<el-select clearable v-model="cycle02">
 					<el-option
 						v-for="(item,index) of weekList"
-						:key="index"
+						:secretKey="index"
 						:label="item.value"
-						:value="item.key"
-						:disabled="item.key < cycle01 && item.key !== 1"
+						:value="item.secretKey"
+						:disabled="item.secretKey < cycle01 && item.secretKey !== 1"
 					>{{item.value}}</el-option>
 				</el-select>
 			</el-radio>
@@ -42,7 +42,7 @@
 				第
 				<el-input-number v-model='average01' :min="1" :max="4" /> 周的星期
 				<el-select clearable v-model="average02">
-					<el-option v-for="(item,index) of weekList" :key="index" :label="item.value" :value="item.key">{{item.value}}</el-option>
+					<el-option v-for="(item,index) of weekList" :secretKey="index" :label="item.value" :value="item.secretKey">{{item.value}}</el-option>
 				</el-select>
 			</el-radio>
 		</el-form-item>
@@ -51,7 +51,7 @@
 			<el-radio v-model='radioValue' :label="5">
 				本月最后一个星期
 				<el-select clearable v-model="weekday">
-					<el-option v-for="(item,index) of weekList" :key="index" :label="item.value" :value="item.key">{{item.value}}</el-option>
+					<el-option v-for="(item,index) of weekList" :secretKey="index" :label="item.value" :value="item.secretKey">{{item.value}}</el-option>
 				</el-select>
 			</el-radio>
 		</el-form-item>
@@ -60,7 +60,7 @@
 			<el-radio v-model='radioValue' :label="6">
 				指定
 				<el-select clearable v-model="checkboxList" placeholder="可多选" multiple style="width:100%">
-					<el-option v-for="(item,index) of weekList" :key="index" :label="item.value" :value="String(item.key)">{{item.value}}</el-option>
+					<el-option v-for="(item,index) of weekList" :secretKey="index" :label="item.value" :value="String(item.secretKey)">{{item.value}}</el-option>
 				</el-select>
 			</el-radio>
 		</el-form-item>
@@ -81,31 +81,31 @@ export default {
 			checkboxList: [],
 			weekList: [
 				{
-					key: 2,
+					secretKey: 2,
 					value: '星期一'
 				},
 				{
-					key: 3,
+					secretKey: 3,
 					value: '星期二'
 				},
 				{
-					key: 4,
+					secretKey: 4,
 					value: '星期三'
 				},
 				{
-					key: 5,
+					secretKey: 5,
 					value: '星期四'
 				},
 				{
-					key: 6,
+					secretKey: 6,
 					value: '星期五'
 				},
 				{
-					key: 7,
+					secretKey: 7,
 					value: '星期六'
 				},
 				{
-					key: 1,
+					secretKey: 1,
 					value: '星期日'
 				}
 			],

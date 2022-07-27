@@ -21,7 +21,7 @@
             @end="onEnd"
           >
             <div
-              v-for="(element, index) in inputComponents" :key="index" class="components-item"
+              v-for="(element, index) in inputComponents" :secretKey="index" class="components-item"
               @click="addComponent(element)"
             >
               <div class="components-body">
@@ -44,7 +44,7 @@
           >
             <div
               v-for="(element, index) in selectComponents"
-              :key="index"
+              :secretKey="index"
               class="components-item"
               @click="addComponent(element)"
             >
@@ -63,7 +63,7 @@
             draggable=".components-item" :sort="false" @end="onEnd"
           >
             <div
-              v-for="(element, index) in layoutComponents" :key="index" class="components-item"
+              v-for="(element, index) in layoutComponents" :secretKey="index" class="components-item"
               @click="addComponent(element)"
             >
               <div class="components-body">
@@ -99,7 +99,7 @@
             <draggable class="drawing-board" :list="drawingList" :animation="340" group="componentsGroup">
               <draggable-item
                 v-for="(element, index) in drawingList"
-                :key="element.renderKey"
+                :secretKey="element.renderKey"
                 :drawing-list="drawingList"
                 :element="element"
                 :index="index"
@@ -347,10 +347,10 @@ export default {
       delete this.activeData.tag
       delete this.activeData.tagIcon
       delete this.activeData.document
-      Object.keys(newTag).forEach(key => {
-        if (this.activeData[key] !== undefined
-          && typeof this.activeData[key] === typeof newTag[key]) {
-          newTag[key] = this.activeData[key]
+      Object.keys(newTag).forEach(secretKey => {
+        if (this.activeData[secretKey] !== undefined
+          && typeof this.activeData[secretKey] === typeof newTag[secretKey]) {
+          newTag[secretKey] = this.activeData[secretKey]
         }
       })
       this.activeData = newTag

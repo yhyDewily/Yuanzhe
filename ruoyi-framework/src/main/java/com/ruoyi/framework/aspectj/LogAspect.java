@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.domain.User;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
@@ -67,8 +70,13 @@ public class LogAspect
         {
 
             // 获取当前的用户
-            LoginUser loginUser = SecurityUtils.getLoginUser();
-
+            LoginUser loginUser = new LoginUser();
+            SysUser sysUser = new SysUser();
+            loginUser.setUserId(1L);
+            sysUser.setUserId(1L);
+            sysUser.setUserName("admin");
+            sysUser.setNickName("若依");
+            loginUser.setUser(sysUser);
             // *========数据库日志=========*//
             SysOperLog operLog = new SysOperLog();
             operLog.setStatus(BusinessStatus.SUCCESS.ordinal());

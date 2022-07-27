@@ -35,11 +35,26 @@ server:
 
 # 静态证书路径存储
 ocspConfiguration:
-  CAPath: ruoyi-system\\src\\main\\resources\\cert\\rootCA-digicert-der.cer
-  keyPath: ruoyi-system\\src\\main\\resources\\cert\\key.pem
-  CRLPath: ruoyi-system\\src\\main\\resources\\cert\\AllCRL.crl
+  CAPath: /opt/apache-tomcat-9.0.56/webapps/cert/rootCA-digicert.pem
+  keyPath: /opt/apache-tomcat-9.0.56/webapps/cert/key.pem
+  CRLPath: /opt/apache-tomcat-9.0.56/webapps/cert/AllCRL.crl
+#  CAPath: ruoyi-system\\src\\main\\resources\\cert\\rootCA-digicert.pem
+#  keyPath: ruoyi-system\\src\\main\\resources\\cert\\key.pem
+#  CRLPath: ruoyi-system\\src\\main\\resources\\cert\\AllCRL.crl
   synUrl: http://192.168.8.202:4130/cipher/public/
   crlUrl: http://192.168.8.169/cipher/public/revokelist/AllCRL.crl
+
+CRLConfiguratin:
+  crlIP: 192.168.8.169
+  crlROOT: root
+  crlPASSWORD: 197154
+  crlPORT: 222
+
+CAConfig:
+  CAPrivate: /opt/apache-tomcat-9.0.56/webapps/rootca/Root.key
+  CAPath: /opt/apache-tomcat-9.0.56/webapps/rootca/RootCA.crt
+#  CAPrivate: ruoyi-system/src/main/resources/rootca/Root.key
+#  CAPath: ruoyi-system/src/main/resources/rootca/RootCA.crt
 
 # 日志配置
 logging:

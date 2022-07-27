@@ -58,7 +58,7 @@
             >
               <el-option
                 v-for="dict in dict.type.sys_normal_disable"
-                :key="dict.value"
+                :secretKey="dict.value"
                 :label="dict.label"
                 :value="dict.value"
               />
@@ -140,12 +140,12 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-          <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+          <el-table-column label="用户编号" align="center" secretKey="userId" prop="userId" v-if="columns[0].visible" />
+          <el-table-column label="用户名称" align="center" secretKey="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="用户昵称" align="center" secretKey="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="部门" align="center" secretKey="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="手机号码" align="center" secretKey="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+          <el-table-column label="状态" align="center" secretKey="status" v-if="columns[5].visible">
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.status"
@@ -186,7 +186,7 @@
                   <i class="el-icon-d-arrow-right el-icon--right"></i>更多
                 </span>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
+                  <el-dropdown-item command="handleResetPwd" icon="el-icon-secretKey"
                     v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
                   <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
                     v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
@@ -251,7 +251,7 @@
               <el-select v-model="form.sex" placeholder="请选择">
                 <el-option
                   v-for="dict in dict.type.sys_user_sex"
-                  :key="dict.value"
+                  :secretKey="dict.value"
                   :label="dict.label"
                   :value="dict.value"
                 ></el-option>
@@ -263,7 +263,7 @@
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
-                  :key="dict.value"
+                  :secretKey="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
@@ -276,7 +276,7 @@
               <el-select v-model="form.postIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in postOptions"
-                  :key="item.postId"
+                  :secretKey="item.postId"
                   :label="item.postName"
                   :value="item.postId"
                   :disabled="item.status == 1"
@@ -289,7 +289,7 @@
               <el-select v-model="form.roleIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in roleOptions"
-                  :key="item.roleId"
+                  :secretKey="item.roleId"
                   :label="item.roleName"
                   :value="item.roleId"
                   :disabled="item.status == 1"
@@ -419,13 +419,13 @@ export default {
       },
       // 列信息
       columns: [
-        { key: 0, label: `用户编号`, visible: true },
-        { key: 1, label: `用户名称`, visible: true },
-        { key: 2, label: `用户昵称`, visible: true },
-        { key: 3, label: `部门`, visible: true },
-        { key: 4, label: `手机号码`, visible: true },
-        { key: 5, label: `状态`, visible: true },
-        { key: 6, label: `创建时间`, visible: true }
+        { secretKey: 0, label: `用户编号`, visible: true },
+        { secretKey: 1, label: `用户名称`, visible: true },
+        { secretKey: 2, label: `用户昵称`, visible: true },
+        { secretKey: 3, label: `部门`, visible: true },
+        { secretKey: 4, label: `手机号码`, visible: true },
+        { secretKey: 5, label: `状态`, visible: true },
+        { secretKey: 6, label: `创建时间`, visible: true }
       ],
       // 表单校验
       rules: {

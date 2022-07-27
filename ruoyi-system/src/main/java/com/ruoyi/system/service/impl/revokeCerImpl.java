@@ -21,12 +21,17 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.*;
+import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static com.ruoyi.common.utils.BCECUtil.convertSEC1ToBCECPrivateKey;
+import static com.ruoyi.system.utils.CertUtil.getCert;
+import static com.ruoyi.system.utils.CertUtil.readPrivateKeySecondApproach;
 
 
 /**
@@ -66,9 +71,29 @@ public class revokeCerImpl implements IrevokeCerService {
                     reasonList.add(cer.getRevokeReason()); //传入的证书撤销原因集合
                 }
                 //产生证书吊销列表CRL时传入的第一个参数：CA证书
-                X509Certificate CaCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + "/signlist/test01/test.mid.ca.certSm2.crt");
+                // X509Certificate CaCer = loadFileFromURLToCer("http://192.168.8.202:4130/cipher/public/" + "/signlist/test01/test.mid.ca.certSm2.crt");
+                X509Certificate CaCer = null;
+                try {
+                    CaCer = getCacer(env.getProperty("CAConfig.CAPath"));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (NoSuchProviderException e) {
+                    e.printStackTrace();
+                }
+
                 //产生证书吊销列表CRL时传入的第二个参数：CaPrivate密钥
-                PrivateKey CaPrivateKey = loadFileFromURLToKey("http://192.168.8.202:4130/cipher/public/"+ "./signlist/test01/test.mid.ca.pri");
+                // PrivateKey CaPrivateKey = loadFileFromURLToKey("http://192.168.8.202:4130/cipher/public/"+ "./signlist/test01/test.mid.ca.pri");
+                PrivateKey CaPrivateKey = null;
+                try {
+                    CaPrivateKey = getCaPrivateKey(env.getProperty("CAConfig.CAPrivate"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 try {
                     try {
                         generateCRL(CaCer,CaPrivateKey,CersList,reasonList, days);  //产生证书 ,并上传远程服务器
@@ -236,7 +261,10 @@ public class revokeCerImpl implements IrevokeCerService {
     //将产生的CRL文件上传到远程服务器指定目录
     public void RemoteUplod(String FilePathString) throws JSchException, SftpException {
         //远程服务器：Ip、Root、Password、[Port(默认是22) 可选参数]
-        SFTPChannel sftpChannel = new SFTPChannel("192.168.8.202", "root", "197154");
+        SFTPChannel sftpChannel = new SFTPChannel(env.getProperty("CRLConfiguratin.crlIP"),
+                env.getProperty("CRLConfiguratin.crlROOT"), env.getProperty("CRLConfiguratin.crlPASSWORD"),
+                Integer.parseInt(env.getProperty("CRLConfiguratin.crlPORT")));
+       // SFTPChannel sftpChannel = new SFTPChannel("192.168.8.169", "root", "197154",222);
         //直接将本地文件名为src的文件上传到目标服务器，目标文件名为dst。
         //（注：使用这个方法时，dst可以是目录，当dst是目录时，上传后的目标文件名将与src文件名相同）
         String src = FilePathString;
@@ -252,6 +280,32 @@ public class revokeCerImpl implements IrevokeCerService {
         //关闭连接
         channelSftp.quit();
         sftpChannel.closeChannel();
+    }
+
+
+    //获取CAPrivateKey
+    public static PrivateKey getCaPrivateKey(String filepath) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, InvalidKeySpecException, CertificateException {
+        File file = new File(filepath);
+        try (FileInputStream fileStream = new FileInputStream(file);
+             DataInputStream dataStream = new DataInputStream(fileStream)) {
+            byte[] keyBytes = new byte[(int) file.length()];
+            dataStream.readFully(keyBytes);
+            String temp = new String(keyBytes);
+            int start = temp.indexOf("-----BEGIN EC PRIVATE KEY-----");
+            int end = temp.indexOf("-----END EC PRIVATE KEY-----");
+            String sub = temp.substring(start, end).replace("-----BEGIN EC PRIVATE KEY-----", "").trim();
+            byte[] decoded = Base64.getMimeDecoder().decode(sub);
+            return convertSEC1ToBCECPrivateKey(decoded);
+        }
+    }
+
+    //获取CA证书
+    public static X509Certificate getCacer(String filepath) throws FileNotFoundException, CertificateException, NoSuchProviderException {
+        FileInputStream certIn = new FileInputStream(filepath);
+        Security.addProvider(new BouncyCastleProvider());
+        CertificateFactory cf = CertificateFactory.getInstance("X.509", "BC");
+        X509Certificate cer=(X509Certificate) cf.generateCertificate(certIn);
+        return cer;
     }
 
 

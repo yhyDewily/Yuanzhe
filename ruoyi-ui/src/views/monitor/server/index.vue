@@ -153,7 +153,7 @@
                 </tr>
               </thead>
               <tbody v-if="server.sysFiles">
-                <tr v-for="(sysFile, index) in server.sysFiles" :key="index">
+                <tr v-for="(sysFile, index) in server.sysFiles" :secretKey="index">
                   <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.dirName }}</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.sysTypeName }}</div></td>
                   <td class="el-table__cell is-leaf"><div class="cell">{{ sysFile.typeName }}</div></td>

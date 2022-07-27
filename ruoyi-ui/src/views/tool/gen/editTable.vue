@@ -5,7 +5,7 @@
         <basic-info-form ref="basicInfo" :info="info" />
       </el-tab-pane>
       <el-tab-pane label="字段信息" name="columnInfo">
-        <el-table ref="dragTable" :data="columns" row-key="columnId" :max-height="tableHeight">
+        <el-table ref="dragTable" :data="columns" row-secretKey="columnId" :max-height="tableHeight">
           <el-table-column label="序号" type="index" min-width="5%" class-name="allowDrag" />
           <el-table-column
             label="字段列名"
@@ -102,7 +102,7 @@
               <el-select v-model="scope.row.dictType" clearable filterable placeholder="请选择">
                 <el-option
                   v-for="dict in dictOptions"
-                  :key="dict.dictType"
+                  :secretKey="dict.dictType"
                   :label="dict.dictName"
                   :value="dict.dictType">
                   <span style="float: left">{{ dict.dictName }}</span>

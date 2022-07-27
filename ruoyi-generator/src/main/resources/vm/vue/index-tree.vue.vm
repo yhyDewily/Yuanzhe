@@ -26,7 +26,7 @@
         <el-select v-model="queryParams.${column.javaField}" placeholder="请选择${comment}" clearable size="small">
           <el-option
             v-for="dict in dict.type.${dictType}"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -86,7 +86,7 @@
     <el-table
       v-loading="loading"
       :data="${businessName}List"
-      row-key="${treeCode}"
+      row-secretKey="${treeCode}"
       default-expand-all
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
@@ -189,7 +189,7 @@
           <el-select v-model="form.${field}" placeholder="请选择${comment}">
             <el-option
               v-for="dict in dict.type.${dictType}"
-              :key="dict.value"
+              :secretKey="dict.value"
               :label="dict.label"
               #if($column.javaType == "Integer" || $column.javaType == "Long"):value="parseInt(dict.value)"#else:value="dict.value"#end
 
@@ -207,7 +207,7 @@
           <el-checkbox-group v-model="form.${field}">
             <el-checkbox
               v-for="dict in dict.type.${dictType}"
-              :key="dict.value"
+              :secretKey="dict.value"
               :label="dict.value">
               {{dict.label}}
             </el-checkbox>
@@ -224,7 +224,7 @@
           <el-radio-group v-model="form.${field}">
             <el-radio
               v-for="dict in dict.type.${dictType}"
-              :key="dict.value"
+              :secretKey="dict.value"
               #if($column.javaType == "Integer" || $column.javaType == "Long"):label="parseInt(dict.value)"#else:label="dict.value"#end
 
             >{{dict.label}}</el-radio>

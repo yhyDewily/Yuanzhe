@@ -18,10 +18,10 @@
               :style="{width: '100%'}"
               @change="tagChange"
             >
-              <el-option-group v-for="group in tagList" :key="group.label" :label="group.label">
+              <el-option-group v-for="group in tagList" :secretKey="group.label" :label="group.label">
                 <el-option
                   v-for="item in group.options"
-                  :key="item.label"
+                  :secretKey="item.label"
                   :label="item.label"
                   :value="item.tagIcon"
                 >
@@ -65,7 +65,7 @@
             <el-select v-model="activeData.justify" placeholder="请选择水平排列" :style="{width: '100%'}">
               <el-option
                 v-for="(item, index) in justifyOptions"
-                :key="index"
+                :secretKey="index"
                 :label="item.label"
                 :value="item.value"
               />
@@ -197,7 +197,7 @@
             >
               <el-option
                 v-for="(item, index) in dateOptions"
-                :key="index"
+                :secretKey="index"
                 :label="item.label"
                 :value="item.value"
               />
@@ -278,7 +278,7 @@
               group="selectItem"
               handle=".option-drag"
             >
-              <div v-for="(item, index) in activeData.options" :key="index" class="select-item">
+              <div v-for="(item, index) in activeData.options" :secretKey="index" class="select-item">
                 <div class="select-line-icon option-drag">
                   <i class="el-icon-s-operation" />
                 </div>
@@ -336,7 +336,7 @@
               v-if="activeData.dataType === 'static'"
               draggable
               :data="activeData.options"
-              node-key="id"
+              node-secretKey="id"
               :expand-on-click-node="false"
               :render-content="renderContent"
             />
@@ -400,7 +400,7 @@
             >
               <el-option
                 v-for="(item, index) in colorFormatOptions"
-                :key="index"
+                :secretKey="index"
                 :label="item.label"
                 :value="item.value"
               />
@@ -473,7 +473,7 @@
             <el-tree
               :data="[activeData]"
               :props="layoutTreeProps"
-              node-key="renderKey"
+              node-secretKey="renderKey"
               default-expand-all
               draggable
             >
@@ -490,7 +490,7 @@
             <el-divider>正则校验</el-divider>
             <div
               v-for="(item, index) in activeData.regList"
-              :key="index"
+              :secretKey="index"
               class="reg-item"
             >
               <span class="close-btn" @click="activeData.regList.splice(index, 1)">

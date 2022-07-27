@@ -31,7 +31,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -183,7 +183,7 @@
           <el-radio-group v-model="form.status">
             <el-radio
               v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
+              :secretKey="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>
@@ -197,7 +197,7 @@
             :data="menuOptions"
             show-checkbox
             ref="menu"
-            node-key="id"
+            node-secretKey="id"
             :check-strictly="!form.menuCheckStrictly"
             empty-text="加载中，请稍候"
             :props="defaultProps"
@@ -226,7 +226,7 @@
           <el-select v-model="form.dataScope" @change="dataScopeSelectChange">
             <el-option
               v-for="item in dataScopeOptions"
-              :key="item.value"
+              :secretKey="item.value"
               :label="item.label"
               :value="item.value"
             ></el-option>
@@ -242,7 +242,7 @@
             show-checkbox
             default-expand-all
             ref="dept"
-            node-key="id"
+            node-secretKey="id"
             :check-strictly="!form.deptCheckStrictly"
             empty-text="加载中，请稍候"
             :props="defaultProps"

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.AuthMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="AuthResult" type="com.ruoyi.system.domain.Auth">
+        <id column="id" property="id" />
+        <result column="role_name" property="roleName" />
+        <result column="role_auth" property="roleAuth" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <sql id="selectAuth">
+        select id, role_name, role_auth, create_time, update_time from auth;
+    </sql>
+    <update id="updateAuth" parameterType="com.ruoyi.system.domain.Auth">
+        update auth
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleName != null">role_name = #{roleName},</if>
+            <if test="roleAuth != null">role_auth = #{roleAuth},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id=#{id}
+    </update>
+    <select id="selectAuthById" resultType="com.ruoyi.system.domain.Auth">
+        <include refid="selectAuth"/>
+        where id=#{id}
+    </select>
+    <select id="selectAuthList" resultType="com.ruoyi.system.domain.Auth">
+        <include refid="selectAuth" />
+        <where>
+            <if test="roleName !=null and roleName != ''">and role_name like concat('%', #{roleName}, '%')</if>
+            <if test="roleAuth !=null and roleAuth != ''">and role_auth like concat('%', #{roleAuth}, '%')</if>
+            <if test="createTime !=null and createTime != ''">and create_time like concat('%', #{createTime}, '%')</if>
+            <if test="updateTime !=null and updateTime != ''">and update_time like concat('%', #{updateTime}, '%')</if>
+        </where>
+    </select>
+    <select id="checkEqual" parameterType="Auth" resultType="Integer">
+        select count (*) from auth
+        <where>
+            <if test="roleName != null  and roleName != ''"> role_name = #{roleName}</if>
+            <if test="roleAuth != null  and roleAuth != ''"> role_auth = #{roleAuth}</if>
+            <if test="createTime != null  and createTime != ''"> create_time = #{createTime}</if>
+            <if test="updateTime != null  and updateTime != ''"> update_time = #{updateTime}</if>
+
+        </where>
+    </select>
+
+    <insert id="insertAuth" parameterType="Auth">
+        insert into auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="roleName != null">role_name,</if>
+            <if test="roleAuth != null">role_auth,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="roleName != null">#{roleName},</if>
+            <if test="roleAuth != null">#{roleAuth},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <delete id="deleteAuthById" parameterType="int">
+        delete from auth where id=#{id}
+    </delete>
+
+
+</mapper>

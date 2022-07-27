@@ -62,7 +62,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          key: 'showSettings',
+          secretKey: 'showSettings',
           value: val
         })
       }

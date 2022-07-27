@@ -21,7 +21,7 @@
                    size="small">
           <el-option
             v-for="dict in spanDict"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />

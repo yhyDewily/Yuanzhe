@@ -5,7 +5,7 @@
         <el-select v-model="queryParams.dictType" size="small">
           <el-option
             v-for="item in typeOptions"
-            :key="item.dictId"
+            :secretKey="item.dictId"
             :label="item.dictName"
             :value="item.dictType"
           />
@@ -24,7 +24,7 @@
         <el-select v-model="queryParams.status" placeholder="数据状态" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
-            :key="dict.value"
+            :secretKey="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -163,7 +163,7 @@
           <el-select v-model="form.listClass">
             <el-option
               v-for="item in listClassOptions"
-              :key="item.value"
+              :secretKey="item.value"
               :label="item.label"
               :value="item.value"
             ></el-option>
@@ -173,7 +173,7 @@
           <el-radio-group v-model="form.status">
             <el-radio
               v-for="dict in dict.type.sys_normal_disable"
-              :key="dict.value"
+              :secretKey="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>

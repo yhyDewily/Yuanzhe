@@ -2,7 +2,7 @@
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
-        <router-view :key="key" />
+        <router-view :secretKey="secretKey" />
       </keep-alive>
     </transition>
   </section>
@@ -15,7 +15,7 @@ export default {
     cachedViews() {
       return this.$store.state.tagsView.cachedViews
     },
-    key() {
+    secretKey() {
       return this.$route.path
     }
   }
