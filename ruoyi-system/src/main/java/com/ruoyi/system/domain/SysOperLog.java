@@ -27,6 +27,9 @@ public class SysOperLog extends BaseEntity
     @Excel(name = "业务类型", readConverterExp = "0=其它,1=新增,2=修改,3=删除,4=授权,5=导出,6=导入,7=强退,8=生成代码,9=清空数据")
     private Integer businessType;
 
+    /** 操作证书序列号 */
+    private String certSerialNum;
+
     /** 业务类型数组 */
     private Integer[] businessTypes;
 
@@ -78,10 +81,13 @@ public class SysOperLog extends BaseEntity
     @Excel(name = "错误消息")
     private String errorMsg;
 
-    /** 操作时间 */
+    /** 操作起始时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    private Date operTime;
+    private Date operStartTime;
+
+    /** 操作结束时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date operEndTime;
 
     public Long getOperId()
     {
@@ -111,6 +117,14 @@ public class SysOperLog extends BaseEntity
     public void setBusinessType(Integer businessType)
     {
         this.businessType = businessType;
+    }
+
+    public String getCertSerialNum() {
+        return certSerialNum;
+    }
+
+    public void setCertSerialNum(String certSerialNum) {
+        this.certSerialNum = certSerialNum;
     }
 
     public Integer[] getBusinessTypes()
@@ -243,13 +257,21 @@ public class SysOperLog extends BaseEntity
         this.errorMsg = errorMsg;
     }
 
-    public Date getOperTime()
+    public Date getOperStartTime()
     {
-        return operTime;
+        return operStartTime;
     }
 
-    public void setOperTime(Date operTime)
+    public void setOperStartTime(Date operStartTime)
     {
-        this.operTime = operTime;
+        this.operStartTime = operStartTime;
+    }
+
+    public Date getOperEndTime() {
+        return operEndTime;
+    }
+
+    public void setOperEndTime(Date operEndTime) {
+        this.operEndTime = operEndTime;
     }
 }
