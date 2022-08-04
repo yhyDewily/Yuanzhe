@@ -6,7 +6,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @author Dewily
  * @date 2022-07-13 22:21
  */
-public class KeyCount extends BaseEntity {
+public class KmsKeyCount extends BaseEntity {
 
     private static final long serialVersionUID=1L;
 
@@ -18,10 +18,10 @@ public class KeyCount extends BaseEntity {
 
     private Integer applyCount;
 
-    public KeyCount() {
+    public KmsKeyCount() {
     }
 
-    public KeyCount(Integer id, Integer downloadCount, Integer logOutCount, Integer applyCount) {
+    public KmsKeyCount(Integer id, Integer downloadCount, Integer logOutCount, Integer applyCount) {
         this.id = id;
         this.downloadCount = downloadCount;
         this.logOutCount = logOutCount;

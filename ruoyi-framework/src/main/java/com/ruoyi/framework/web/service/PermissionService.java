@@ -22,6 +22,18 @@ public class PermissionService
     /** 管理员角色权限标识 */
     private static final String SUPER_ADMIN = "admin";
 
+    /** 业务管理员角色权限标识 */
+    private static final String BUSINESS_ADMIN = "business_admin";
+
+    /** 业务操作员角色权限标识 */
+    private static final String BUSINESS_OPERATOR = "business_operator";
+
+    /** 审计管理员角色权限标识 */
+    private static final String AUDIT_ADMIN = "audit_admin";
+
+    /** 审计操作员角色权限标识*/
+    private static final String AUDIT_OPERATOR = "audit_operator";
+
     private static final String ROLE_DELIMETER = ",";
 
     private static final String PERMISSION_DELIMETER = ",";

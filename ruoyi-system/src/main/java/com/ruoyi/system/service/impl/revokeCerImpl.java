@@ -30,8 +30,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 
 import static com.ruoyi.common.utils.BCECUtil.convertSEC1ToBCECPrivateKey;
-import static com.ruoyi.system.utils.CertUtil.getCert;
-import static com.ruoyi.system.utils.CertUtil.readPrivateKeySecondApproach;
 
 
 /**

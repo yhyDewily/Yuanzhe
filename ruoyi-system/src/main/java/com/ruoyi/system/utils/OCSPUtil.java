@@ -1,6 +1,5 @@
 package com.ruoyi.system.utils;
 
-import com.ruoyi.system.mapper.SignsMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;

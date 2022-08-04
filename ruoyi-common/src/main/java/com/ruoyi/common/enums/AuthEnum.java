@@ -1,4 +1,4 @@
-package com.ruoyi.system.utils.enums;
+package com.ruoyi.common.enums;
 
 /**
  * @author Dewily

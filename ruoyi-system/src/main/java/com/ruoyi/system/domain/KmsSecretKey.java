@@ -8,7 +8,7 @@ import java.util.Date;
  * @author Dewily
  * @date 2022-07-13 22:19
  */
-public class SecretKey extends BaseEntity {
+public class KmsSecretKey extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
@@ -26,10 +26,10 @@ public class SecretKey extends BaseEntity {
 
     private String savePath;
 
-    public SecretKey() {
+    public KmsSecretKey() {
     }
 
-    public SecretKey(Long id, String serialNumber, String issureDn, String keyAlg, Date createTime, Integer length, String savePath) {
+    public KmsSecretKey(Long id, String serialNumber, String issureDn, String keyAlg, Date createTime, Integer length, String savePath) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.issureDn = issureDn;

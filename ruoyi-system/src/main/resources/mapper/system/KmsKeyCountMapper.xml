@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.system.mapper.KeyCountMapper">
+<mapper namespace="com.ruoyi.system.mapper.KmsKeyCountMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="KeyCountResult" type="com.ruoyi.system.domain.KeyCount">
+    <resultMap id="KeyCountResult" type="com.ruoyi.system.domain.KmsKeyCount">
         <id column="id" property="id" />
         <result column="download_count" property="downloadCount" />
         <result column="log_out_count" property="logOutCount" />
@@ -11,10 +11,10 @@
     </resultMap>
 
     <sql id="selectKeyCount">
-        select id, download_count, log_out_count, apply_count from key_count;
+        select id, download_count, log_out_count, apply_count from kms_key_count;
     </sql>
-    <update id="updateKeyCount" parameterType="com.ruoyi.system.domain.KeyCount">
-        update key_count
+    <update id="updateKeyCount" parameterType="com.ruoyi.system.domain.KmsKeyCount">
+        update kms_key_count
         <trim prefix="SET" suffixOverrides=",">
             <if test="downloadCount != null">download_count = #{downloadCount},</if>
             <if test="logOutCount != null">log_out_count = #{logOutCount},</if>
@@ -22,11 +22,11 @@
         </trim>
         where id=#{id}
     </update>
-    <select id="selectKeyCountById" resultType="com.ruoyi.system.domain.KeyCount">
+    <select id="selectKeyCountById" resultType="com.ruoyi.system.domain.KmsKeyCount">
         <include refid="selectKeyCount"/>
         where id=#{id}
     </select>
-    <select id="selectKeyCountList" resultType="com.ruoyi.system.domain.KeyCount">
+    <select id="selectKeyCountList" resultType="com.ruoyi.system.domain.KmsKeyCount">
         <include refid="selectKeyCount" />
         <where>
             <if test="downloadCount !=null and downloadCount != ''">and download_count like concat('%', #{downloadCount}, '%')</if>
@@ -34,8 +34,8 @@
             <if test="applyCount !=null and applyCount != ''">and apply_count like concat('%', #{applyCount}, '%')</if>
         </where>
     </select>
-    <select id="checkEqual" parameterType="KeyCount" resultType="Integer">
-        select count (*) from key_count
+    <select id="checkEqual" parameterType="KmsKeyCount" resultType="Integer">
+        select count (*) from kms_key_count
         <where>
             <if test="downloadCount != null  and downloadCount != ''"> download_count = #{downloadCount}</if>
             <if test="logOutCount != null  and logOutCount != ''"> log_out_count = #{log_out_count}</if>
@@ -44,8 +44,8 @@
         </where>
     </select>
 
-    <insert id="insertKeyCount" parameterType="KeyCount">
-        insert into key_count
+    <insert id="insertKeyCount" parameterType="KmsKeyCount">
+        insert into kms_key_count
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
             <if test="downloadCount != null">download_count,</if>
@@ -61,7 +61,7 @@
     </insert>
 
     <delete id="deleteKeyCountById" parameterType="int">
-        delete from key_count where id=#{id}
+        delete from kms_key_count where id=#{id}
     </delete>
 
 </mapper>

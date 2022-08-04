@@ -257,8 +257,6 @@ public class SysUserServiceImpl implements ISysUserService
     {
         // 新增用户信息
         int rows = userMapper.insertUser(user);
-        // 新增用户岗位关联
-        insertUserPost(user);
         // 新增用户与角色管理
         insertUserRole(user);
         return rows;
@@ -293,8 +291,6 @@ public class SysUserServiceImpl implements ISysUserService
         insertUserRole(user);
         // 删除用户与岗位关联
         userPostMapper.deleteUserPostByUserId(userId);
-        // 新增用户与岗位管理
-        insertUserPost(user);
         return userMapper.updateUser(user);
     }
 
@@ -337,19 +333,6 @@ public class SysUserServiceImpl implements ISysUserService
     }
 
     /**
-     * 修改用户头像
-     * 
-     * @param userName 用户名
-     * @param avatar 头像地址
-     * @return 结果
-     */
-    @Override
-    public boolean updateUserAvatar(String userName, String avatar)
-    {
-        return userMapper.updateUserAvatar(userName, avatar) > 0;
-    }
-
-    /**
      * 重置用户密码
      * 
      * @param user 用户信息
@@ -376,54 +359,28 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 新增用户角色信息
-     * 
+     * todo 根据需要进行修改，可能需要修改函数定义，将函数该为修改用户角色
      * @param user 用户对象
      */
     public void insertUserRole(SysUser user)
     {
-        Long[] roles = user.getRoleIds();
-        if (StringUtils.isNotNull(roles))
-        {
-            // 新增用户与角色管理
-            List<SysUserRole> list = new ArrayList<SysUserRole>();
-            for (Long roleId : roles)
-            {
-                SysUserRole ur = new SysUserRole();
-                ur.setUserId(user.getUserId());
-                ur.setRoleId(roleId);
-                list.add(ur);
-            }
-            if (list.size() > 0)
-            {
-                userRoleMapper.batchUserRole(list);
-            }
-        }
-    }
-
-    /**
-     * 新增用户岗位信息
-     * 
-     * @param user 用户对象
-     */
-    public void insertUserPost(SysUser user)
-    {
-        Long[] posts = user.getPostIds();
-        if (StringUtils.isNotNull(posts))
-        {
-            // 新增用户与岗位管理
-            List<SysUserPost> list = new ArrayList<SysUserPost>();
-            for (Long postId : posts)
-            {
-                SysUserPost up = new SysUserPost();
-                up.setUserId(user.getUserId());
-                up.setPostId(postId);
-                list.add(up);
-            }
-            if (list.size() > 0)
-            {
-                userPostMapper.batchUserPost(list);
-            }
-        }
+//        Long[] roles = user.getRoleIds();
+//        if (StringUtils.isNotNull(roles))
+//        {
+//            // 新增用户与角色管理
+//            List<SysUserRole> list = new ArrayList<SysUserRole>();
+//            for (Long roleId : roles)
+//            {
+//                SysUserRole ur = new SysUserRole();
+//                ur.setUserId(user.getUserId());
+//                ur.setRoleId(roleId);
+//                list.add(ur);
+//            }
+//            if (list.size() > 0)
+//            {
+//                userRoleMapper.batchUserRole(list);
+//            }
+//        }
     }
 
     /**
