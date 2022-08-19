@@ -28,6 +28,7 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
 
     private final Base64.Encoder encoder64 = Base64.getEncoder();
 
+    // TODO 插入数据库时还有数据需要后续决定为何值
     @Override
     public Map<String,String> applyKeyPair(String type, String keyName) {
         // 先根据SM2算法生成密钥
