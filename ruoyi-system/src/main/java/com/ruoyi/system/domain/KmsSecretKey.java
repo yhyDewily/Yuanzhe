@@ -26,10 +26,14 @@ public class KmsSecretKey extends BaseEntity {
 
     private String savePath;
 
+    private String keyType;
+
+    private Integer keySymmetry;
+
     public KmsSecretKey() {
     }
 
-    public KmsSecretKey(Long id, String serialNumber, String issureDn, String keyAlg, Date createTime, Integer length, String savePath) {
+    public KmsSecretKey(Long id, String serialNumber, String issureDn, String keyAlg, Date createTime, Integer length, String savePath,String keyType,Integer keySymmetry) {
         this.id = id;
         this.serialNumber = serialNumber;
         this.issureDn = issureDn;
@@ -37,6 +41,8 @@ public class KmsSecretKey extends BaseEntity {
         this.createTime = createTime;
         this.length = length;
         this.savePath = savePath;
+        this.keyType = keyType;
+        this.keySymmetry = keySymmetry;
     }
 
     public Long getId() {
@@ -45,6 +51,14 @@ public class KmsSecretKey extends BaseEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getKeyType() {
+        return keyType;
+    }
+
+    public void setKeyType(String keyType) {
+        this.keyType = keyType;
     }
 
     public String getSerialNumber() {
@@ -97,9 +111,17 @@ public class KmsSecretKey extends BaseEntity {
         this.savePath = savePath;
     }
 
+    public Integer getKeySymmetry() {
+        return keySymmetry;
+    }
+
+    public void setKeySymmetry(Integer keySymmetry) {
+        this.keySymmetry = keySymmetry;
+    }
+
     @Override
     public String toString() {
-        return "Key{" +
+        return "KmsSecretKey{" +
                 "id=" + id +
                 ", serialNumber='" + serialNumber + '\'' +
                 ", issureDn='" + issureDn + '\'' +
@@ -107,6 +129,8 @@ public class KmsSecretKey extends BaseEntity {
                 ", createTime=" + createTime +
                 ", length=" + length +
                 ", savePath='" + savePath + '\'' +
+                ", keyType='" + keyType + '\'' +
+                ", keySymmetry=" + keySymmetry +
                 '}';
     }
 }
