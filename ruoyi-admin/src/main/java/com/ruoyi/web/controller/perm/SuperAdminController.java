@@ -300,12 +300,13 @@ public class SuperAdminController extends BaseController {
         sysUser.setUserId(getUserId());
         sysUser.setUserName(getUsername());
 
+
         sysUser.setPassword(newPassword);
         userService.updateUser(sysUser);
-        Long roleIds = getLoginUser().getUser().getRoleId();
+
         SysUserRole sysUserRole = new SysUserRole();
         sysUserRole.setUserId(getUserId());
-        sysUserRole.setRoleId(roleIds);
+        sysUserRole.setRoleId(1l);
         sysUserRoleMapper.insertUserRole(sysUserRole);
 
 
