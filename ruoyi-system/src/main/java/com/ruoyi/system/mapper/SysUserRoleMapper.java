@@ -44,6 +44,14 @@ public interface SysUserRoleMapper
     public int batchUserRole(List<SysUserRole> userRoleList);
 
     /**
+     * 新增用户单个角色信息
+     *
+     * @param userRole 用户角色列表
+     * @return 结果
+     */
+    public int insertUserRole(SysUserRole userRole);
+
+    /**
      * 删除用户和角色关联信息
      * 
      * @param userRole 用户和角色关联信息
@@ -59,4 +67,11 @@ public interface SysUserRoleMapper
      * @return 结果
      */
     public int deleteUserRoleInfos(@Param("roleId") Long roleId, @Param("userIds") Long[] userIds);
+
+    /**
+     *
+     * @param roleId 角色ID
+     * @return 结果
+     */
+    public List<Integer> selectUserIdByRoleId(Long roleId);
 }
