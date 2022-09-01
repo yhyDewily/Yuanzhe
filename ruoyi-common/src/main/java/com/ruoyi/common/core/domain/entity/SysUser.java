@@ -26,6 +26,10 @@ public class SysUser extends BaseEntity
     @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
+    /** 部门ID */
+    @Excel(name = "部门")
+    private Long deptId;
+
     /** 用户账号 */
     @Excel(name = "登录名称")
     private String userName;
@@ -103,8 +107,8 @@ public class SysUser extends BaseEntity
         return userId != null && 1L == userId;
     }
 
-    @Xss(message = "用户昵称不能包含脚本字符")
-    @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
+//    @Xss(message = "用户昵称不能包含脚本字符")
+//    @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
     public String getNickName()
     {
         return nickName;
