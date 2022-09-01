@@ -262,10 +262,7 @@ public class SysUserServiceImpl implements ISysUserService
         return rows;
     }
 
-    @Override
-    public int insertUser2(SysUser user) {
-        return 0;
-    }
+
 
     /**
      * 注册用户信息
