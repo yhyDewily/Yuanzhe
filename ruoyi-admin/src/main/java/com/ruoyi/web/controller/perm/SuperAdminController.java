@@ -97,6 +97,18 @@ public class SuperAdminController extends BaseController {
         }
         user.setCreateBy(getUsername());
         user.setNickName("业务管理员");
+        if (StringUtils.isNotEmpty(user.getSex())) {
+            if (user.getSex().equals("男")||user.getSex().equals("1")) {
+                user.setSex("1");
+            }
+            else if (user.getSex().equals("女")||user.getSex().equals("0")) {
+                user.setSex("0");
+            }
+            else {
+                user.setSex("2");
+            }
+        }
+
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
         Long ids = 2l;
         int suc = userService.insertUser(user);
@@ -131,6 +143,7 @@ public class SuperAdminController extends BaseController {
         SysUserRole sysUserRole = new SysUserRole();
         sysUserRole.setRoleId(2l);
         sysUserRole.setUserId(userId);
+        userService.updateUser(sysUser);
         sysUserRoleMapper.insertUserRole(sysUserRole);
 //        userService
         return AjaxResult.success().put("msg","注销成功");
@@ -157,6 +170,7 @@ public class SuperAdminController extends BaseController {
 //                String msg = "该账号已被删除";
 //                System.out.println(msg);
 //            }
+            sysUsers.add(sysUser);
         }
 
         return getDataTable(sysUsers);
