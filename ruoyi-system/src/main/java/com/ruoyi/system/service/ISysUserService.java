@@ -112,6 +112,8 @@ public interface ISysUserService
      */
     public int insertUser(SysUser user);
 
+
+
     /**
      * 注册用户信息
      * 

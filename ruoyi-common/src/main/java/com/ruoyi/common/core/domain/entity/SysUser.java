@@ -26,8 +26,9 @@ public class SysUser extends BaseEntity
     @Excel(name = "用户序号", cellType = ColumnType.NUMERIC, prompt = "用户编号")
     private Long userId;
 
-    /** 角色ID */
-    private Long roleId;
+    /** 部门ID */
+    @Excel(name = "部门")
+    private Long deptId;
 
     /** 用户账号 */
     @Excel(name = "登录名称")
@@ -73,6 +74,9 @@ public class SysUser extends BaseEntity
     /** 角色对象 */
     private List<SysRole> roles;
 
+    /** 角色ID */
+    private Long roleId;
+
     public SysUser()
     {
 
@@ -98,14 +102,13 @@ public class SysUser extends BaseEntity
         return isAdmin(this.userId);
     }
 
-    //todo: 目前判断是否是管理员是根据userId，需要进行更改
     public static boolean isAdmin(Long userId)
     {
         return userId != null && 1L == userId;
     }
 
-    @Xss(message = "用户昵称不能包含脚本字符")
-    @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
+//    @Xss(message = "用户昵称不能包含脚本字符")
+//    @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
     public String getNickName()
     {
         return nickName;

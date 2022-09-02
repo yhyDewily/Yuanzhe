@@ -59,6 +59,8 @@ public interface SysUserMapper
      */
     public int insertUser(SysUser user);
 
+
+
     /**
      * 修改用户信息
      * 

@@ -3,6 +3,8 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -117,7 +119,7 @@ public class SysUserController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
-    @PostMapping
+    @PostMapping("/adduser")
     public AjaxResult add(@Validated @RequestBody SysUser user)
     {
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
@@ -158,6 +160,7 @@ public class SysUserController extends BaseController
         {
             return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
+
         user.setUpdateBy(getUsername());
         return toAjax(userService.updateUser(user));
     }
@@ -199,6 +202,7 @@ public class SysUserController extends BaseController
     @PutMapping("/changeStatus")
     public AjaxResult changeStatus(@RequestBody SysUser user)
     {
+
         userService.checkUserAllowed(user);
         user.setUpdateBy(getUsername());
         return toAjax(userService.updateUserStatus(user));
@@ -230,4 +234,40 @@ public class SysUserController extends BaseController
         userService.insertUserAuth(userId, roleIds);
         return success();
     }
+
+    /**
+     * 新增业务管理员
+     * @author csj
+     */
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @Log(title = "操作员管理", businessType = BusinessType.INSERT)
+    @PostMapping("/addBusinessAdmin")
+    public AjaxResult addBusinessAdmin(@Validated @RequestBody SysUser user)
+    {
+        if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+        }
+        else if (StringUtils.isNotEmpty(user.getPhonenumber())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        }
+        else if (StringUtils.isNotEmpty(user.getEmail())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        user.setCreateBy(getUsername());
+        user.setNickName("业务管理员");
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+        Long[] ids = {Long.valueOf(2)};
+        int suc = userService.insertUser(user);
+        System.out.println("__________________"+user.getUserId()+"__________________");
+        userService.insertUserAuth(user.getUserId(), ids);
+        return toAjax(suc);
+    }
+
+
+
 }

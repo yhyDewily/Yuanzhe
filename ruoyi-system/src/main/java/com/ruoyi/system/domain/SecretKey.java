@@ -1,11 +1,11 @@
 package com.ruoyi.system.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +15,7 @@ import lombok.Setter;
  * </p>
  *
  * @author lls
- * @since 2022-08-19
+ * @since 2022-08-20
  */
 @Getter
 @Setter
@@ -25,7 +25,7 @@ public class SecretKey implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 证书序列号
@@ -42,19 +42,22 @@ public class SecretKey implements Serializable {
     /**
      * 创建时间
      */
-    @TableField("create_time")
+    @TableField(value = "create_time", fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime createTime;
 
     /**
      * 过期时间
      */
-    @TableField("expire_time")
+    @TableField(value = "expire_time",fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime expireTime;
 
     /**
      * 使用时间
      */
     @TableField("use_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private LocalDateTime useTime;
 
     /**
@@ -95,6 +98,12 @@ public class SecretKey implements Serializable {
 
     @TableField("ca_id")
     private String caId;
+
+    /**
+     * 密钥是否使用，1为正在使用，0为已注销
+     */
+    @TableField(value = "valid", fill = FieldFill.INSERT)
+    private Boolean valid;
 
 
 }
