@@ -112,13 +112,7 @@ public interface ISysUserService
      */
     public int insertUser(SysUser user);
 
-    /**
-     * 新增用户信息
-     * @author csj
-     * @param user 用户信息
-     * @return 结果
-     */
-    public int insertUser2(SysUser user);
+
 
     /**
      * 注册用户信息

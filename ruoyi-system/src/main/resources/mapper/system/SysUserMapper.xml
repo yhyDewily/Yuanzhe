@@ -154,7 +154,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			sysdate()
  		)
 	</insert>
-	<insert id="insertUser2" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId"></insert>
+
 
 	<update id="updateUser" parameterType="SysUser">
  		update sys_user
