@@ -13,7 +13,12 @@ public enum DataSourceType
     MASTER,
 
     /**
-     * 从库
+     * 从库，历史库
      */
-    SLAVE
+    SLAVE,
+
+    /**
+     * 备用库
+     */
+    BACKUP
 }

@@ -14,11 +14,11 @@ import java.util.Collections;
 
 public class MybatisPlusGenerator {
     public static void main(String[] args) {
-        FastAutoGenerator.create("jdbc:mysql://localhost:3306/ry?serverTimezone=Asia/Shanghai", "root", "lls19981115.")
+        FastAutoGenerator.create("jdbc:mysql://192.168.159.124:3306/kmsdb?serverTimezone=Asia/Shanghai", "root", "root")
                 .globalConfig(builder -> {
                     builder.author("lls") // 设置作者
 //                            .enableSwagger() // 开启 swagger 模式
-                            .fileOverride() // 覆盖已生成文件
+//                            .fileOverride() // 覆盖已生成文件
                             .commentDate("yyyy-MM-dd")
                             .outputDir(System.getProperty("user.dir") + "\\ruoyi-system\\src\\main\\java"); // 指定输出目录
                 })
@@ -35,7 +35,7 @@ public class MybatisPlusGenerator {
                                     System.getProperty("user.dir") + "\\ruoyi-system\\src\\main\\resources\\mapper\\system")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("kms_secret_key") // 设置需要生成的表名
+                    builder.addInclude("kms_backup_log") // 设置需要生成的表名
                             .addTablePrefix("kms_") // 设置过滤表前缀
                             .serviceBuilder()
                             .formatServiceFileName("%sService")
