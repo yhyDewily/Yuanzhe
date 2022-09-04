@@ -8,7 +8,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<id     property="operId"         column="oper_id"        />
 		<result property="title"          column="title"          />
 		<result property="businessType"   column="business_type"  />
-		<result property="certSerialNum" column="cert_serial_num"/>
 		<result property="method"         column="method"         />
 		<result property="requestMethod"  column="request_method" />
 		<result property="operatorType"   column="operator_type"  />
@@ -20,19 +19,36 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="operParam"      column="oper_param"     />
 		<result property="jsonResult"     column="json_result"    />
 		<result property="status"         column="status"         />
+		<result property="isAudit"        column="is_audit"     />
+		<result property="auditResult"    column="audit_result"   />
 		<result property="errorMsg"       column="error_msg"      />
-		<result property="operStartTime"  column="oper_start_time"/>
-		<result property="operEndTime"  column="oper_end_time"/>
+		<result property="operTime"  column="oper_time"           />
+	</resultMap>
+	
+	<resultMap type="SysLogVO" id="SysLogVOResult">
+		<id     property="operId"         column="oper_id"        />
+		<result property="title"          column="title"          />
+		<result property="businessType"   column="business_type"  />
+		<result property="operName"       column="oper_name"      />
+		<result property="status"         column="status"         />
+		<result property="isAudit"        column="is_audit"     />
+		<result property="auditResult"    column="audit_result"   />
+		<result property="operTime"       column="oper_time"      />
 	</resultMap>
 
 	<sql id="selectOperLogVo">
-        select oper_id, title, cert_serial_num, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_start_time, oper_end_time
+        select oper_id, title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, is_audit, audit_result, error_msg, oper_time
         from sys_oper_log
     </sql>
+	
+	<sql id="selectAuditOperLogVo">
+		select oper_id, title, oper_name, business_type, oper_time, status, is_audit, audit_result
+		from sys_oper_log 
+	</sql>
     
 	<insert id="insertOperlog" parameterType="SysOperLog">
-		insert into sys_oper_log(cert_serial_num, title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, error_msg, oper_start_time, oper_end_time)
-        values (#{certSerialNum}, #{title}, #{businessType}, #{method}, #{requestMethod}, #{operatorType}, #{operName}, #{deptName}, #{operUrl}, #{operIp}, #{operLocation}, #{operParam}, #{jsonResult}, #{status}, #{errorMsg}, sysdate(), sysdate())
+		insert into sys_oper_log(title, business_type, method, request_method, operator_type, oper_name, dept_name, oper_url, oper_ip, oper_location, oper_param, json_result, status, is_audit, audit_result, error_msg, oper_time)
+        values (#{title}, #{businessType}, #{method}, #{requestMethod}, #{operatorType}, #{operName}, #{deptName}, #{operUrl}, #{operIp}, #{operLocation}, #{operParam}, #{jsonResult}, #{status}, #{isAudit}, #{auditResult}, #{errorMsg}, sysdate())
 	</insert>
 	
 	<select id="selectOperLogList" parameterType="SysOperLog" resultMap="SysOperLogResult">
@@ -43,12 +59,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="businessType != null and businessType != ''">
 				AND business_type = #{businessType}
-			</if>
-			<if test="businessTypes != null and businessTypes.length > 0">
-			    AND business_type in
-			    <foreach collection="businessTypes" item="businessType" open="(" separator="," close=")">
-		 			#{businessType}
-		        </foreach> 
 			</if>
 			<if test="status != null">
 				AND status = #{status}
@@ -61,6 +71,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
 				and date_format(oper_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			</if>
+			<if test="params.isAudit !=null and params.isAudit != ''"><!-- 是否审计检索-->
+				and is_audit = #{isAudit}
+			</if>
+			<if test="params.auditResult !=null and params.auditResult != ''"><!-- 是否审计检索-->
+				and audit_result = #{auditResult}
 			</if>
 		</where>
 		order by oper_id desc
@@ -77,9 +93,48 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<include refid="selectOperLogVo"/>
 		where oper_id = #{operId}
 	</select>
-	
-	<update id="cleanOperLog">
+    <select id="selectAuditOperLogList" parameterType="SysLogVO" resultType="com.ruoyi.system.domain.vo.SysLogVO">
+		<include refid="selectAuditOperLogVo" />
+		<where>
+			<if test="title != null and title != ''">
+				AND title like concat('%', #{title}, '%')
+			</if>
+			<if test="businessType != null and businessType != ''">
+				AND business_type = #{businessType}
+			</if>
+			<if test="status != null">
+				AND status = #{status}
+			</if>
+			<if test="operName != null and operName != ''">
+				AND oper_name like concat('%', #{operName}, '%')
+			</if>
+			<if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+				and date_format(oper_time,'%y%m%d') &gt;= date_format(#{params.beginTime},'%y%m%d')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				and date_format(oper_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
+			</if>
+			<if test="isAudit !=null and isAudit != ''"><!-- 是否审计检索-->
+				and is_audit = #{isAudit}
+			</if>
+			<if test="auditResult !=null and auditResult != ''"><!-- 是否审计检索-->
+				and audit_result = #{auditResult}
+			</if>
+		</where>
+		order by oper_id desc
+	</select>
+		
+    <update id="cleanOperLog">
         truncate table sys_oper_log
     </update>
+	
+	<update id="updateLog" parameterType="SysOperLog">
+		update sys_oper_log
+		<set>
+			<if test="isAudit != null">is_audit = #{isAudit},</if>
+			<if test="auditResult != null">audit_result = #{auditResult}</if>
+		</set>
+		where oper_id = #{operId}
+	</update>
 
 </mapper> 

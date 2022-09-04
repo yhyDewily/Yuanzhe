@@ -1,32 +1,6 @@
 <template>
   <div class="app-container">
-    <el-row :gutter="20">
-      <!--部门数据-->
-      <el-col :span="4" :xs="24">
-        <div class="head-container">
-          <el-input
-            v-model="deptName"
-            placeholder="请输入部门名称"
-            clearable
-            size="small"
-            prefix-icon="el-icon-search"
-            style="margin-bottom: 20px"
-          />
-        </div>
-        <div class="head-container">
-          <el-tree
-            :data="deptOptions"
-            :props="defaultProps"
-            :expand-on-click-node="false"
-            :filter-node-method="filterNode"
-            ref="tree"
-            default-expand-all
-            @node-click="handleNodeClick"
-          />
-        </div>
-      </el-col>
       <!--用户数据-->
-      <el-col :span="20" :xs="24">
         <el-form :model="queryParams" ref="queryForm" :inline="true" v-show="showSearch" label-width="68px">
           <el-form-item label="用户名称" prop="userName">
             <el-input
@@ -58,7 +32,7 @@
             >
               <el-option
                 v-for="dict in dict.type.sys_normal_disable"
-                :secretKey="dict.value"
+                :key="dict.value"
                 :label="dict.label"
                 :value="dict.value"
               />
@@ -140,71 +114,68 @@
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
           <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" secretKey="userId" prop="userId" v-if="columns[0].visible" />
-          <el-table-column label="用户名称" align="center" secretKey="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" secretKey="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="部门" align="center" secretKey="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" secretKey="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
-          <el-table-column label="状态" align="center" secretKey="status" v-if="columns[5].visible">
+          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+          <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
+          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+          <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
             <template slot-scope="scope">
               <el-switch
                 v-model="scope.row.status"
                 active-value="0"
                 inactive-value="1"
-                @change="handleStatusChange(scope.row)"
-              ></el-switch>
-            </template>
-          </el-table-column>
-          <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
-            <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.createTime) }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作"
-            align="center"
-            width="160"
-            class-name="small-padding fixed-width"
-          >
-            <template slot-scope="scope" v-if="scope.row.userId !== 1">
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-edit"
-                @click="handleUpdate(scope.row)"
-                v-hasPermi="['system:user:edit']"
-              >修改</el-button>
-              <el-button
-                size="mini"
-                type="text"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.row)"
-                v-hasPermi="['system:user:remove']"
-              >删除</el-button>
-              <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
-                <span class="el-dropdown-link">
-                  <i class="el-icon-d-arrow-right el-icon--right"></i>更多
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="handleResetPwd" icon="el-icon-secretKey"
-                    v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
-                  <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
-                    v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
+              @change="handleStatusChange(scope.row)"
+            ></el-switch>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.createTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          align="center"
+          width="160"
+          class-name="small-padding fixed-width"
+        >
+          <template slot-scope="scope" v-if="scope.row.userId !== 1">
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:user:edit']"
+            >修改</el-button>
+            <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-delete"
+              @click="handleDelete(scope.row)"
+              v-hasPermi="['system:user:remove']"
+            >删除</el-button>
+            <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
+              <span class="el-dropdown-link">
+                <i class="el-icon-d-arrow-right el-icon--right"></i>更多
+              </span>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item command="handleResetPwd" icon="el-icon-key"
+                  v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
+                <el-dropdown-item command="handleAuthRole" icon="el-icon-circle-check"
+                  v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </template>
+        </el-table-column>
+      </el-table>
 
-        <pagination
-          v-show="total>0"
-          :total="total"
-          :page.sync="queryParams.pageNum"
-          :limit.sync="queryParams.pageSize"
-          @pagination="getList"
-        />
-      </el-col>
-    </el-row>
+      <pagination
+        v-show="total>0"
+        :total="total"
+        :page.sync="queryParams.pageNum"
+        :limit.sync="queryParams.pageSize"
+        @pagination="getList"
+      />
 
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
@@ -213,11 +184,6 @@
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
               <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -251,7 +217,7 @@
               <el-select v-model="form.sex" placeholder="请选择">
                 <el-option
                   v-for="dict in dict.type.sys_user_sex"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
                 ></el-option>
@@ -263,7 +229,7 @@
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
@@ -272,27 +238,14 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-                <el-option
-                  v-for="item in postOptions"
-                  :secretKey="item.postId"
-                  :label="item.postName"
-                  :value="item.postId"
-                  :disabled="item.status == 1"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="角色">
               <el-select v-model="form.roleIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in roleOptions"
-                  :secretKey="item.roleId"
+                  :key="item.roleId"
                   :label="item.roleName"
                   :value="item.roleId"
-                  :disabled="item.status == 1"
+                  :disabled="item.status === 1"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -347,7 +300,6 @@
 <script>
 import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUserStatus } from "@/api/system/user";
 import { getToken } from "@/utils/auth";
-import { treeselect } from "@/api/system/dept";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -373,18 +325,13 @@ export default {
       userList: null,
       // 弹出层标题
       title: "",
-      // 部门树选项
-      deptOptions: undefined,
       // 是否显示弹出层
       open: false,
-      // 部门名称
-      deptName: undefined,
       // 默认密码
       initPassword: undefined,
       // 日期范围
       dateRange: [],
       // 岗位选项
-      postOptions: [],
       // 角色选项
       roleOptions: [],
       // 表单参数
@@ -415,17 +362,16 @@ export default {
         userName: undefined,
         phonenumber: undefined,
         status: undefined,
-        deptId: undefined
       },
       // 列信息
       columns: [
-        { secretKey: 0, label: `用户编号`, visible: true },
-        { secretKey: 1, label: `用户名称`, visible: true },
-        { secretKey: 2, label: `用户昵称`, visible: true },
-        { secretKey: 3, label: `部门`, visible: true },
-        { secretKey: 4, label: `手机号码`, visible: true },
-        { secretKey: 5, label: `状态`, visible: true },
-        { secretKey: 6, label: `创建时间`, visible: true }
+        { key: 0, label: `用户编号`, visible: true },
+        { key: 1, label: `用户名称`, visible: true },
+        { key: 2, label: `用户昵称`, visible: true },
+        { key: 3, label: `部门`, visible: true },
+        { key: 4, label: `手机号码`, visible: true },
+        { key: 5, label: `状态`, visible: true },
+        { key: 6, label: `创建时间`, visible: true }
       ],
       // 表单校验
       rules: {
@@ -457,15 +403,8 @@ export default {
       }
     };
   },
-  watch: {
-    // 根据名称筛选部门树
-    deptName(val) {
-      this.$refs.tree.filter(val);
-    }
-  },
   created() {
     this.getList();
-    this.getTreeselect();
     this.getConfigKey("sys.user.initPassword").then(response => {
       this.initPassword = response.msg;
     });
@@ -480,22 +419,6 @@ export default {
           this.loading = false;
         }
       );
-    },
-    /** 查询部门下拉树结构 */
-    getTreeselect() {
-      treeselect().then(response => {
-        this.deptOptions = response.data;
-      });
-    },
-    // 筛选节点
-    filterNode(value, data) {
-      if (!value) return true;
-      return data.label.indexOf(value) !== -1;
-    },
-    // 节点单击事件
-    handleNodeClick(data) {
-      this.queryParams.deptId = data.id;
-      this.handleQuery();
     },
     // 用户状态修改
     handleStatusChange(row) {
@@ -517,7 +440,6 @@ export default {
     reset() {
       this.form = {
         userId: undefined,
-        deptId: undefined,
         userName: undefined,
         nickName: undefined,
         password: undefined,
@@ -526,7 +448,6 @@ export default {
         sex: undefined,
         status: "0",
         remark: undefined,
-        postIds: [],
         roleIds: []
       };
       this.resetForm("form");
@@ -564,9 +485,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      this.getTreeselect();
       getUser().then(response => {
-        this.postOptions = response.posts;
         this.roleOptions = response.roles;
         this.open = true;
         this.title = "添加用户";
@@ -576,13 +495,11 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
-      this.getTreeselect();
       const userId = row.userId || this.ids;
       getUser(userId).then(response => {
         this.form = response.data;
-        this.postOptions = response.posts;
+        console.log(response)
         this.roleOptions = response.roles;
-        this.form.postIds = response.postIds;
         this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";

@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import java.util.List;
 import com.ruoyi.system.domain.SysOperLog;
+import com.ruoyi.system.domain.vo.SysLogVO;
 
 /**
  * 操作日志 服务层
@@ -24,6 +25,13 @@ public interface ISysOperLogService
      * @return 操作日志集合
      */
     public List<SysOperLog> selectOperLogList(SysOperLog operLog);
+
+    /**
+     *
+     * @param sysLogVO 操作日志对象
+     * @return 审计员日志视图
+     */
+    public List<SysLogVO> selectOperLogList(SysLogVO sysLogVO);
 
     /**
      * 批量删除系统操作日志

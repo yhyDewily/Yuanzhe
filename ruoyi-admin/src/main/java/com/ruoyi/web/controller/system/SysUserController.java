@@ -138,6 +138,9 @@ public class SysUserController extends BaseController
         }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+
+
+
         return toAjax(userService.insertUser(user));
     }
 

@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -69,13 +70,7 @@ public class LogAspect
         {
 
             // 获取当前的用户
-            LoginUser loginUser = new LoginUser();
-            SysUser sysUser = new SysUser();
-            loginUser.setUserId(1L);
-            sysUser.setUserId(1L);
-            sysUser.setUserName("admin");
-            sysUser.setNickName("若依");
-            loginUser.setUser(sysUser);
+            LoginUser loginUser = SecurityUtils.getLoginUser();
             // *========数据库日志=========*//
             SysOperLog operLog = new SysOperLog();
             operLog.setStatus(BusinessStatus.SUCCESS.ordinal());
@@ -101,6 +96,14 @@ public class LogAspect
             operLog.setRequestMethod(ServletUtils.getRequest().getMethod());
             // 处理设置注解上的参数
             getControllerMethodDescription(joinPoint, controllerLog, operLog, jsonResult);
+            // 设置操作是否成功
+            AjaxResult result = (AjaxResult)jsonResult;
+            if (result.get("code")!=null ){
+                if (result.get("code").equals(200)) operLog.setStatus(0);
+                else if (result.get("code").equals(500)) operLog.setStatus(2);
+                else operLog.setStatus(1);
+            }
+
             // 保存数据库
             AsyncManager.me().execute(AsyncFactory.recordOper(operLog));
         }

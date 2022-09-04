@@ -1,6 +1,8 @@
 package com.ruoyi.system.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.system.domain.vo.SysLogVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.domain.SysOperLog;
@@ -39,6 +41,11 @@ public class SysOperLogServiceImpl implements ISysOperLogService
     public List<SysOperLog> selectOperLogList(SysOperLog operLog)
     {
         return operLogMapper.selectOperLogList(operLog);
+    }
+
+    @Override
+    public List<SysLogVO> selectOperLogList(SysLogVO sysLogVO) {
+        return operLogMapper.selectAuditOperLogList(sysLogVO);
     }
 
     /**
