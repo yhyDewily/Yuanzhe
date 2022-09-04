@@ -31,7 +31,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_oper_type"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -47,7 +47,39 @@
         >
           <el-option
             v-for="dict in dict.type.sys_common_status"
-            :secretKey="dict.value"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="审计状态" prop="isAudit">
+        <el-select
+          v-model="queryParams.isAudit"
+          placeholder="审计状态"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.log_audit_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="审计结果" prop="auditResult">
+        <el-select
+          v-model="queryParams.auditResult"
+          placeholder="审计结果"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.log_audit_result"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -115,10 +147,7 @@
           <dict-tag :options="dict.type.sys_oper_type" :value="scope.row.businessType"/>
         </template>
       </el-table-column>
-      <el-table-column label="请求方式" align="center" prop="requestMethod" />
       <el-table-column label="操作人员" align="center" prop="operName" width="100" :show-overflow-tooltip="true" sortable="custom" :sort-orders="['descending', 'ascending']" />
-      <el-table-column label="操作地址" align="center" prop="operIp" width="130" :show-overflow-tooltip="true" />
-      <el-table-column label="操作地点" align="center" prop="operLocation" :show-overflow-tooltip="true" />
       <el-table-column label="操作状态" align="center" prop="status">
         <template slot-scope="scope">
           <dict-tag :options="dict.type.sys_common_status" :value="scope.row.status"/>
@@ -129,15 +158,25 @@
           <span>{{ parseTime(scope.row.operTime) }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="是否审计" align="center" prop="audited" width="100">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.log_audit_status" :value="scope.row.isAudit"/>
+        </template>
+      </el-table-column>
+      <el-table-column label="审计结果" align="center" prop="auditResult" width="100">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.log_audit_result" :value="scope.row.auditResult"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-view"
-            @click="handleView(scope.row,scope.index)"
-            v-hasPermi="['monitor:operlog:query']"
-          >详细</el-button>
+            type="primary"
+            icon="el-icon-edit"
+            @click="handleAudit(scope.row,scope.$index)"
+            v-has-role="['audit_operator', 'admin']"
+            :disabled = "scope.row.isAudit === 1"
+          >审计</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -149,57 +188,15 @@
       :limit.sync="queryParams.pageSize"
       @pagination="getList"
     />
-
-    <!-- 操作日志详细 -->
-    <el-dialog title="操作日志详细" :visible.sync="open" width="700px" append-to-body>
-      <el-form ref="form" :model="form" label-width="100px" size="mini">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="操作模块：">{{ form.title }} / {{ typeFormat(form) }}</el-form-item>
-            <el-form-item
-              label="登录信息："
-            >{{ form.operName }} / {{ form.operIp }} / {{ form.operLocation }}</el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="请求地址：">{{ form.operUrl }}</el-form-item>
-            <el-form-item label="请求方式：">{{ form.requestMethod }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="操作方法：">{{ form.method }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="请求参数：">{{ form.operParam }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="返回参数：">{{ form.jsonResult }}</el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="操作状态：">
-              <div v-if="form.status === 0">正常</div>
-              <div v-else-if="form.status === 1">失败</div>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="操作时间：">{{ parseTime(form.operTime) }}</el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item label="异常信息：" v-if="form.status === 1">{{ form.errorMsg }}</el-form-item>
-          </el-col>
-        </el-row>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="open = false">关 闭</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-import { list, delOperlog, cleanOperlog } from "@/api/monitor/operlog";
+import { list, delOperlog, cleanOperlog, auditLog } from "@/api/monitor/operlog";
 
 export default {
   name: "Operlog",
-  dicts: ['sys_oper_type', 'sys_common_status'],
+  dicts: ['sys_oper_type', 'sys_common_status', 'log_audit_status', 'log_audit_result'],
   data() {
     return {
       // 遮罩层
@@ -250,6 +247,19 @@ export default {
     // 操作日志类型字典翻译
     typeFormat(row, column) {
       return this.selectDictLabel(this.dict.type.sys_oper_type, row.businessType);
+    },
+    handleAudit(row, idx) {
+      this.form = row;
+      auditLog(this.form).then( res => {
+        if (res.code === 200) {
+          this.list[idx].auditResult = 0;
+        }
+        this.list[idx].isAudit = 1;
+      }).catch(()=> {
+        this.list[idx].auditResult = 1;
+        this.list[idx].isAudit = 1;
+      })
+
     },
     /** 搜索按钮操作 */
     handleQuery() {

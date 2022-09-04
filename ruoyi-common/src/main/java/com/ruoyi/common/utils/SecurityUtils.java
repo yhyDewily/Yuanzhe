@@ -98,6 +98,7 @@ public class SecurityUtils
      * @param userId 用户ID
      * @return 结果
      */
+    //todo: 目前判断是否是管理员是根据userId，需要进行更改
     public static boolean isAdmin(Long userId)
     {
         return userId != null && 1L == userId;

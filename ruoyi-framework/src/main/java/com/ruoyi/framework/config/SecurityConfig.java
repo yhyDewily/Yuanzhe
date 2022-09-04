@@ -107,8 +107,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                         "/**/*.js",
                         "/profile/**"
                 ).permitAll()
-                .antMatchers("/admins/**").permitAll()
-                .antMatchers("/system/**").permitAll()
+                //todo admins和system接口日后需要删除，不然任何人可以直接访问
+//                .antMatchers("/admins/**").permitAll()
+                .antMatchers("/system/login").permitAll()
                 .antMatchers("/ocsp/**").permitAll()
                 .antMatchers("/signs/**").permitAll()
                 .antMatchers("/swagger-ui.html").anonymous()

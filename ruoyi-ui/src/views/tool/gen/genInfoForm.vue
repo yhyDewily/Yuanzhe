@@ -127,7 +127,7 @@
           <el-select v-model="info.treeCode" placeholder="请选择">
             <el-option
               v-for="(column, index) in info.columns"
-              :secretKey="index"
+              :key="index"
               :label="column.columnName + '：' + column.columnComment"
               :value="column.columnName"
             ></el-option>
@@ -145,7 +145,7 @@
           <el-select v-model="info.treeParentCode" placeholder="请选择">
             <el-option
               v-for="(column, index) in info.columns"
-              :secretKey="index"
+              :key="index"
               :label="column.columnName + '：' + column.columnComment"
               :value="column.columnName"
             ></el-option>
@@ -163,7 +163,7 @@
           <el-select v-model="info.treeName" placeholder="请选择">
             <el-option
               v-for="(column, index) in info.columns"
-              :secretKey="index"
+              :key="index"
               :label="column.columnName + '：' + column.columnComment"
               :value="column.columnName"
             ></el-option>
@@ -184,7 +184,7 @@
           <el-select v-model="info.subTableName" placeholder="请选择" @change="subSelectChange">
             <el-option
               v-for="(table, index) in tables"
-              :secretKey="index"
+              :key="index"
               :label="table.tableName + '：' + table.tableComment"
               :value="table.tableName"
             ></el-option>
@@ -202,7 +202,7 @@
           <el-select v-model="info.subTableFkName" placeholder="请选择">
             <el-option
               v-for="(column, index) in subColumns"
-              :secretKey="index"
+              :key="index"
               :label="column.columnName + '：' + column.columnComment"
               :value="column.columnName"
             ></el-option>

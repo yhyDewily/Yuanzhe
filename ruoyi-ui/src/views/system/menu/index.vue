@@ -14,7 +14,7 @@
         <el-select v-model="queryParams.status" placeholder="菜单状态" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -53,7 +53,7 @@
       v-if="refreshTable"
       v-loading="loading"
       :data="menuList"
-      row-secretKey="menuId"
+      row-key="menuId"
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
@@ -242,7 +242,7 @@
               <el-radio-group v-model="form.visible">
                 <el-radio
                   v-for="dict in dict.type.sys_show_hide"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>
@@ -259,7 +259,7 @@
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in dict.type.sys_normal_disable"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>

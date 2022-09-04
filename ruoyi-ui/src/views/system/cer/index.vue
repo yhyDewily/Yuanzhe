@@ -14,7 +14,7 @@
         <el-select v-model="queryParams.issuerDn" placeholder="请选择颁发者" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_issuers"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -57,7 +57,7 @@
         <el-select v-model="queryParams.signatureAlgorithm" placeholder="请选择签名算法" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_signature_algorithm"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -215,7 +215,7 @@
           <el-select v-model="form.issuerDn" placeholder="请选择颁发者">
             <el-option
               v-for="dict in dict.type.sys_issuers"
-              :secretKey="dict.value"
+              :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>
@@ -247,7 +247,7 @@
           <el-select v-model="form.signatureAlgorithm" placeholder="请选择签名算法">
             <el-option
               v-for="dict in dict.type.sys_signature_algorithm"
-              :secretKey="dict.value"
+              :key="dict.value"
               :label="dict.label"
               :value="dict.value"
             ></el-option>

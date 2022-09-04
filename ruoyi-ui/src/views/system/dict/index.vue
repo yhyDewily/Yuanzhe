@@ -31,7 +31,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_normal_disable"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -174,7 +174,7 @@
           <el-radio-group v-model="form.status">
             <el-radio
               v-for="dict in dict.type.sys_normal_disable"
-              :secretKey="dict.value"
+              :key="dict.value"
               :label="dict.value"
             >{{dict.label}}</el-radio>
           </el-radio-group>

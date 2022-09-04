@@ -63,8 +63,8 @@ export default {
     // 右侧列表元素变化
     dataChange(data) {
       for (let item in this.columns) {
-        const secretKey = this.columns[item].secretKey;
-        this.columns[item].visible = !data.includes(secretKey);
+        const key = this.columns[item].key;
+        this.columns[item].visible = !data.includes(key);
       }
     },
     // 打开显隐列dialog

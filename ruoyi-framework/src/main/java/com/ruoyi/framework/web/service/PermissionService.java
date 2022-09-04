@@ -117,6 +117,7 @@ public class PermissionService
         for (SysRole sysRole : loginUser.getUser().getRoles())
         {
             String roleKey = sysRole.getRoleKey();
+            //todo: 超管具有所有权限，这里之后可考虑是否需要删除第一个判断语句
             if (SUPER_ADMIN.equals(roleKey) || roleKey.equals(StringUtils.trim(role)))
             {
                 return true;

@@ -31,7 +31,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_common_status"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />

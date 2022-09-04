@@ -93,7 +93,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          secretKey: 'fixedHeader',
+          key: 'fixedHeader',
           value: val
         })
       }
@@ -104,7 +104,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          secretKey: 'topNav',
+          key: 'topNav',
           value: val
         })
         if (!val) {
@@ -118,7 +118,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          secretKey: 'tagsView',
+          key: 'tagsView',
           value: val
         })
       }
@@ -129,7 +129,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          secretKey: 'sidebarLogo',
+          key: 'sidebarLogo',
           value: val
         })
       }
@@ -140,7 +140,7 @@ export default {
       },
       set(val) {
         this.$store.dispatch('settings/changeSetting', {
-          secretKey: 'dynamicTitle',
+          key: 'dynamicTitle',
           value: val
         })
       }
@@ -149,14 +149,14 @@ export default {
   methods: {
     themeChange(val) {
       this.$store.dispatch('settings/changeSetting', {
-        secretKey: 'theme',
+        key: 'theme',
         value: val
       })
       this.theme = val;
     },
     handleTheme(val) {
       this.$store.dispatch('settings/changeSetting', {
-        secretKey: 'sideTheme',
+        key: 'sideTheme',
         value: val
       })
       this.sideTheme = val;

@@ -22,7 +22,7 @@
               <el-radio-group v-model="formData.type">
                 <el-radio-button
                   v-for="(item, index) in typeOptions"
-                  :secretKey="index"
+                  :key="index"
                   :label="item.value"
                   :disabled="item.disabled"
                 >

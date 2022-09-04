@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.annotation.Excel.ColumnType;
 import com.ruoyi.common.core.domain.BaseEntity;
+import com.ruoyi.system.domain.vo.SysLogVO;
 
 /**
  * 操作日志记录表 oper_log
@@ -26,9 +27,6 @@ public class SysOperLog extends BaseEntity
     /** 业务类型（0其它 1新增 2修改 3删除） */
     @Excel(name = "业务类型", readConverterExp = "0=其它,1=新增,2=修改,3=删除,4=授权,5=导出,6=导入,7=强退,8=生成代码,9=清空数据")
     private Integer businessType;
-
-    /** 操作证书序列号 */
-    private String certSerialNum;
 
     /** 业务类型数组 */
     private Integer[] businessTypes;
@@ -73,7 +71,7 @@ public class SysOperLog extends BaseEntity
     @Excel(name = "返回参数")
     private String jsonResult;
 
-    /** 操作状态（0正常 1异常） */
+    /** 操作状态（0正常 1异常 2失败） */
     @Excel(name = "状态", readConverterExp = "0=正常,1=异常")
     private Integer status;
 
@@ -81,13 +79,31 @@ public class SysOperLog extends BaseEntity
     @Excel(name = "错误消息")
     private String errorMsg;
 
-    /** 操作起始时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date operStartTime;
+    /** 是否已审计 */
+    @Excel(name = "是否审计")
+    private Integer isAudit;
 
-    /** 操作结束时间 */
+    /** 审计结果(0 成功 1 失败) */
+    @Excel(name = "审计结果")
+    private Integer auditResult;
+
+    /** 操作时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date operEndTime;
+    private Date operTime;
+
+    public SysOperLog() {
+    }
+
+    public SysOperLog(SysLogVO sysLogVO) {
+        if (sysLogVO.getOperId()!=null) this.operId = sysLogVO.getOperId();
+        if (sysLogVO.getTitle()!=null) this.title = sysLogVO.getTitle();
+        if (sysLogVO.getOperName()!=null) this.operName = sysLogVO.getOperName();
+        if (sysLogVO.getBusinessType()!=null) this.businessType = sysLogVO.getBusinessType();
+        if (sysLogVO.getOperTime()!=null) this.operTime = sysLogVO.getOperTime();
+        if (sysLogVO.getStatus()!=null) this.status = sysLogVO.getStatus();
+        if (sysLogVO.getAuditResult()!=null) this.auditResult = sysLogVO.getAuditResult();
+        if (sysLogVO.getIsAudit()!=null) this.auditResult = sysLogVO.getIsAudit();
+    }
 
     public Long getOperId()
     {
@@ -117,14 +133,6 @@ public class SysOperLog extends BaseEntity
     public void setBusinessType(Integer businessType)
     {
         this.businessType = businessType;
-    }
-
-    public String getCertSerialNum() {
-        return certSerialNum;
-    }
-
-    public void setCertSerialNum(String certSerialNum) {
-        this.certSerialNum = certSerialNum;
     }
 
     public Integer[] getBusinessTypes()
@@ -247,6 +255,22 @@ public class SysOperLog extends BaseEntity
         this.status = status;
     }
 
+    public Integer getIsAudit() {
+        return isAudit;
+    }
+
+    public void setIsAudit(Integer audit) {
+        isAudit = audit;
+    }
+
+    public Integer getAuditResult() {
+        return auditResult;
+    }
+
+    public void setAuditResult(Integer auditResult) {
+        this.auditResult = auditResult;
+    }
+
     public String getErrorMsg()
     {
         return errorMsg;
@@ -257,21 +281,13 @@ public class SysOperLog extends BaseEntity
         this.errorMsg = errorMsg;
     }
 
-    public Date getOperStartTime()
+    public Date getOperTime()
     {
-        return operStartTime;
+        return operTime;
     }
 
-    public void setOperStartTime(Date operStartTime)
+    public void setOperTime(Date operTime)
     {
-        this.operStartTime = operStartTime;
-    }
-
-    public Date getOperEndTime() {
-        return operEndTime;
-    }
-
-    public void setOperEndTime(Date operEndTime) {
-        this.operEndTime = operEndTime;
+        this.operTime = operTime;
     }
 }

@@ -51,7 +51,7 @@ public class CerController extends BaseController
     /**
      * 查询证书管理列表
      */
-    @PreAuthorize("@ss.hasPermi('system:cer:list')")
+    @PreAuthorize("@ss.hasAnyRoles('admin,audit_admin,audit_operator')")
     @GetMapping("/list")
     public TableDataInfo list(Cer cer)
     {
