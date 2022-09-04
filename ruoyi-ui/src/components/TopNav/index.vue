@@ -5,7 +5,7 @@
     @select="handleSelect"
   >
     <template v-for="(item, index) in topMenus">
-      <el-menu-item :style="{'--theme': theme}" :index="item.path" :secretKey="index" v-if="index < visibleNumber"
+      <el-menu-item :style="{'--theme': theme}" :index="item.path" :key="index" v-if="index < visibleNumber"
         ><svg-icon :icon-class="item.meta.icon" />
         {{ item.meta.title }}</el-menu-item
       >
@@ -17,7 +17,7 @@
       <template v-for="(item, index) in topMenus">
         <el-menu-item
           :index="item.path"
-          :secretKey="index"
+          :key="index"
           v-if="index >= visibleNumber"
           ><svg-icon :icon-class="item.meta.icon" />
           {{ item.meta.title }}</el-menu-item
@@ -124,34 +124,34 @@ export default {
     // 默认激活的路由
     defaultRouter() {
       let router;
-      Object.keys(this.routers).some((secretKey) => {
-        if (!this.routers[secretKey].hidden) {
-          router = this.routers[secretKey].path;
+      Object.keys(this.routers).some((key) => {
+        if (!this.routers[key].hidden) {
+          router = this.routers[key].path;
           return true;
         }
       });
       return router;
     },
     // 菜单选择事件
-    handleSelect(secretKey, keyPath) {
-      this.currentIndex = secretKey;
-      if (this.ishttp(secretKey)) {
+    handleSelect(key, keyPath) {
+      this.currentIndex = key;
+      if (this.ishttp(key)) {
         // http(s):// 路径新窗口打开
-        window.open(secretKey, "_blank");
-      } else if (secretKey.indexOf("/redirect") !== -1) {
+        window.open(key, "_blank");
+      } else if (key.indexOf("/redirect") !== -1) {
         // /redirect 路径内部打开
-        this.$router.push({ path: secretKey.replace("/redirect", "") });
+        this.$router.push({ path: key.replace("/redirect", "") });
       } else {
         // 显示左侧联动菜单
-        this.activeRoutes(secretKey);
+        this.activeRoutes(key);
       }
     },
     // 当前激活的路由
-    activeRoutes(secretKey) {
+    activeRoutes(key) {
       var routes = [];
       if (this.childrenMenus && this.childrenMenus.length > 0) {
         this.childrenMenus.map((item) => {
-          if (secretKey == item.parentPath || (secretKey == "index" && "" == item.path)) {
+          if (key == item.parentPath || (key == "index" && "" == item.path)) {
             routes.push(item);
           }
         });

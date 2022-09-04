@@ -81,7 +81,7 @@ public class SysOperLog extends BaseEntity
 
     /** 是否已审计 */
     @Excel(name = "是否审计")
-    private boolean isAudit;
+    private Integer isAudit;
 
     /** 审计结果(0 成功 1 失败) */
     @Excel(name = "审计结果")
@@ -255,11 +255,11 @@ public class SysOperLog extends BaseEntity
         this.status = status;
     }
 
-    public boolean isAudit() {
+    public Integer getIsAudit() {
         return isAudit;
     }
 
-    public void setAudit(boolean audit) {
+    public void setIsAudit(Integer audit) {
         isAudit = audit;
     }
 

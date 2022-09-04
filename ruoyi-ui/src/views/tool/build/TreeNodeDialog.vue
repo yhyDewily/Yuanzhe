@@ -45,7 +45,7 @@
                 >
                   <el-option
                     v-for="(item, index) in dataTypeOptions"
-                    :secretKey="index"
+                    :key="index"
                     :label="item.label"
                     :value="item.value"
                     :disabled="item.disabled"

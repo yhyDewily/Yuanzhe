@@ -14,7 +14,7 @@
         <el-select v-model="queryParams.jobGroup" placeholder="请选择任务组名" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_job_group"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -24,7 +24,7 @@
         <el-select v-model="queryParams.status" placeholder="请选择任务状态" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_job_status"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -168,7 +168,7 @@
               <el-select v-model="form.jobGroup" placeholder="请选择">
                 <el-option
                   v-for="dict in dict.type.sys_job_group"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.label"
                   :value="dict.value"
                 ></el-option>
@@ -225,7 +225,7 @@
               <el-radio-group v-model="form.status">
                 <el-radio
                   v-for="dict in dict.type.sys_job_status"
-                  :secretKey="dict.value"
+                  :key="dict.value"
                   :label="dict.value"
                 >{{dict.label}}</el-radio>
               </el-radio-group>

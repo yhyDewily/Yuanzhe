@@ -31,7 +31,7 @@
         >
           <el-option
             v-for="dict in dict.type.sys_oper_type"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -47,7 +47,39 @@
         >
           <el-option
             v-for="dict in dict.type.sys_common_status"
-            :secretKey="dict.value"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="审计状态" prop="isAudit">
+        <el-select
+          v-model="queryParams.isAudit"
+          placeholder="审计状态"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.log_audit_status"
+            :key="dict.value"
+            :label="dict.label"
+            :value="dict.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="审计结果" prop="auditResult">
+        <el-select
+          v-model="queryParams.auditResult"
+          placeholder="审计结果"
+          clearable
+          size="small"
+          style="width: 240px"
+        >
+          <el-option
+            v-for="dict in dict.type.log_audit_result"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />

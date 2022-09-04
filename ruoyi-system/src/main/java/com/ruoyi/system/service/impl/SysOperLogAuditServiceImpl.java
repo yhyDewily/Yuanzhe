@@ -20,7 +20,7 @@ public class SysOperLogAuditServiceImpl implements ISysOperLogAuditService {
             return 1;
         }
         //比对前端传入的日志信息和数据库存储的日志信息是否被修改，如果被修改，则审计失败
-        sysOperLog.setAudit(true);
+        sysOperLog.setIsAudit(1);
         if (!sysLogVO.getTitle().equals(sysOperLog.getTitle())) {
             sysOperLog.setAuditResult(1);
             operLogMapper.updateLog(sysOperLog);

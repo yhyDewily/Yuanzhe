@@ -114,10 +114,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
 				and date_format(oper_time,'%y%m%d') &lt;= date_format(#{params.endTime},'%y%m%d')
 			</if>
-			<if test="isAudit !=null and isAudit != ''"><!-- 是否审计检索-->
+			<if test="isAudit !=null"><!-- 是否审计检索-->
 				and is_audit = #{isAudit}
 			</if>
-			<if test="auditResult !=null and auditResult != ''"><!-- 是否审计检索-->
+			<if test="auditResult !=null"><!-- 是否审计检索-->
 				and audit_result = #{auditResult}
 			</if>
 		</where>

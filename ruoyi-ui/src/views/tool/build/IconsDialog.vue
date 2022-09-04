@@ -11,7 +11,7 @@
       <div slot="title">
         选择图标
         <el-input
-          v-model="secretKey"
+          v-model="key"
           size="mini"
           :style="{width: '260px'}"
           placeholder="请输入图标名称"
@@ -22,7 +22,7 @@
       <ul class="icon-ul">
         <li
           v-for="icon in iconList"
-          :secretKey="icon"
+          :key="icon"
           :class="active===icon?'active-item':''"
           @click="onSelect(icon)"
         >
@@ -45,11 +45,11 @@ export default {
     return {
       iconList: originList,
       active: null,
-      secretKey: ''
+      key: ''
     }
   },
   watch: {
-    secretKey(val) {
+    key(val) {
       if (val) {
         this.iconList = originList.filter(name => name.indexOf(val) > -1)
       } else {
@@ -60,7 +60,7 @@ export default {
   methods: {
     onOpen() {
       this.active = this.current
-      this.secretKey = ''
+      this.key = ''
     },
     onClose() {},
     onSelect(icon) {

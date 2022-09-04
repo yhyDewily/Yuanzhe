@@ -36,8 +36,8 @@ public class SysAuditLogController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(SysLogVO logVO) {
         startPage();
-        List<SysLogVO> sysLogVOS = operLogService.selectOperLogList(logVO);
-        return getDataTable(sysLogVOS);
+        List<SysLogVO> list = operLogService.selectOperLogList(logVO);
+        return getDataTable(list);
     }
 
 }

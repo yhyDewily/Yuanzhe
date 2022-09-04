@@ -70,7 +70,7 @@
         <p class="title">时间表达式</p>
         <table>
           <thead>
-            <th v-for="item of tabTitles" width="40" :secretKey="item">{{item}}</th>
+            <th v-for="item of tabTitles" width="40" :key="item">{{item}}</th>
             <th>Cron 表达式</th>
           </thead>
           <tbody>
@@ -142,8 +142,8 @@ export default {
   name: "vcrontab",
   props: ["expression", "hideComponent"],
   methods: {
-    shouldHide(secretKey) {
-      if (this.hideComponent && this.hideComponent.includes(secretKey)) return false;
+    shouldHide(key) {
+      if (this.hideComponent && this.hideComponent.includes(key)) return false;
       return true;
     },
     resolveExp() {

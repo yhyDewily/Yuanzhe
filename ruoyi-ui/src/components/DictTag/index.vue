@@ -4,7 +4,7 @@
       <template v-if="values.includes(item.value)">
         <span
           v-if="item.raw.listClass == 'default' || item.raw.listClass == ''"
-          :secretKey="item.value"
+          :key="item.value"
           :index="index"
           :class="item.raw.cssClass"
           >{{ item.label }}</span
@@ -12,7 +12,7 @@
         <el-tag
           v-else
           :disable-transitions="true"
-          :secretKey="item.value"
+          :key="item.value"
           :index="index"
           :type="item.raw.listClass == 'primary' ? '' : item.raw.listClass"
           :class="item.raw.cssClass"

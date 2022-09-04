@@ -85,8 +85,8 @@ public class SysLogVO extends BaseEntity {
         return isAudit;
     }
 
-    public void setAudited(Integer audited) {
-        isAudit = audited;
+    public void setIsAudit(Integer audit) {
+        isAudit = audit;
     }
 
     public Integer getAuditResult() {
