@@ -52,6 +52,45 @@ public class SysLoginController
     }
 
     /**
+     * 获取用户权限
+     *
+     * @author csj
+     *
+     */
+    @GetMapping("perm")
+    public AjaxResult getPerm() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        // 角色集合
+        Set<String> roles = permissionService.getRolePermission(user);
+        // 权限集合
+        Set<String> permissions = permissionService.getMenuPermission(user);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("user", user);
+
+        ajax.put("permissions", permissions);
+        return ajax;
+    }
+
+    /**
+     * 获取用户角色
+     * @author csj
+     * @return
+     */
+    @GetMapping("getrole")
+    public AjaxResult getRole() {
+        SysUser user = SecurityUtils.getLoginUser().getUser();
+        // 角色集合
+        Set<String> roles = permissionService.getRolePermission(user);
+        // 权限集合
+        Set<String> permissions = permissionService.getMenuPermission(user);
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("user", user);
+        ajax.put("roles", roles);
+
+        return ajax;
+    }
+
+    /**
      * 获取用户信息
      * 
      * @return 用户信息
