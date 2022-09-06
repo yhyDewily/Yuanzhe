@@ -47,6 +47,11 @@ public class DataScopeAspect
     public static final String DATA_SCOPE_SELF = "5";
 
     /**
+     * 角色数据权限
+     */
+    public static final String DATA_SCOPE_ROLE = "6";
+
+    /**
      * 数据权限过滤关键字
      */
     public static final String DATA_SCOPE = "dataScope";
@@ -69,7 +74,7 @@ public class DataScopeAspect
             if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin())
             {
                 dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
-                        controllerDataScope.userAlias());
+                        controllerDataScope.userAlias(), controllerDataScope.roleAlias());
             }
         }
     }
@@ -81,7 +86,7 @@ public class DataScopeAspect
      * @param user 用户
      * @param userAlias 别名
      */
-    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias)
+    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias, String roleAlias)
     {
         StringBuilder sqlString = new StringBuilder();
 
@@ -92,6 +97,9 @@ public class DataScopeAspect
             {
                 sqlString = new StringBuilder();
                 break;
+            }
+            else if (DATA_SCOPE_ROLE.equals(dataScope)) {
+
             }
             else if (DATA_SCOPE_CUSTOM.equals(dataScope))
             {
