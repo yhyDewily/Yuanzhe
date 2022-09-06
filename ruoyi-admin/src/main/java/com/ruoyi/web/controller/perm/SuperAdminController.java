@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.perm;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.UserConstants;
@@ -74,7 +75,7 @@ public class SuperAdminController extends BaseController {
      * 新增业务管理员
      * @author csj
      */
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasAnyRoles('super_admin,admin')}")
 //    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "操作员管理", businessType = BusinessType.INSERT)
     @PostMapping("/addBusinessAdmin")
@@ -123,7 +124,7 @@ public class SuperAdminController extends BaseController {
     /**
      * 删除/注销用户(仅可删除roleId为2)
      */
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('super_admin')}")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/delete/{userId}")
     public AjaxResult remove(@PathVariable Long userId)
@@ -153,12 +154,12 @@ public class SuperAdminController extends BaseController {
      * 获取用户列表（查询role为2的列表）
      */
 
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('super_admin')}")
     @GetMapping("/list")
     public TableDataInfo list()
     {
 
-        startPage();
+//        startPage();
         List<Integer> list = sysUserRoleMapper.selectUserIdByRoleId((long) 2);
         List<SysUser> sysUsers = new ArrayList<>();
         if (list == null) return getDataTable(null);
@@ -172,6 +173,10 @@ public class SuperAdminController extends BaseController {
 //            }
             sysUsers.add(sysUser);
         }
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("nick_name","业务管理员");
+
+//        wrapper.eq("nick_name",)
 
         return getDataTable(sysUsers);
     }
@@ -182,7 +187,7 @@ public class SuperAdminController extends BaseController {
      */
 
     @GetMapping(value = {"/{userId}" })
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('super_admin')}")
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {
         userService.checkUserDataScope(userId);
@@ -208,7 +213,7 @@ public class SuperAdminController extends BaseController {
 
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/update")
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('super_admin')}")
     public AjaxResult edit(@Validated @RequestBody SysUser user)
     {
         userService.checkUserAllowed(user);
@@ -263,7 +268,7 @@ public class SuperAdminController extends BaseController {
      * 修改密码
      * 仅可修改自己
      */
-    @PreAuthorize("{@ss.hasPermi('perm:password:update') and @ss.hasRole('admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:password:update') and @ss.hasRole('super_admin')}")
     @Log(title = "用户管理", businessType = BusinessType.UPDATE)
     @PutMapping("/resetPwd")
     public AjaxResult resetPwd(@RequestBody Map<String,String> params) {
@@ -306,7 +311,7 @@ public class SuperAdminController extends BaseController {
 
         SysUserRole sysUserRole = new SysUserRole();
         sysUserRole.setUserId(getUserId());
-        sysUserRole.setRoleId(1l);
+        sysUserRole.setRoleId(6l);
         sysUserRoleMapper.insertUserRole(sysUserRole);
 
 
