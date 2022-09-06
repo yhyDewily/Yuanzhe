@@ -361,28 +361,27 @@ public class SysUserServiceImpl implements ISysUserService
 
     /**
      * 新增用户角色信息
-     * todo 根据需要进行修改，可能需要修改函数定义，将函数该为修改用户角色
      * @param user 用户对象
      */
     public void insertUserRole(SysUser user)
     {
-//        Long[] roles = user.getRoleIds();
-//        if (StringUtils.isNotNull(roles))
-//        {
-//            // 新增用户与角色管理
-//            List<SysUserRole> list = new ArrayList<SysUserRole>();
-//            for (Long roleId : roles)
-//            {
-//                SysUserRole ur = new SysUserRole();
-//                ur.setUserId(user.getUserId());
-//                ur.setRoleId(roleId);
-//                list.add(ur);
-//            }
-//            if (list.size() > 0)
-//            {
-//                userRoleMapper.batchUserRole(list);
-//            }
-//        }
+        Long[] roles = user.getRoleIds();
+        if (StringUtils.isNotNull(roles))
+        {
+            // 新增用户与角色管理
+            List<SysUserRole> list = new ArrayList<SysUserRole>();
+            for (Long roleId : roles)
+            {
+                SysUserRole ur = new SysUserRole();
+                ur.setUserId(user.getUserId());
+                ur.setRoleId(roleId);
+                list.add(ur);
+            }
+            if (list.size() > 0)
+            {
+                userRoleMapper.batchUserRole(list);
+            }
+        }
     }
 
     /**

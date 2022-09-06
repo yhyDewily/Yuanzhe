@@ -239,7 +239,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="角色">
-              <el-select v-model="form.roleIds" multiple placeholder="请选择">
+              <el-select v-model="roleIds" multiple placeholder="请选择">
                 <el-option
                   v-for="item in roleOptions"
                   :key="item.roleId"
@@ -336,6 +336,8 @@ export default {
       roleOptions: [],
       // 表单参数
       form: {},
+      // 角色参数
+      roleIds: {},
       defaultProps: {
         children: "children",
         label: "label"
@@ -496,10 +498,11 @@ export default {
     handleUpdate(row) {
       this.reset();
       const userId = row.userId || this.ids;
+      this.form.roleIds = this.roleIds;
       getUser(userId).then(response => {
         this.form = response.data;
-        console.log(response)
         this.roleOptions = response.roles;
+        this.roleIds = response.roleIds;
         this.form.roleIds = response.roleIds;
         this.open = true;
         this.title = "修改用户";
@@ -530,12 +533,14 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.userId != undefined) {
+            this.form.roleIds = this.roleIds
             updateUser(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
               this.open = false;
               this.getList();
             });
           } else {
+            this.form.roleIds = this.roleIds
             addUser(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;
