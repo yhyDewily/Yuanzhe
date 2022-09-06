@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRoleDatascopeMapper">
+
+    <resultMap type="SysRoleDatascope" id="SysRoleDatascopeResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="subRoleId"    column="sub_role_id"    />
+    </resultMap>
+
+    <sql id="selectSysRoleDatascopeVo">
+        select role_id, sub_role_id from sys_role_datascope
+    </sql>
+
+    <select id="selectSysRoleDatascopeList" parameterType="SysRoleDatascope" resultMap="SysRoleDatascopeResult">
+        <include refid="selectSysRoleDatascopeVo"/>
+        <where>
+            <if test="roleId != null "> and role_id = #{roleId}</if>
+            <if test="subRoleId != null "> and sub_role_id = #{subRoleId}</if>
+        </where>
+    </select>
+
+    <select id="selectSysRoleDatascopeByRoleId" parameterType="Long" resultMap="SysRoleDatascopeResult">
+        <include refid="selectSysRoleDatascopeVo"/>
+        where role_id = #{roleId}
+    </select>
+
+    <insert id="insertSysRoleDatascope" parameterType="SysRoleDatascope">
+        insert into sys_role_datascope
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">role_id,</if>
+            <if test="subRoleId != null">sub_role_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleId != null">#{roleId},</if>
+            <if test="subRoleId != null">#{subRoleId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysRoleDatascope" parameterType="SysRoleDatascope">
+        update sys_role_datascope
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="subRoleId != null">sub_role_id = #{subRoleId},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteSysRoleDatascopeByRoleId" parameterType="Long">
+        delete from sys_role_datascope where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteSysRoleDatascopeByRoleIds" parameterType="String">
+        delete from sys_role_datascope where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+</mapper>
