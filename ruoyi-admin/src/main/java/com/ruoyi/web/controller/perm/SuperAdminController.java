@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.perm;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.constant.UserConstants;
@@ -74,7 +75,7 @@ public class SuperAdminController extends BaseController {
      * 新增业务管理员
      * @author csj
      */
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('super_admin')}")
+    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasAnyRoles('super_admin,admin')}")
 //    @PreAuthorize("@ss.hasRole('admin')")
     @Log(title = "操作员管理", businessType = BusinessType.INSERT)
     @PostMapping("/addBusinessAdmin")
@@ -158,7 +159,7 @@ public class SuperAdminController extends BaseController {
     public TableDataInfo list()
     {
 
-        startPage();
+//        startPage();
         List<Integer> list = sysUserRoleMapper.selectUserIdByRoleId((long) 2);
         List<SysUser> sysUsers = new ArrayList<>();
         if (list == null) return getDataTable(null);
@@ -172,6 +173,10 @@ public class SuperAdminController extends BaseController {
 //            }
             sysUsers.add(sysUser);
         }
+        QueryWrapper<SysUser> wrapper = new QueryWrapper<>();
+        wrapper.eq("nick_name","业务管理员");
+
+//        wrapper.eq("nick_name",)
 
         return getDataTable(sysUsers);
     }
