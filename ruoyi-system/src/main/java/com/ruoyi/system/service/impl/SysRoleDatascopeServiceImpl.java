@@ -1,6 +1,9 @@
 package com.ruoyi.system.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.system.mapper.SysRoleDatascopeMapper;
@@ -26,9 +29,9 @@ public class SysRoleDatascopeServiceImpl implements ISysRoleDatascopeService
      * @return 系统角色所拥有下属角色创建权限
      */
     @Override
-    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId)
+    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId, Long subRoleId)
     {
-        return sysRoleDatascopeMapper.selectSysRoleDatascopeByRoleId(roleId);
+        return sysRoleDatascopeMapper.selectSysRoleDatascopeByRoleId(roleId, subRoleId);
     }
 
     /**
@@ -64,7 +67,15 @@ public class SysRoleDatascopeServiceImpl implements ISysRoleDatascopeService
     @Override
     public int updateSysRoleDatascope(SysRoleDatascope sysRoleDatascope)
     {
-        return sysRoleDatascopeMapper.updateSysRoleDatascope(sysRoleDatascope);
+        List<SysRoleDatascope> list = new ArrayList<>();
+        if (sysRoleDatascopeMapper.selectAllByRoleId(sysRoleDatascope.getRoleId()) == null ||
+            sysRoleDatascopeMapper.selectAllByRoleId(sysRoleDatascope.getRoleId()).isEmpty()) {
+            return sysRoleDatascopeMapper.updateSysRoleDatascope(sysRoleDatascope);
+        } else {
+            list = sysRoleDatascopeMapper.selectAllByRoleId(sysRoleDatascope.getRoleId());
+            if (list.contains(sysRoleDatascope)) return 0;
+            else return sysRoleDatascopeMapper.updateSysRoleDatascope(sysRoleDatascope);
+        }
     }
 
     /**

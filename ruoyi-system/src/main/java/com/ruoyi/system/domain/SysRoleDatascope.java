@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.Objects;
+
 public class SysRoleDatascope extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +35,19 @@ public class SysRoleDatascope extends BaseEntity {
     public Long getSubRoleId()
     {
         return subRoleId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SysRoleDatascope)) return false;
+        SysRoleDatascope that = (SysRoleDatascope) o;
+        return Objects.equals(getRoleId(), that.getRoleId()) && Objects.equals(getSubRoleId(), that.getSubRoleId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getRoleId(), getSubRoleId());
     }
 
     @Override

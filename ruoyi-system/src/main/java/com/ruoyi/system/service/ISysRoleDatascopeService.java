@@ -14,10 +14,11 @@ public interface ISysRoleDatascopeService
     /**
      * 查询系统角色所拥有下属角色创建权限
      *
-     * @param roleId 系统角色所拥有下属角色创建权限主键
+     * @param roleId 系统角色Id
+     * @param subRoleId 拥有的下属角色Id
      * @return 系统角色所拥有下属角色创建权限
      */
-    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId);
+    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId, Long subRoleId);
 
     /**
      * 查询系统角色所拥有下属角色创建权限列表

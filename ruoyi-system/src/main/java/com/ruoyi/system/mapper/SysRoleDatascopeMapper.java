@@ -11,13 +11,15 @@ import com.ruoyi.system.domain.SysRoleDatascope;
  */
 public interface SysRoleDatascopeMapper
 {
+    public List<SysRoleDatascope> selectAllByRoleId(Long roleId);
+
     /**
      * 查询系统角色所拥有下属角色创建权限
      *
      * @param roleId 系统角色所拥有下属角色创建权限主键
      * @return 系统角色所拥有下属角色创建权限
      */
-    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId);
+    public SysRoleDatascope selectSysRoleDatascopeByRoleId(Long roleId, Long subRoleId);
 
     /**
      * 查询系统角色所拥有下属角色创建权限列表

@@ -5,17 +5,17 @@
         <el-select v-model="queryParams.roleId" placeholder="请选择角色id" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_role_enum"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="拥有的下属角色id" prop="subRoleId">
+      <el-form-item label="拥有的下属角色id" prop="subRoleId" label-width="150px">
         <el-select v-model="queryParams.subRoleId" placeholder="请选择拥有的下属角色id" clearable size="small">
           <el-option
             v-for="dict in dict.type.sys_role_enum"
-            :secretKey="dict.value"
+            :key="dict.value"
             :label="dict.label"
             :value="dict.value"
           />
@@ -37,17 +37,6 @@
           @click="handleAdd"
           v-hasPermi="['system:datascope:add']"
         >新增</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['system:datascope:edit']"
-        >修改</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -75,8 +64,8 @@
 
     <el-table v-loading="loading" :data="datascopeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色id" align="center" prop="roleId" />
-      <el-table-column label="拥有的下属角色id" align="center" prop="subRoleId" />
+      <el-table-column label="角色" align="center" prop="roleIdLabel" />
+      <el-table-column label="拥有下属角色" align="center" prop="subRoleIdLabel" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -101,7 +90,7 @@
     <!-- 添加或修改系统角色所拥有下属角色创建权限对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="角色">
+        <el-form-item label="角色" prop="roleId">
           <el-select v-model="form.roleId" placeholder="请选择">
             <el-option
               v-for="dict in dict.type.sys_role_enum"
@@ -112,9 +101,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="下属角色">
-<!--          todo 非空校验，思路新建一个role_subrole_dict，根据这个数据对象建立key-value对应-->
-          <el-select v-model="form.subRoleId" placeholder="请选择">
+        <el-form-item label="下属角色" prop="subRoleId">
+          <el-select v-model="form.subRoleId" placeholder="请选择" >
             <el-option
               v-for="dict in dict.type.sys_role_enum"
               :key="dict.value"
@@ -135,7 +123,7 @@
 </template>
 
 <script>
-import { listDatascope, getDatascope, delDatascope, addDatascope, updateDatascope } from "@/api/system/datascope";
+import { listDatascope, getDatascope, delDatascope, addDatascope } from "@/api/system/datascope";
 
 export default {
   name: "Datascope",
@@ -189,6 +177,11 @@ export default {
       this.loading = true;
       listDatascope(this.queryParams).then(response => {
         this.datascopeList = response.rows;
+        const role_dict = this.dict.type.sys_role_enum
+        for (let i=0;i<this.datascopeList.length;i++) {
+          this.datascopeList[i].roleIdLabel = role_dict[this.datascopeList[i].roleId-2].label
+          this.datascopeList[i].subRoleIdLabel = role_dict[this.datascopeList[i].subRoleId-2].label
+        }
         this.total = response.total;
         this.loading = false;
       });
@@ -228,19 +221,17 @@ export default {
       this.open = true;
       this.title = "添加系统角色所拥有下属角色创建权限";
     },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const roleId = row.roleId || this.ids
-      getDatascope(roleId).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改系统角色所拥有下属角色创建权限";
-      });
-    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
+        const _dataScopes = this.datascopeList;
+        for (let i =0;i<_dataScopes.length;i++) {
+          if (parseInt(_dataScopes[i].roleId) === parseInt(this.form.roleId) &&
+            parseInt(_dataScopes[i].subRoleId) === parseInt(this.form.subRoleId)) {
+            this.$message("角色已拥有创建所选下属角色的权限")
+            return;
+          }
+        }
         if (valid) {
           addDatascope(this.form).then(response => {
             this.$modal.msgSuccess("新增成功");

@@ -331,7 +331,6 @@ export default {
       initPassword: undefined,
       // 日期范围
       dateRange: [],
-      // 岗位选项
       // 角色选项
       roleOptions: [],
       // 表单参数
