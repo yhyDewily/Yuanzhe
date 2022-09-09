@@ -71,22 +71,23 @@ public class DataScopeAspect
         {
             SysUser currentUser = loginUser.getUser();
             // 如果是超级管理员，则不过滤数据
-            if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin())
+            if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin() && StringUtils.isNotEmpty(controllerDataScope.userAlias()))
             {
-                dataScopeFilter(joinPoint, currentUser, controllerDataScope.deptAlias(),
-                        controllerDataScope.userAlias(), controllerDataScope.roleAlias());
+                dataScopeFilter(joinPoint, currentUser, controllerDataScope.userAlias());
+            } else if (StringUtils.isNotNull(currentUser) && !currentUser.isAdmin() && StringUtils.isNotEmpty(controllerDataScope.roleAlias())) {
+                roleDataScopeFilter(joinPoint, currentUser, controllerDataScope.roleAlias());
             }
         }
     }
 
     /**
-     * 数据范围过滤
+     * 用户数据范围过滤
      *
      * @param joinPoint 切点
      * @param user 用户
      * @param userAlias 别名
      */
-    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String deptAlias, String userAlias, String roleAlias)
+    public static void dataScopeFilter(JoinPoint joinPoint, SysUser user, String userAlias)
     {
         StringBuilder sqlString = new StringBuilder();
 
@@ -99,13 +100,12 @@ public class DataScopeAspect
                 break;
             }
             else if (DATA_SCOPE_ROLE.equals(dataScope)) {
-
-            }
-            else if (DATA_SCOPE_CUSTOM.equals(dataScope))
-            {
                 sqlString.append(StringUtils.format(
-                        " OR {}.dept_id IN ( SELECT dept_id FROM sys_role_dept WHERE role_id = {} ) ", deptAlias,
-                        role.getRoleId()));
+                        " OR {}.user_id IN ( SELECT ur2.user_id FROM sys_user_role ur1 " +
+                                "LEFT JOIN sys_role_datascope rd on ur1.role_id=rd.role_id " +
+                                "LEFT JOIN sys_user_role ur2 on ur2.role_id=rd.sub_role_id " +
+                                "WHERE ur1.role_id = {} )", userAlias, role.getRoleId()
+                ));
             }
             else if (DATA_SCOPE_SELF.equals(dataScope))
             {
@@ -131,6 +131,28 @@ public class DataScopeAspect
             }
         }
     }
+
+    public static void roleDataScopeFilter(JoinPoint joinPoint, SysUser user, String roleAlias) {
+        StringBuilder sqlString = new StringBuilder();
+        for (SysRole role : user.getRoles()) {
+            sqlString.append(StringUtils.format(
+                    " OR {}.role_id IN ( SELECT rd.sub_role_id from sys_role sr " +
+                            "LEFT JOIN sys_role_datascope rd on sr.role_id=rd.role_id " +
+                            "where sr.role_id = {} )", roleAlias, role.getRoleId()
+            ));
+        }
+
+        if (StringUtils.isNotBlank(sqlString.toString()))
+        {
+            Object params = joinPoint.getArgs()[0];
+            if (StringUtils.isNotNull(params) && params instanceof BaseEntity)
+            {
+                BaseEntity baseEntity = (BaseEntity) params;
+                baseEntity.getParams().put(DATA_SCOPE, " AND (" + sqlString.substring(4) + ")");
+            }
+        }
+    }
+
 
     /**
      * 拼接权限sql前先清空params.dataScope参数防止注入

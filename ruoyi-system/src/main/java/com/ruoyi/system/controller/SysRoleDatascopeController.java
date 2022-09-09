@@ -65,10 +65,10 @@ public class SysRoleDatascopeController extends BaseController
      * 获取系统角色所拥有下属角色创建权限详细信息
      */
     @PreAuthorize("@ss.hasPermi('system:datascope:query')")
-    @GetMapping(value = "/{roleId}")
-    public AjaxResult getInfo(@PathVariable("roleId") Long roleId)
+    @GetMapping(value = "/{roleId}_{subRoleId}")
+    public AjaxResult getInfo(@PathVariable("roleId") Long roleId, @PathVariable("subRoleId") Long subRoleId)
     {
-        return AjaxResult.success(sysRoleDatascopeService.selectSysRoleDatascopeByRoleId(roleId));
+        return AjaxResult.success(sysRoleDatascopeService.selectSysRoleDatascopeByRoleId(roleId, subRoleId));
     }
 
     /**

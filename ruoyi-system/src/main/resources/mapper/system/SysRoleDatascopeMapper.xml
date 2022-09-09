@@ -23,6 +23,10 @@
 
     <select id="selectSysRoleDatascopeByRoleId" parameterType="Long" resultMap="SysRoleDatascopeResult">
         <include refid="selectSysRoleDatascopeVo"/>
+        where role_id = #{roleId} and sub_role_id = #{subRoleId}
+    </select>
+    <select id="selectAllByRoleId" resultType="SysRoleDatascope">
+        <include refid="selectSysRoleDatascopeVo"/>
         where role_id = #{roleId}
     </select>
 

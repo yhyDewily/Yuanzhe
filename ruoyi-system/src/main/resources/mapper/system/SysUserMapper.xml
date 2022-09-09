@@ -45,8 +45,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
     
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u
-		left join sys_dept d on u.dept_id = d.dept_id
+		select u.user_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark from sys_user u
 		where u.del_flag = '0'
 		<if test="userId != null and userId != 0">
 			AND u.user_id = #{userId}
@@ -124,8 +123,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
 		select user_id, email from sys_user where email = #{email} limit 1
 	</select>
-	
-	<insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
+    <select id="selectSubUserListByRoleId" parameterType="Long" resultMap="SysUserResult">
+		select uo.user_id, uo.nick_name, uo.user_name, uo.email, uo.phonenumber, uo.password, uo.sex, uo.status, uo.del_flag, uo.login_ip, uo.login_date, uo.create_by, uo.create_time, uo.remark
+		from sys_user uo
+		left join sys_user_role uro on uo.user_id=uro.user_id
+# 		where role_id=
+# 		      (select )
+	</select>
+
+    <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
  		insert into sys_user(
  			<if test="userId != null and userId != 0">user_id,</if>
 			<if test="deptId != null and deptId != 0">dept_id,</if>
