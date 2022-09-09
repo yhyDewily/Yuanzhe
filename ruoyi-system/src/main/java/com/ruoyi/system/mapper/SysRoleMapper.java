@@ -1,6 +1,8 @@
 package com.ruoyi.system.mapper;
 
 import java.util.List;
+
+import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.core.domain.entity.SysRole;
 
 /**
@@ -16,6 +18,7 @@ public interface SysRoleMapper
      * @param role 角色信息
      * @return 角色数据集合信息
      */
+    @DataScope(roleAlias = "r")
     public List<SysRole> selectRoleList(SysRole role);
 
     /**

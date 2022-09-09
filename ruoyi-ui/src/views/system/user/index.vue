@@ -231,7 +231,7 @@
                   v-for="dict in dict.type.sys_normal_disable"
                   :key="dict.value"
                   :label="dict.value"
-                >{{dict.label}}</el-radio>
+                >{{ dict.label }}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
@@ -336,7 +336,7 @@ export default {
       // 表单参数
       form: {},
       // 角色参数
-      roleIds: {},
+      roleIds: [],
       defaultProps: {
         children: "children",
         label: "label"
@@ -485,7 +485,7 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      this.reset();
+      // this.reset();
       getUser().then(response => {
         this.roleOptions = response.roles;
         this.open = true;

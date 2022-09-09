@@ -63,7 +63,7 @@
           icon="el-icon-plus"
           size="mini"
           @click="handleAdd"
-          v-hasPermi="['system:role:add']"
+          v-has-role="['admin']"
         >新增</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -368,12 +368,6 @@ export default {
         this.menuOptions = response.data;
       });
     },
-    /** 查询部门树结构 */
-    getDeptTreeselect() {
-      deptTreeselect().then(response => {
-        this.deptOptions = response.data;
-      });
-    },
     // 所有菜单节点数据
     getMenuAllCheckedKeys() {
       // 目前被选中的菜单节点
@@ -429,7 +423,7 @@ export default {
     },
     // 表单重置
     reset() {
-      if (this.$refs.menu != undefined) {
+      if (this.$refs.menu !== undefined) {
         this.$refs.menu.setCheckedKeys([]);
       }
       this.menuExpand = false,
