@@ -58,4 +58,5 @@ public interface SecretKeyService extends IService<SecretKey> {
     IPage<SecretKey> getAllUseKeyPair(Long currentPage,Long pageSize);
 
 
+    IPage<SecretKey> getKeyPariByCondition(Map<String, String> map, Long currentPage, Long pageSize);
 }

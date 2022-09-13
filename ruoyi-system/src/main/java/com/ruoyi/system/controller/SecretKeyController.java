@@ -2,18 +2,13 @@ package com.ruoyi.system.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.ruoyi.common.annotation.DataSource;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.DataSourceType;
 import com.ruoyi.system.domain.SecretKey;
-//import com.ruoyi.system.domain.vo.ApplyKeyVo;
-import com.ruoyi.system.domain.vo.KeyPairVo;
-import com.ruoyi.system.domain.vo.KeyTypePair;
+import com.ruoyi.system.domain.vo.ApplyKeyVo;
 import com.ruoyi.system.service.SecretKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,20 +27,20 @@ public class SecretKeyController {
     @Autowired
     SecretKeyService secretKeyService;
 
-//    /**
-//     * 非对称密钥生成，目前只使用了SM2算法生成密钥
-//     *
-//     * @param keyVo  包含 type和keyName
-//     * type 算法类型，目前采用SM2算法
-//     * keyName 密钥名称，默认为""，同一应用同一类型的keyName不可重复
-//     * @return 返回生成的公私钥对
-//     * TODO 对前端传入的type进行判断，根据字段来进行SM2算法生成密钥或者使用RSA算法生成密钥
-//     */
-//    @PostMapping("/applyKeyPair")
-//    public AjaxResult applyKeyPair(@RequestBody ApplyKeyVo keyVo) {
-//        Map<String, String> keyPair = secretKeyService.applyKeyPair(keyVo.getType(), keyVo.getKeyName());
-//        return AjaxResult.success("生成密钥成功", keyPair);
-//    }
+    /**
+     * 非对称密钥生成，目前只使用了SM2算法生成密钥
+     *
+     * @param keyVo 包含 type和keyName
+     *              type 算法类型，目前采用SM2算法
+     *              keyName 密钥名称，默认为""，同一应用同一类型的keyName不可重复
+     * @return 返回生成的公私钥对
+     * TODO 对前端传入的type进行判断，根据字段来进行SM2算法生成密钥或者使用RSA算法生成密钥
+     */
+    @PostMapping("/applyKeyPair")
+    public AjaxResult applyKeyPair(@RequestBody ApplyKeyVo keyVo) {
+        Map<String, String> keyPair = secretKeyService.applyKeyPair(keyVo.getType(), keyVo.getKeyName());
+        return AjaxResult.success("生成密钥成功", keyPair);
+    }
 
     /**
      * 非对称密钥注销，优先根据id进行注销，如果id为空，则根据type和keyName进行注销
@@ -113,12 +108,16 @@ public class SecretKeyController {
     }
 
     @GetMapping("/getAllUseKeyPair")
-    public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage,@RequestParam Long pageSize) {
-        IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage,pageSize);
-        return AjaxResult.success("查询成功",list);
+    public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage, @RequestParam Long pageSize) {
+        IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage, pageSize);
+        return AjaxResult.success("查询成功", list);
     }
 
-
+    @GetMapping("/getKeyPariByCondition")
+    public AjaxResult getKeyPariByCondition(@RequestParam Map<String, String> map, @RequestParam Long currentPage, @RequestParam Long pageSize) {
+        IPage<SecretKey> list = secretKeyService.getKeyPariByCondition(map, currentPage, pageSize);
+        return AjaxResult.success("查询成功",list);
+    }
 
 
 }
