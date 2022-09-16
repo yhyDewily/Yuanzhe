@@ -95,7 +95,7 @@ public class SysUserController extends BaseController
     /**
      * 根据用户编号获取详细信息
      */
-    @PreAuthorize("@ss.hasAnyRoles('business_admin,business_operator,audit_admin')")
+    @PreAuthorize("@ss.hasAnyRoles('business_admin,business_operator,audit_admin,super_admin')")
     @GetMapping(value = { "/", "/{userId}" })
     public AjaxResult getInfo(@PathVariable(value = "userId", required = false) Long userId)
     {

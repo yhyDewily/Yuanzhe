@@ -119,14 +119,26 @@
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
+<!--            <template slot-scope="scope">-->
+<!--              <el-switch-->
+<!--                v-model="scope.row.status"-->
+<!--                active-value="0"-->
+<!--                inactive-value="1"-->
+<!--              @change="handleStatusChange(scope.row)"-->
+<!--            ></el-switch>-->
+<!--          </template>-->
             <template slot-scope="scope">
-              <el-switch
-                v-model="scope.row.status"
-                active-value="0"
-                inactive-value="1"
-              @change="handleStatusChange(scope.row)"
-            ></el-switch>
-          </template>
+              <div v-if="scope.row.status==2">
+                <el-tag type="info">未授权</el-tag>
+              </div>
+              <div v-if="scope.row.status==0">
+                <el-tag type='success'>正常</el-tag>
+              </div>
+              <div v-if="scope.row.status==1">
+                <el-tag type='danger'>已注销</el-tag>
+              </div>
+
+            </template>
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
           <template slot-scope="scope">
