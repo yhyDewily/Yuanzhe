@@ -67,28 +67,28 @@
               v-hasPermi="['system:user:add']"
             >新增</el-button>
           </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="success"
-              plain
-              icon="el-icon-edit"
-              size="mini"
-              :disabled="single"
-              @click="handleUpdate"
-              v-hasPermi="['system:user:edit']"
-            >修改</el-button>
-          </el-col>
-          <el-col :span="1.5">
-            <el-button
-              type="danger"
-              plain
-              icon="el-icon-delete"
-              size="mini"
-              :disabled="multiple"
-              @click="handleDelete"
-              v-hasPermi="['system:user:remove']"
-            >删除</el-button>
-          </el-col>
+<!--          <el-col :span="1.5">-->
+<!--            <el-button-->
+<!--              type="success"-->
+<!--              plain-->
+<!--              icon="el-icon-edit"-->
+<!--              size="mini"-->
+<!--              :disabled="single"-->
+<!--              @click="handleUpdate"-->
+<!--              v-hasPermi="['system:user:edit']"-->
+<!--            >修改</el-button>-->
+<!--          </el-col>-->
+<!--          <el-col :span="1.5">-->
+<!--            <el-button-->
+<!--              type="danger"-->
+<!--              plain-->
+<!--              icon="el-icon-delete"-->
+<!--              size="mini"-->
+<!--              :disabled="multiple"-->
+<!--              @click="handleDelete"-->
+<!--              v-hasPermi="['system:user:remove']"-->
+<!--            >删除</el-button>-->
+<!--          </el-col>-->
           <el-col :span="1.5">
             <el-button
               type="info"
@@ -113,8 +113,8 @@
         </el-row>
 
         <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
-          <el-table-column type="selection" width="50" align="center" />
-          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
+<!--          <el-table-column type="selection" width="50" align="center" />-->
+          <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" sortable/>
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
@@ -155,6 +155,8 @@
             <el-button
               size="mini"
               type="text"
+              v-show="scope.row.menuShow"
+
               icon="el-icon-edit"
               @click="handleUpdate(scope.row)"
               v-hasPermi="['system:user:edit']"
@@ -163,10 +165,12 @@
               size="mini"
               type="text"
               icon="el-icon-delete"
+              v-show="scope.row.menuShow"
               @click="handleDelete(scope.row)"
               v-hasPermi="['system:user:remove']"
+
             >删除</el-button>
-            <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
+            <el-dropdown  v-show="scope.row.menuShow" size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:user:resetPwd', 'system:user:edit']">
               <span class="el-dropdown-link">
                 <i class="el-icon-d-arrow-right el-icon--right"></i>更多
               </span>
@@ -250,8 +254,8 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="角色">
-              <el-select v-model="roleIds" multiple placeholder="请选择">
+            <el-form-item label="角色" prop="role">
+              <el-select v-model="roleIds" multiple placeholder="请选择" multiple-limit="1">
                 <el-option
                   v-for="item in roleOptions"
                   :key="item.roleId"
@@ -321,6 +325,9 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      //下属
+      subRoleId:null,
+      menuShow:true,
       // 遮罩层
       loading: true,
       // 选中数组
@@ -334,7 +341,7 @@ export default {
       // 总条数
       total: 0,
       // 用户表格数据
-      userList: null,
+      userList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -412,26 +419,84 @@ export default {
             message: "请输入正确的手机号码",
             trigger: "blur"
           }
-        ]
+        ],
+        // role: [
+        //
+        //   { min: 1, max: 1, message: '只能选一个角色', trigger: 'blur' }
+        // ]
       }
     };
   },
+  beforeCreate() {
+    console.log("before subroleID"+this.subRoleId)
+    // getUser().then(response => {
+    //   // console.log(response)
+    //
+    //   this.subRoleId = response.roles[0].roleId;
+    //   console.log("before函数后"+this.subRoleId)
+    //
+    // });
+    // console.log("before函数外部"+this.subRoleId)
+  },
   created() {
-    this.getList();
-    this.getConfigKey("sys.user.initPassword").then(response => {
-      this.initPassword = response.msg;
-    });
+    // while (this.subRoleId!==null){
+    //
+    // }
+
+
+
+      console.log("create函数开始："+this.subRoleId)
+      this.getList();
+      this.getConfigKey("sys.user.initPassword").then(response => {
+        this.initPassword = response.msg;
+      });
+
+
+    console.log("create快结束"+this.subRoleId)
+
+
   },
   methods: {
     /** 查询用户列表 */
     getList() {
-      this.loading = true;
-      listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
-          this.userList = response.rows;
-          this.total = response.total;
-          this.loading = false;
-        }
-      );
+      this.reset();
+      getUser().then(response => {
+        // console.log(response)
+        this.loading = true;
+        this.subRoleId = response.roles[0].roleId;
+        console.log("在getlist:"+this.subRoleId)
+        listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
+            // console.log(response.rows)
+            console.log("ListUserHANSHU"+this.subRoleId)
+            this.userList = response.rows;
+            this.total = response.total;
+            for (let i=0;i<this.userList.length;i++) {
+              if (this.userList[i].roleId != this.subRoleId) {
+                console.log("for循环roleID：" + this.userList[i].roleId)
+                console.log("for循环SUBROLE：" + this.subRoleId);
+                this.userList[i].menuShow = false
+              }else{
+                this.userList[i].menuShow = true
+
+              }
+
+            }
+            this.loading = false;
+          }
+        );
+
+      });
+
+
+
+    },
+    menuShowMethod(row) {
+      console.log(row)
+      console.log(this.subRoleId)
+      if (row.roleId !== this.subRoleId) {
+        return  false
+      }
+      return true
     },
     // 用户状态修改
     handleStatusChange(row) {
@@ -497,8 +562,11 @@ export default {
     },
     /** 新增按钮操作 */
     handleAdd() {
-      // this.reset();
+
+      this.reset();
       getUser().then(response => {
+        console.log(response)
+
         this.roleOptions = response.roles;
         this.open = true;
         this.title = "添加用户";
@@ -507,10 +575,15 @@ export default {
     },
     /** 修改按钮操作 */
     handleUpdate(row) {
+
       this.reset();
+
       const userId = row.userId || this.ids;
       this.form.roleIds = this.roleIds;
       getUser(userId).then(response => {
+        // console.log(response)
+        console.log("row:")
+        console.log(row)
         this.form = response.data;
         this.roleOptions = response.roles;
         this.roleIds = response.roleIds;
@@ -519,6 +592,10 @@ export default {
         this.title = "修改用户";
         this.form.password = "";
       });
+    },
+    isSub(row) {
+
+      return true
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {
@@ -541,9 +618,11 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
+      console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.userId != undefined) {
+
             this.form.roleIds = this.roleIds
             updateUser(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
@@ -552,6 +631,7 @@ export default {
             });
           } else {
             this.form.roleIds = this.roleIds
+            console.log(this.form)
             addUser(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
               this.open = false;

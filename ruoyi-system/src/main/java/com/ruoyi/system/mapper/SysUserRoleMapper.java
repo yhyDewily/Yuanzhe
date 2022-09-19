@@ -74,4 +74,6 @@ public interface SysUserRoleMapper
      * @return 结果
      */
     public List<Integer> selectUserIdByRoleId(Long roleId);
+
+    public List<Integer> selectRoleIdByUserId(Long userId);
 }

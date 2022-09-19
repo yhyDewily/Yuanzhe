@@ -236,38 +236,7 @@ public class SysUserController extends BaseController
         return success();
     }
 
-    /**
-     * 新增业务管理员
-     * @author csj
-     */
-    @PreAuthorize("{@ss.hasPermi('perm:operator:list') and @ss.hasRole('admin')}")
-    @Log(title = "操作员管理", businessType = BusinessType.INSERT)
-    @PostMapping("/addBusinessAdmin")
-    public AjaxResult addBusinessAdmin(@Validated @RequestBody SysUser user)
-    {
-        if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
-        {
-            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
-        }
-        else if (StringUtils.isNotEmpty(user.getPhonenumber())
-                && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
-        {
-            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
-        }
-        else if (StringUtils.isNotEmpty(user.getEmail())
-                && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
-        {
-            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
-        }
-        user.setCreateBy(getUsername());
-        user.setNickName("业务管理员");
-        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
-        Long[] ids = {Long.valueOf(2)};
-        int suc = userService.insertUser(user);
-        System.out.println("__________________"+user.getUserId()+"__________________");
-        userService.insertUserAuth(user.getUserId(), ids);
-        return toAjax(suc);
-    }
+
 
 
 
