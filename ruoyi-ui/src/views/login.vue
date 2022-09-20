@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">若依后台管理系统</h3>
+      <h3 class="title">密钥管理系统</h3>
       <el-form-item prop="username">
         <el-input
           v-model="loginForm.username"
@@ -11,6 +11,22 @@
         >
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
         </el-input>
+      </el-form-item>
+      <el-form-item prop="secretKey" style="width: 350px" >
+        <div class="selectForm">
+          <el-select v-model="secretKey" placeholder="请选择" :required="true">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </div>
+
+
+          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+
       </el-form-item>
       <el-form-item prop="password">
         <el-input
@@ -71,6 +87,11 @@ export default {
   data() {
     return {
       codeUrl: "",
+      options:[{
+        value:'选项一',
+        label:'sadkljl1324038'
+      }],
+      secretKey:'',
       loginForm: {
         username: "admin",
         password: "admin123",
@@ -215,5 +236,25 @@ export default {
 }
 .login-code-img {
   height: 38px;
+}
+.selectForm{
+  .el-input{
+    width:350px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input__inner{
+    width:350px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input--suffix .el-input__inner{
+    width:350px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input__icon{
+    height:116%;
+  }
 }
 </style>

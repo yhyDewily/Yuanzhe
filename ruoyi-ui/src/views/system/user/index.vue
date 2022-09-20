@@ -445,14 +445,12 @@ export default {
 
 
 
-      console.log("create函数开始："+this.subRoleId)
       this.getList();
       this.getConfigKey("sys.user.initPassword").then(response => {
         this.initPassword = response.msg;
       });
 
 
-    console.log("create快结束"+this.subRoleId)
 
 
   },
@@ -464,16 +462,13 @@ export default {
         // console.log(response)
         this.loading = true;
         this.subRoleId = response.roles[0].roleId;
-        console.log("在getlist:"+this.subRoleId)
         listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
             // console.log(response.rows)
-            console.log("ListUserHANSHU"+this.subRoleId)
             this.userList = response.rows;
             this.total = response.total;
             for (let i=0;i<this.userList.length;i++) {
               if (this.userList[i].roleId != this.subRoleId) {
-                console.log("for循环roleID：" + this.userList[i].roleId)
-                console.log("for循环SUBROLE：" + this.subRoleId);
+
                 this.userList[i].menuShow = false
               }else{
                 this.userList[i].menuShow = true
