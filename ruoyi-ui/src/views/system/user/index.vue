@@ -428,15 +428,7 @@ export default {
     };
   },
   beforeCreate() {
-    console.log("before subroleID"+this.subRoleId)
-    // getUser().then(response => {
-    //   // console.log(response)
-    //
-    //   this.subRoleId = response.roles[0].roleId;
-    //   console.log("before函数后"+this.subRoleId)
-    //
-    // });
-    // console.log("before函数外部"+this.subRoleId)
+
   },
   created() {
     // while (this.subRoleId!==null){
@@ -445,6 +437,8 @@ export default {
 
 
 
+      // var userName = this.$store.state.user.name;
+      // console.log(userName)
       this.getList();
       this.getConfigKey("sys.user.initPassword").then(response => {
         this.initPassword = response.msg;
@@ -466,7 +460,13 @@ export default {
             // console.log(response.rows)
             this.userList = response.rows;
             this.total = response.total;
+            var userName = this.$store.state.user.name;
+
             for (let i=0;i<this.userList.length;i++) {
+              if (userName == 'admin') {
+                this.userList[i].menuShow = true
+                continue
+              }
               if (this.userList[i].roleId != this.subRoleId) {
 
                 this.userList[i].menuShow = false

@@ -88,10 +88,16 @@ export default {
   methods: {
     /** 单击选中行数据 */
     clickRow(row) {
+
       this.$refs.table.toggleRowSelection(row);
     },
     // 多选框选中数据
     handleSelectionChange(selection) {
+      if (selection.length > 1) {
+        let del_row = selection.shift()
+
+        this.$refs.table.toggleRowSelection(del_row,false)
+      }
       this.roleIds = selection.map((item) => item.roleId);
     },
     // 保存选中的数据编号
