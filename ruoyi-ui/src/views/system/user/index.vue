@@ -12,16 +12,16 @@
               @keyup.enter.native="handleQuery"
             />
           </el-form-item>
-          <el-form-item label="手机号码" prop="phonenumber">
-            <el-input
-              v-model="queryParams.phonenumber"
-              placeholder="请输入手机号码"
-              clearable
-              size="small"
-              style="width: 240px"
-              @keyup.enter.native="handleQuery"
-            />
-          </el-form-item>
+<!--          <el-form-item label="手机号码" prop="phonenumber">-->
+<!--            <el-input-->
+<!--              v-model="queryParams.phonenumber"-->
+<!--              placeholder="请输入手机号码"-->
+<!--              clearable-->
+<!--              size="small"-->
+<!--              style="width: 240px"-->
+<!--              @keyup.enter.native="handleQuery"-->
+<!--            />-->
+<!--          </el-form-item>-->
           <el-form-item label="状态" prop="status">
             <el-select
               v-model="queryParams.status"
@@ -117,7 +117,8 @@
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" sortable/>
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
           <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+          <el-table-column label="ukeyID" align="center" key="ukeyId" prop="ukeyId" v-if="columns[2].visible" width="200px"/>
+<!--          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
 <!--            <template slot-scope="scope">-->
 <!--              <el-switch-->
@@ -196,50 +197,38 @@
     <!-- 添加或修改用户配置对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+<!--        <el-row>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="用户昵称" prop="nickName">-->
+<!--              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--        </el-row>-->
+<!--      -->
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+
+            <el-form-item v-if="form.userId == undefined" label="设备名称" prop="userName">
+              <div class="selectForm">
+                <el-select v-model="form.userName" placeholder="请选择" :required="true">
+                  <el-option
+                    v-for="item in dev_list"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.name">
+                  </el-option>
+                </el-select>
+                <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice">刷新</el-button>
+              </div>
+<!--              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />-->
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="手机号码" prop="phonenumber">
-              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="email">
-              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
+
             <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
             </el-form-item>
-          </el-col>
+
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-form-item label="用户性别">
-              <el-select v-model="form.sex" placeholder="请选择">
-                <el-option
-                  v-for="dict in dict.type.sys_user_sex"
-                  :key="dict.value"
-                  :label="dict.label"
-                  :value="dict.value"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+
           <el-col :span="12">
             <el-form-item label="状态">
               <el-radio-group v-model="form.status">
@@ -318,6 +307,7 @@ import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUs
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
 
 export default {
   name: "User",
@@ -332,6 +322,7 @@ export default {
       loading: true,
       // 选中数组
       ids: [],
+      dev_list:[],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -395,13 +386,11 @@ export default {
       ],
       // 表单校验
       rules: {
-        userName: [
-          { required: true, message: "用户名称不能为空", trigger: "blur" },
-          { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
-        ],
-        nickName: [
-          { required: true, message: "用户昵称不能为空", trigger: "blur" }
-        ],
+        // userName: [
+        //   { required: true, message: "用户名称不能为空", trigger: "blur" },
+        //   { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+        // ],
+
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
           { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
@@ -443,6 +432,7 @@ export default {
       this.getConfigKey("sys.user.initPassword").then(response => {
         this.initPassword = response.msg;
       });
+      this.getAllDevice();
 
 
 
@@ -476,6 +466,7 @@ export default {
               }
 
             }
+            console.log(this.userList)
             this.loading = false;
           }
         );
@@ -484,6 +475,38 @@ export default {
 
 
 
+    },
+    // 获取所有设备
+    getAllDevice() {
+      // 先清空列表
+      this.dev_list = []
+      // 获取序列号字符串，以 ‘|’ 分割（根据序列号获取和根据名称获取最终都是获取序列号）
+      let id = FISECKEY.EnumBySerial();
+      // 检验是否插入令牌
+      if (id === '') {
+        Message.warning('请插入令牌！');
+        return;
+      }
+      // 获取序列号和名称集合
+      let id_list = id.split('|');
+      for (let i = 0; i < id_list.length; i++) {
+        // 根据句柄来获取 U 盾名称
+        try {
+          let hDevice = FISECKEY.OpenBySerial(id_list[i], 0);
+          let uName = FISECKEY.GetInfo(hDevice, 0).Label;
+          this.dev_list.push({id: id_list[i], name: uName});
+
+          //todo此处写死，后面去掉
+          this.dev_list.push({id:'admin',name:'admin'});
+          this.dev_list.push({id:'business_admin',name:'business_admin'});
+          this.dev_list.push({id:'business_operator',name:'business_operator'});
+          this.dev_list.push({id:'super_admin',name:'super_admin'});
+
+          console.log(this.dev_list)
+        }catch (e) {
+          Message.error(e);
+        }
+      }
     },
     menuShowMethod(row) {
       console.log(row)
@@ -560,7 +583,7 @@ export default {
 
       this.reset();
       getUser().then(response => {
-        console.log(response)
+        // console.log(response)
 
         this.roleOptions = response.roles;
         this.open = true;
@@ -613,7 +636,7 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log(this.form)
+      // console.log(this.form)
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.userId != undefined) {
@@ -626,8 +649,13 @@ export default {
             });
           } else {
             this.form.roleIds = this.roleIds
+            // console.log("请选择设备")
+            if (this.form.userName==null) {
+              this.$message.error('请选择设备');
+            }
             console.log(this.form)
             addUser(this.form).then(response => {
+              console.log(response)
               this.$modal.msgSuccess("新增成功");
               this.open = false;
               this.getList();
