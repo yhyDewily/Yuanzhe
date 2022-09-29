@@ -27,6 +27,24 @@ export function addUser(data) {
   })
 }
 
+// 新增Super Admin用户
+export function addUserSA(data) {
+  return request({
+    url: '/system/init/addSuperadmin',
+    method: 'post',
+    data: data
+  })
+}
+
+// 新增Audit Admin用户
+export function addUserAA(data) {
+  return request({
+    url: '/system/init/addauditdmin',
+    method: 'post',
+    data: data
+  })
+}
+
 // 修改用户
 export function updateUser(data) {
   return request({
