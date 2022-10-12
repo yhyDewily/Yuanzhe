@@ -92,8 +92,8 @@ export default {
       getAllBackupKey(data)
         .then((res) => {
           console.log(res.data);
-          this.list = res.data.data.records;
-          this.totalCount = res.data.data.total;
+          this.list = res.data.records;
+          this.totalCount = res.data.total;
         })
         .catch((err) => {
           console.error(err);

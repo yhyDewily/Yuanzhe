@@ -90,7 +90,6 @@
     </el-form>
 
     <el-table
-    v-fit-columns
       :data="list"
       element-loading-text="Loading"
       border
@@ -215,12 +214,10 @@ export default {
         currentPage: n1,
         pageSize: n2,
       };
-      console.log(data);
       getAllUseKeyPair(data)
         .then((res) => {
-          console.log(res.data);
-          this.list = res.data.data.records;
-          this.totalCount = res.data.data.total;
+          this.list = res.data.records;
+          this.totalCount = res.data.total;
         })
         .catch((err) => {
           console.error(err);
@@ -239,8 +236,8 @@ export default {
       this.findFlag = true;
       getKeyPariByCondition(this.queryData)
         .then((res) => {
-          this.list = res.data.data.records;
-          this.totalCount = res.data.data.total;
+          this.list = res.data.records;
+          this.totalCount = res.data.total;
         })
         .catch((err) => {
           console.error(err);

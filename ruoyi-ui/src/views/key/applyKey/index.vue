@@ -70,8 +70,8 @@ export default {
         .then((res) => {
           let array = [
             {
-              publicKey: res.data.data.publicKey,
-              privateKey: res.data.data.privateKey,
+              publicKey: res.data.publicKey,
+              privateKey: res.data.privateKey,
             },
           ];
           this.keys = array;

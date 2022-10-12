@@ -66,7 +66,7 @@ export default {
       getKeyPairList(data)
         .then((res) => {
           console.log("data:",res.data);
-          this.keys=res.data.data
+          this.keys=res.data
           console.log("keys:",this.keys);
           this.$message({
             message: "密钥生成成功！",

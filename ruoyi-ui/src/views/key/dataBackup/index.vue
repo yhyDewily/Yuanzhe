@@ -246,7 +246,7 @@ export default {
       };
       getDatabaseByIp(data)
         .then((res) => {
-          this.database = res.data.data;
+          this.database = res.data;
           this.databaseAble = false;
         })
         .catch((err) => {
@@ -262,7 +262,7 @@ export default {
       };
       getDatatableByBase(data)
         .then((res) => {
-          this.datatable = res.data.data;
+          this.datatable = res.data;
           this.datatableAble = false;
         })
         .catch((err) => {
@@ -278,8 +278,8 @@ export default {
       getAllData(data)
         .then((res) => {
           console.log(res.data);
-          this.list = res.data.data.records;
-          this.totalCount = res.data.data.total;
+          this.list = res.data.records;
+          this.totalCount = res.data.total;
         })
         .catch((err) => {
           console.error(err);
@@ -298,8 +298,8 @@ export default {
       };
       getDataBackupRecords(data)
         .then((res) => {
-          this.backupRecords = res.data.data.records;
-          this.totalCount = res.data.data.total;
+          this.backupRecords = res.data.records;
+          this.totalCount = res.data.total;
         })
         .catch((err) => {
           console.error(err);
