@@ -68,10 +68,18 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 用户信息集合信息
      */
     @Override
-    @DataScope(userAlias = "u")
+//    @DataScope(userAlias = "u")
     public List<SysUser> selectUserList(SysUser user)
     {
-        return userMapper.selectUserList(user);
+        List<SysUser> sysUsers = userMapper.selectUserList(user);
+        for (SysUser sysUser : sysUsers) {
+            List<Integer> list = userRoleMapper.selectRoleIdByUserId(sysUser.getUserId());
+            if (list.size()==0) {
+                sysUser.setRoleId(null);
+            }
+            else sysUser.setRoleId(Long.valueOf(list.get(0)));
+        }
+        return sysUsers;
     }
 
     /**
@@ -122,6 +130,16 @@ public class SysUserServiceImpl implements ISysUserService
     public SysUser selectUserById(Long userId)
     {
         return userMapper.selectUserById(userId);
+    }
+
+    /**
+     * 通过用户id查到角色id
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<Integer> selectRoleByUserId(Long userId) {
+        return userRoleMapper.selectRoleIdByUserId(userId);
     }
 
     /**

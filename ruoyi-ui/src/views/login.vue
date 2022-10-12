@@ -1,16 +1,34 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">若依后台管理系统</h3>
-      <el-form-item prop="username">
-        <el-input
-          v-model="loginForm.username"
-          type="text"
-          auto-complete="off"
-          placeholder="账号"
-        >
+      <h3 class="title">密钥管理系统</h3>
+<!--      <el-form-item prop="username">-->
+<!--        <el-input-->
+<!--          v-model="loginForm.username"-->
+<!--          type="text"-->
+<!--          auto-complete="off"-->
+<!--          placeholder="账号"-->
+<!--        >-->
+<!--          <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />-->
+<!--        </el-input>-->
+<!--      </el-form-item>-->
+      <el-form-item prop="secretKey" style="width: 350px" >
+        令牌
+        <div class="selectForm">
+          <el-select v-model="loginForm.username" placeholder="请选择" :required="true">
+            <el-option
+              v-for="item in dev_list"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name">
+            </el-option>
+          </el-select>
+          <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice">刷新</el-button>
+        </div>
+
+
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
-        </el-input>
+
       </el-form-item>
       <el-form-item prop="password">
         <el-input
@@ -65,12 +83,19 @@
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
 import { encrypt, decrypt } from '@/utils/jsencrypt'
+import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
 
 export default {
   name: "Login",
   data() {
     return {
       codeUrl: "",
+      dev_list:[
+        {
+
+        }
+      ],
+      secretKey:'',
       loginForm: {
         username: "admin",
         password: "admin123",
@@ -106,6 +131,7 @@ export default {
   created() {
     this.getCode();
     this.getCookie();
+    this.getAllDevice();
   },
   methods: {
     getCode() {
@@ -116,6 +142,39 @@ export default {
           this.loginForm.uuid = res.uuid;
         }
       });
+    },
+    // 获取所有设备
+    getAllDevice() {
+      // 先清空列表
+      this.dev_list = []
+      // 获取序列号字符串，以 ‘|’ 分割（根据序列号获取和根据名称获取最终都是获取序列号）
+      let id = FISECKEY.EnumBySerial();
+      // 检验是否插入令牌
+      if (id === '') {
+        Message.warning('请插入令牌！');
+        return;
+      }
+      // 获取序列号和名称集合
+      let id_list = id.split('|');
+      for (let i = 0; i < id_list.length; i++) {
+        // 根据句柄来获取 U 盾名称
+        try {
+          let hDevice = FISECKEY.OpenBySerial(id_list[i], 0);
+          let uName = FISECKEY.GetInfo(hDevice, 0).Label;
+          this.dev_list.push({id: id_list[i], name: uName});
+
+          //todo此处写死，后面去掉
+          this.dev_list.push({id:'admin',name:'admin'});
+          this.dev_list.push({id:'business_admin',name:'business_admin'});
+          this.dev_list.push({id:'business_operator',name:'business_operator'});
+          this.dev_list.push({id:'super_admin',name:'super_admin'});
+          this.dev_list.push({id:'audit_operator',name:'audit_operator'});
+
+          console.log(this.dev_list)
+        }catch (e) {
+          Message.error(e);
+        }
+      }
     },
     getCookie() {
       const username = Cookies.get("username");
@@ -215,5 +274,25 @@ export default {
 }
 .login-code-img {
   height: 38px;
+}
+.selectForm{
+  .el-input{
+    width:280px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input__inner{
+    width:280px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input--suffix .el-input__inner{
+    width:280px!important;
+    /*margin-left: 4px;*/
+    height:38px;
+  }
+  .el-input__icon{
+    height:116%;
+  }
 }
 </style>

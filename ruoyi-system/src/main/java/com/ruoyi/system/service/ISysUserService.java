@@ -51,6 +51,12 @@ public interface ISysUserService
     public SysUser selectUserById(Long userId);
 
     /**
+     * 通过用户id查到角色
+     * @param userId
+     * @return
+     */
+    public List<Integer> selectRoleByUserId(Long userId);
+    /**
      * 根据用户ID查询用户所属角色组
      * 
      * @param userName 用户名

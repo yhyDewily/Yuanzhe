@@ -3,6 +3,8 @@ package com.ruoyi.common.core.domain.entity;
 import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
+
+import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,6 +20,7 @@ import com.ruoyi.common.xss.Xss;
  * 
  * @author ruoyi
  */
+@Data
 public class SysUser extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
@@ -29,6 +32,9 @@ public class SysUser extends BaseEntity
     /** 部门ID */
     @Excel(name = "部门")
     private Long deptId;
+
+    @Excel(name = "ukey")
+    private String ukeyId;
 
     /** 用户账号 */
     @Excel(name = "登录名称")

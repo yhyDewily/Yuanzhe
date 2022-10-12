@@ -177,10 +177,25 @@ export default {
       this.loading = true;
       listDatascope(this.queryParams).then(response => {
         this.datascopeList = response.rows;
+        console.log(this.datascopeList)
+        console.log(this.dict.type.sys_role_enum)
         const role_dict = this.dict.type.sys_role_enum
         for (let i=0;i<this.datascopeList.length;i++) {
-          this.datascopeList[i].roleIdLabel = role_dict[this.datascopeList[i].roleId-2].label
-          this.datascopeList[i].subRoleIdLabel = role_dict[this.datascopeList[i].subRoleId-2].label
+          if (this.datascopeList[i].roleId === '12') {
+            this.datascopeList[i].roleIdLabel = "司法专员"
+          }
+          else {
+            this.datascopeList[i].roleIdLabel = role_dict[this.datascopeList[i].roleId-2].label
+          }
+          if (this.datascopeList[i].subRoleId === 12) {
+            this.datascopeList[i].subRoleIdLabel = "司法专员"
+          }
+          else{
+
+            this.datascopeList[i].subRoleIdLabel = role_dict[this.datascopeList[i].subRoleId-2].label
+          }
+
+
         }
         this.total = response.total;
         this.loading = false;
