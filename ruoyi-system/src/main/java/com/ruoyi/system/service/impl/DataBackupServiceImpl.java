@@ -6,7 +6,6 @@ import com.ruoyi.system.service.DataBackupService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.utils.DbUtil;
 import com.ruoyi.system.utils.SFTPUtil;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * <p>
@@ -27,12 +27,16 @@ import java.time.format.DateTimeFormatter;
 @Service
 public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBackup> implements DataBackupService {
 
+    private static final String DIRECTORY = "/opt/kms/sql/";
+
+    private static final String HREF = "http://localhost:8080/kms/api/database/downloadFile?fileDirectory=/opt/kms/sql&fileName=";
+
     @Override
     public void doBackupData(String ip, String database, String datatable) {
         // 先根据前端传入的ip对应的配置名、数据库名、数据表名称和是否需要建表语句，是否需要数据，以及要忽略哪一些列来生成SQL语句，此时的SQL语句是已经加密了的
         String sql = DbUtil.generateSql(ip, database, datatable, true, true, null);
         // 拿到sql文件的字节数组
-        byte[] bytes = sql.getBytes();
+//        byte[] bytes = sql.getBytes();
 
         // 文件名称
         String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
@@ -50,27 +54,29 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
             fileName = fileName + database + "-" + datatable + ".sql";
             dataBackup.setTableName(datatable);
         }
+        // 保存文件到远程服务器
+        SFTPUtil.remoteUpload(sql, DIRECTORY + fileName);
         // 设置下载地址，带上目录和文件名
-        String href = "http://localhost:8080/kms/api/database/downloadFile?fileDirectory=/opt/kms/sql" + "&fileName=" + fileName;
+        String href = HREF+ fileName;
         dataBackup.setHref(href);
-        dataBackup.setFileDirectory("/opt/kms/sql");
+        dataBackup.setFileDirectory(DIRECTORY);
         dataBackup.setFileName(fileName);
         dataBackup.setOpType("导出");
-        // 保存文件到远程服务器
-        SFTPUtil.remoteUplod(sql, "/opt/kms/sql/" + fileName);
+
         // 插入操作记录
         this.save(dataBackup);
     }
 
     @Override
     public void downloadFile(String fileDirectory, String fileName, HttpServletResponse response) {
-
         //将文件流写到前端，用户可以选择路径下载
         ServletOutputStream os = null;
         try {
             os = response.getOutputStream();
             response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+            // 此步会把要下载的文件内容写到os中
             SFTPUtil.download(fileDirectory, fileName, os);
+
 //            os.write(bytes);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -84,9 +90,11 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
         String fileDirectory = backup.getFileDirectory();
         String fileName = backup.getFileName();
         OutputStream outputStream = new ByteArrayOutputStream();
+        // 将文件内容保存到outputStream输出流中
         SFTPUtil.download(fileDirectory, fileName, outputStream);
+        // 得到sql语句，此时是密文
         String sql = outputStream.toString();
-        System.out.println(sql);
+        // 执行sql语句，其中会进行解密操作
         DbUtil.executeSql(ip, sql);
 
     }

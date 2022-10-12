@@ -125,7 +125,7 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
         QueryWrapper<SecretKey> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge("create_time", LocalDateTime.now().minusHours(1)).le("create_time", LocalDateTime.now());
         List<SecretKey> list = this.list(queryWrapper);
-        // 把这些记录插入到从库中
+        // 把这些记录插入到历史库中
         SpringUtils.getAopProxy(this).insertKeyPairsToSlave(list);
         return null;
     }

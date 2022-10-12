@@ -32,14 +32,9 @@ public class DSCUtil {
 
     /**
      * 用DES算法进行加密
-     * @param clearText
-     * @param originKey
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
+     * @param clearText 明文数据
+     * @param originKey 加密密钥
+     * @return 返回通过密钥加密后的密文
      */
     public static String desEncript(String clearText, String originKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         //1.获取加密算法工具类对象  参数：转换的名称，例如 DES/CBC/PKCS5Padding。
@@ -70,8 +65,8 @@ public class DSCUtil {
     }
 
     /**
-     * 不论原始密钥originKey多长，我们都要醒程一个8个字节的原始密钥
-     * @param originKey
+     * 不论原始密钥originKey多长，我们都要截成一个8个字节的原始密钥
+     * @param originKey 原始密钥
      * @return
      */
     private static SecretKeySpec getKey(String originKey) {
@@ -88,20 +83,16 @@ public class DSCUtil {
         * 参数 key：密钥的密钥内容。
         * 参数 algorithm：与给定的密钥内容相关联的密钥算法的名称。
         * */
+        // 最终的密钥
         SecretKeySpec key = new SecretKeySpec(buffer, "DES");
         return key;
     }
 
     /**
      * 用DES算法进行解密
-     * @param cipherText
-     * @param originKey
-     * @return
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
+     * @param cipherText 密文
+     * @param originKey 密钥
+     * @return 返回密文通过密钥解密后的明文数据
      */
     public static String desDecript(String cipherText, String originKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance("DES");

@@ -46,7 +46,7 @@ public class SecretKeyController {
      * 非对称密钥注销，优先根据id进行注销，如果id为空，则根据type和keyName进行注销
      *
      * @param id 密钥的唯一标识
-     * @return
+     * @return 注销成功返回success，失败返回error
      */
     @PostMapping("/revokeKeyPair")
     public AjaxResult revokeKeyPair(@RequestParam(value = "id") String id) {
@@ -75,8 +75,8 @@ public class SecretKeyController {
     /**
      * 根据id获取非对称密钥
      *
-     * @param id
-     * @return
+     * @param id 前端传入的密钥id
+     * @return 返回查询到的密钥对信息
      */
     @GetMapping("/getKeyPair")
     public AjaxResult getKeyPair(@RequestParam String id) {
@@ -86,7 +86,7 @@ public class SecretKeyController {
 
     /**
      * 密钥备份启动，备份过去一小时-当前时间段产生的密钥
-     *
+     * TODO 该接口功能待定，后续需要修改
      * @param backName 备份名称
      * @return
      */
@@ -97,7 +97,7 @@ public class SecretKeyController {
     }
 
     /**
-     * 从在用库中移除那些已经过期的key和已经失效的key
+     * 从在用库中移除那些已经过期的key和已经失效的key，然后会将该密钥对插入到历史库中
      *
      * @return
      */
@@ -107,12 +107,25 @@ public class SecretKeyController {
         return AjaxResult.success();
     }
 
+    /**
+     * 分页获取所有的在用密钥对
+     * @param currentPage 当前页
+     * @param pageSize 页面大小
+     * @return
+     */
     @GetMapping("/getAllUseKeyPair")
     public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage, @RequestParam Long pageSize) {
         IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage, pageSize);
         return AjaxResult.success("查询成功", list);
     }
 
+    /**
+     * 条件分页查询所有在用密钥对
+     * @param map 条件map集合
+     * @param currentPage 当前页
+     * @param pageSize 页面大小
+     * @return
+     */
     @GetMapping("/getKeyPariByCondition")
     public AjaxResult getKeyPariByCondition(@RequestParam Map<String, String> map, @RequestParam Long currentPage, @RequestParam Long pageSize) {
         IPage<SecretKey> list = secretKeyService.getKeyPariByCondition(map, currentPage, pageSize);

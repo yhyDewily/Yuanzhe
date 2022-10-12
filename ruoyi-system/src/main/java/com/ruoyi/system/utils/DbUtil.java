@@ -1,30 +1,18 @@
 package com.ruoyi.system.utils;
 
-import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.text.StrBuilder;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.ds.DSFactory;
-import cn.hutool.db.ds.druid.DruidDSFactory;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.SftpException;
-import com.ruoyi.common.utils.SFTPChannel;
-import com.ruoyi.common.utils.uuid.UUID;
-import freemarker.core.Environment;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
-import javax.sql.DataSource;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
@@ -33,7 +21,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * 用于数据库备份相关的工具类
@@ -45,7 +32,7 @@ import java.util.Vector;
 public class DbUtil {
 
     // 加密密钥现在使用UUID
-    static String originKey = "abcd1234";
+    static final String originKey = "abcd1234";
 
 
     /**
