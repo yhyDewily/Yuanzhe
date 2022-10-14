@@ -125,7 +125,7 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
         QueryWrapper<SecretKey> queryWrapper = new QueryWrapper<>();
         queryWrapper.ge("create_time", LocalDateTime.now().minusHours(1)).le("create_time", LocalDateTime.now());
         List<SecretKey> list = this.list(queryWrapper);
-        // 把这些记录插入到从库中
+        // 把这些记录插入到历史库中
         SpringUtils.getAopProxy(this).insertKeyPairsToSlave(list);
         return null;
     }
@@ -142,11 +142,11 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
     public void moveExpireKey() {
         // 先从在用库中查询出已经过期的key和已经失效的key
         QueryWrapper<SecretKey> queryWrapper = new QueryWrapper<>();
-        queryWrapper.le("expire_time",LocalDateTime.now()).or().eq("valid",false);
+        queryWrapper.le("expire_time", LocalDateTime.now()).or().eq("valid", false);
         List<SecretKey> list = this.list(queryWrapper);
         // 把这些记录插入到历史库中
         Boolean flag = SpringUtils.getAopProxy(this).insertKeyPairsToSlave(list);
-        if(flag){
+        if (flag) {
             // 插入到历史库成功后，再删除在用库中的这些密钥对
             this.removeBatchByIds(list);
         }
@@ -154,9 +154,46 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
 
     @Override
     public IPage<SecretKey> getAllUseKeyPair(Long currentPage, Long pageSize) {
-        return this.page(new Page<>(currentPage,pageSize));
+        return this.page(new Page<>(currentPage, pageSize));
     }
 
+    @Override
+    public IPage<SecretKey> getKeyPariByCondition(Map<String, String> map, Long currentPage, Long pageSize) {
+        String id = map.get("id");
+        String keyType = map.get("keyType");
+        String createBegin = map.get("createBegin");
+        String createEnd = map.get("createEnd");
+        String useBegin = map.get("useBegin");
+        String useEnd = map.get("useEnd");
+        String expireBegin = map.get("expireBegin");
+        String expireEnd = map.get("expireEnd");
+        QueryWrapper<SecretKey> queryWrapper = new QueryWrapper<>();
+        if (id != null && !"".equals(id)) {
+            queryWrapper.eq("id", id);
+        }
+        if (keyType != null && !"".equals(keyType)) {
+            queryWrapper.eq("key_type", keyType);
+        }
+        if (createBegin != null && !"".equals(createBegin)) {
+            queryWrapper.ge("create_time", createBegin);
+        }
+        if (createEnd != null && !"".equals(createEnd)) {
+            queryWrapper.le("create_time", createEnd);
+        }
+        if (useBegin != null && !"".equals(useBegin)) {
+            queryWrapper.ge("use_time", useBegin);
+        }
+        if (useEnd != null && !"".equals(useEnd)) {
+            queryWrapper.le("use_time", useEnd);
+        }
+        if (expireBegin != null && !"".equals(expireBegin)) {
+            queryWrapper.ge("expire_time", expireBegin);
+        }
+        if (expireEnd != null && !"".equals(expireEnd)) {
+            queryWrapper.eq("expire_time", expireEnd);
+        }
+        return this.page(new Page<>(currentPage, pageSize), queryWrapper);
+    }
 
 
 }

@@ -17,6 +17,7 @@ public class MyObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject,"createTime",LocalDateTime.class,LocalDateTime.now());
         this.strictInsertFill(metaObject,"valid",Boolean.class,true);
         this.strictInsertFill(metaObject,"expireTime",LocalDateTime.class,LocalDateTime.now().plusYears(5));
+        this.strictInsertFill(metaObject,"opTime",LocalDateTime.class,LocalDateTime.now());
     }
 
     @Override

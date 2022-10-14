@@ -2,18 +2,13 @@ package com.ruoyi.system.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.ruoyi.common.annotation.DataSource;
 import com.ruoyi.common.core.domain.AjaxResult;
-import com.ruoyi.common.enums.DataSourceType;
 import com.ruoyi.system.domain.SecretKey;
-//import com.ruoyi.system.domain.vo.ApplyKeyVo;
-import com.ruoyi.system.domain.vo.KeyPairVo;
-import com.ruoyi.system.domain.vo.KeyTypePair;
+import com.ruoyi.system.domain.vo.ApplyKeyVo;
 import com.ruoyi.system.service.SecretKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,26 +27,26 @@ public class SecretKeyController {
     @Autowired
     SecretKeyService secretKeyService;
 
-//    /**
-//     * 非对称密钥生成，目前只使用了SM2算法生成密钥
-//     *
-//     * @param keyVo  包含 type和keyName
-//     * type 算法类型，目前采用SM2算法
-//     * keyName 密钥名称，默认为""，同一应用同一类型的keyName不可重复
-//     * @return 返回生成的公私钥对
-//     * TODO 对前端传入的type进行判断，根据字段来进行SM2算法生成密钥或者使用RSA算法生成密钥
-//     */
-//    @PostMapping("/applyKeyPair")
-//    public AjaxResult applyKeyPair(@RequestBody ApplyKeyVo keyVo) {
-//        Map<String, String> keyPair = secretKeyService.applyKeyPair(keyVo.getType(), keyVo.getKeyName());
-//        return AjaxResult.success("生成密钥成功", keyPair);
-//    }
+    /**
+     * 非对称密钥生成，目前只使用了SM2算法生成密钥
+     *
+     * @param keyVo 包含 type和keyName
+     *              type 算法类型，目前采用SM2算法
+     *              keyName 密钥名称，默认为""，同一应用同一类型的keyName不可重复
+     * @return 返回生成的公私钥对
+     * TODO 对前端传入的type进行判断，根据字段来进行SM2算法生成密钥或者使用RSA算法生成密钥
+     */
+    @PostMapping("/applyKeyPair")
+    public AjaxResult applyKeyPair(@RequestBody ApplyKeyVo keyVo) {
+        Map<String, String> keyPair = secretKeyService.applyKeyPair(keyVo.getType(), keyVo.getKeyName());
+        return AjaxResult.success("生成密钥成功", keyPair);
+    }
 
     /**
      * 非对称密钥注销，优先根据id进行注销，如果id为空，则根据type和keyName进行注销
      *
      * @param id 密钥的唯一标识
-     * @return
+     * @return 注销成功返回success，失败返回error
      */
     @PostMapping("/revokeKeyPair")
     public AjaxResult revokeKeyPair(@RequestParam(value = "id") String id) {
@@ -80,8 +75,8 @@ public class SecretKeyController {
     /**
      * 根据id获取非对称密钥
      *
-     * @param id
-     * @return
+     * @param id 前端传入的密钥id
+     * @return 返回查询到的密钥对信息
      */
     @GetMapping("/getKeyPair")
     public AjaxResult getKeyPair(@RequestParam String id) {
@@ -91,7 +86,7 @@ public class SecretKeyController {
 
     /**
      * 密钥备份启动，备份过去一小时-当前时间段产生的密钥
-     *
+     * TODO 该接口功能待定，后续需要修改
      * @param backName 备份名称
      * @return
      */
@@ -102,7 +97,7 @@ public class SecretKeyController {
     }
 
     /**
-     * 从在用库中移除那些已经过期的key和已经失效的key
+     * 从在用库中移除那些已经过期的key和已经失效的key，然后会将该密钥对插入到历史库中
      *
      * @return
      */
@@ -112,13 +107,30 @@ public class SecretKeyController {
         return AjaxResult.success();
     }
 
+    /**
+     * 分页获取所有的在用密钥对
+     * @param currentPage 当前页
+     * @param pageSize 页面大小
+     * @return
+     */
     @GetMapping("/getAllUseKeyPair")
-    public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage,@RequestParam Long pageSize) {
-        IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage,pageSize);
-        return AjaxResult.success("查询成功",list);
+    public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage, @RequestParam Long pageSize) {
+        IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage, pageSize);
+        return AjaxResult.success("查询成功", list);
     }
 
-
+    /**
+     * 条件分页查询所有在用密钥对
+     * @param map 条件map集合
+     * @param currentPage 当前页
+     * @param pageSize 页面大小
+     * @return
+     */
+    @GetMapping("/getKeyPariByCondition")
+    public AjaxResult getKeyPariByCondition(@RequestParam Map<String, String> map, @RequestParam Long currentPage, @RequestParam Long pageSize) {
+        IPage<SecretKey> list = secretKeyService.getKeyPariByCondition(map, currentPage, pageSize);
+        return AjaxResult.success("查询成功",list);
+    }
 
 
 }

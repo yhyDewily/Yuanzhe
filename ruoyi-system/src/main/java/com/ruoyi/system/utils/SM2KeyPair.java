@@ -1,7 +1,15 @@
 package com.ruoyi.system.utils;
 
+import org.bouncycastle.asn1.ASN1Encoding;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
+import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.asn1.x9.X9ECPoint;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.util.PrivateKeyInfoFactory;
@@ -12,16 +20,26 @@ import org.bouncycastle.math.ec.ECPoint;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SM2KeyPair {
     private final ECPublicKeyParameters publicKeyParam;
     private final ECPrivateKeyParameters privateKeyParam;
+    private X9ECParameters x9ecParameters;
 
     private final Base64.Encoder encoder64 = Base64.getEncoder();
 
     public SM2KeyPair(ECPublicKeyParameters publicKeyParam, ECPrivateKeyParameters privateKeyParam) {
         this.publicKeyParam = publicKeyParam;
         this.privateKeyParam = privateKeyParam;
+    }
+
+    public SM2KeyPair(ECPublicKeyParameters publicKeyParam, ECPrivateKeyParameters privateKeyParam,
+                      X9ECParameters x9ecParameters) {
+        this.publicKeyParam = publicKeyParam;
+        this.privateKeyParam = privateKeyParam;
+        this.x9ecParameters = x9ecParameters;
     }
 
     /** 获取椭圆曲线上的公钥参数 */
@@ -46,6 +64,7 @@ public class SM2KeyPair {
 
     /** 获取椭圆曲线上 基点到最终公钥坐标点 所做的加密次数 就是私钥的值 */
     public BigInteger getPrivateKeyD() {
+
         return getPrivateKeyParam().getD();
     }
 
@@ -81,12 +100,46 @@ public class SM2KeyPair {
 
     /** 把公钥转换为ASN.1对象 */
     public SubjectPublicKeyInfo getX509SubjectPublicInfo() throws IOException {
-        return SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(getPublicKeyParam());
+        // bc库处理有问题，没有对sm2p256v1进行定义
+        // return
+        // SubjectPublicKeyInfoFactory.createSubjectPublicKeyInfo(getPublicKeyParam());
+
+        // 把公钥转换为asn.1格式数据
+        ASN1OctetString publicKey = (ASN1OctetString) new X9ECPoint(getPublicKeyParam().getQ(), false)
+                .toASN1Primitive();
+        /*
+         * GMObjectIdentifiers GM对象标识符库
+         */
+        SubjectPublicKeyInfo subjectPublicKeyInfo = new SubjectPublicKeyInfo(
+                new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey, GMObjectIdentifiers.sm2p256v1),
+                publicKey.getOctets());
+
+        return subjectPublicKeyInfo;
     }
 
     /** 把私钥转换为ASN.1对象 */
     public PrivateKeyInfo getX509PrivateInfo() throws IOException {
-        return PrivateKeyInfoFactory.createPrivateKeyInfo(getPrivateKeyParam());
+        // return PrivateKeyInfoFactory.createPrivateKeyInfo(getPrivateKeyParam());
+
+        // bc库处理有问题，没有对sm2p256v1进行定义
+        // ECDomainParameters privateDomainParams = privateKeyParam.getParameters();
+
+        // ECC椭圆曲线计算的终点就是公钥 , 基点G * 运算次数D (私钥) = 公钥坐标点Q
+        // ECPoint q = new
+        // FixedPointCombMultiplier().multiply(privateDomainParams.getG(),
+        // getPrivateKeyD());
+
+        // DERBitString publicKey = new DERBitString(q.getEncoded(false));
+
+        // ASN1BitString privateKey = (ASN1BitString)
+        // ASN1BitString.fromByteArray(convertPrivatekeyDToByte());
+        // DERBitString.convert(privateKey);
+
+        return new PrivateKeyInfo(
+                new AlgorithmIdentifier(X9ObjectIdentifiers.id_ecPublicKey,
+                        GMObjectIdentifiers.sm2p256v1),
+                new ECPrivateKey(privateKeyParam.getParameters().getN().bitLength(), getPrivateKeyD()),
+                null, convertECPublicKeyPointToByte());
     }
 
     /** 获取椭圆曲线上的公钥对象 */
@@ -125,6 +178,83 @@ public class SM2KeyPair {
      */
     public String convertECPublicKeyPointToString() {
         return encoder64.encodeToString(convertECPublicKeyPointToByte());
+    }
+    /**
+     * 获得经过BASE64编码的SM2密钥对;
+     * get("private") 获取私钥;
+     * get("public") 获取公钥;
+     *
+     * @param origin 是否获取原生的密钥对，不是的话获取PKCS8包装的密钥对
+     * @throws IOException
+     */
+    public Map<String, String> getSM2KeyPair(boolean origin) throws IOException {
+        HashMap<String, String> sm2KeyPair = new HashMap<>(2);
+
+        String privateKey = null;
+        String publicKey = null;
+
+        if (origin) {
+            privateKey = convertPrivatekeyDToString();
+            publicKey = convertECPublicKeyPointToString();
+        } else {
+            privateKey = encoder64.encodeToString(getX509PrivateInfo().getEncoded());
+            publicKey = encoder64.encodeToString(getX509SubjectPublicInfo().getEncoded());
+        }
+
+        sm2KeyPair.put("private", privateKey);
+        sm2KeyPair.put("public", publicKey);
+
+        return sm2KeyPair;
+    }
+
+    /**
+     * 获取一串经过PKCS8包装的私钥
+     *
+     * @return 返回一串经过PKCS8包装的私钥
+     * @throws IOException
+     */
+    public String getPKCS8PrivateKey() throws IOException {
+        return getSM2KeyPair(false).get("private");
+    }
+
+    /**
+     * 获取一串经过PKCS8包装的公钥
+     *
+     * @return 返回一串经过PKCS8包装的公钥
+     * @throws IOException
+     */
+    public String getPKCS8PublicKey() throws IOException {
+        return getSM2KeyPair(false).get("public");
+    }
+
+    /**
+     * 获取ECC椭圆参数
+     */
+    public X9ECParameters getX9ecParameters() {
+        if (x9ecParameters != null) {
+            return x9ecParameters;
+        }
+
+        return new X9ECParameters(getPublicKeyParam().getParameters().getCurve(), new X9ECPoint(getECPublicKeyPoint(), false),
+                getPublicKeyParam().getParameters().getN(), getPublicKeyParam().getParameters().getH());
+    }
+
+    /**
+     * ECC椭圆参数转换成字节数组
+     * @return
+     * @throws IOException
+     */
+    public byte[] convertX9ecParametersToByteArray() throws IOException{
+        return getX9ecParameters().getEncoded(ASN1Encoding.DER);
+    }
+
+    /**
+     * ECC椭圆参数经过Base64编码转换成字符串
+     * @return
+     * @throws IOException
+     */
+    public String convertX9ecParametersToString() throws IOException{
+        return encoder64.encodeToString(convertX9ecParametersToByteArray());
     }
 
 }
