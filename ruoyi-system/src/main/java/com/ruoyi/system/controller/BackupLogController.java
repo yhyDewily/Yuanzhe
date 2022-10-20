@@ -2,7 +2,9 @@ package com.ruoyi.system.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.BackupLog;
 import com.ruoyi.system.domain.BackupSecretKey;
 import com.ruoyi.system.service.BackupLogService;
@@ -32,6 +34,7 @@ public class BackupLogController {
     @Autowired
     BackupLogService backupLogService;
 
+    @Log(title = "备份数据库日志", businessType = BusinessType.EXPORT)
     @GetMapping("/getAllBackupLog")
     public AjaxResult getAllBackupLog(@RequestParam Long currentPage, @RequestParam Long pageSize
     , @RequestParam String beginDate,@RequestParam String endDate){

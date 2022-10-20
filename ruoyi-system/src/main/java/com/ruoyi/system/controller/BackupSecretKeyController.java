@@ -2,7 +2,9 @@ package com.ruoyi.system.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.BackupSecretKey;
 import com.ruoyi.system.domain.SecretKey;
 import com.ruoyi.system.service.BackupSecretKeyService;
@@ -33,12 +35,14 @@ public class BackupSecretKeyController {
      * @param keyNum 需要获取的密钥数量
      * @return 密钥集合
      */
+    @Log(title = "从备用库中获取批量密钥", businessType = BusinessType.EXPORT)
     @PostMapping("/getKeyPairList")
     public AjaxResult getKeyPairList(@RequestParam String type,@RequestParam Integer keyNum){
         List<BackupSecretKey> list = backupSecretKeyService.getKeyPairList(keyNum);
         return AjaxResult.success("获取成功！",list);
     }
 
+    @Log(title = "查询备用库密钥", businessType = BusinessType.EXPORT)
     @GetMapping("getAllBackupKey")
     public AjaxResult getAllBackupKey(@RequestParam Long currentPage,@RequestParam Long pageSize){
         IPage<BackupSecretKey> page = backupSecretKeyService.getAllBackupKey(currentPage,pageSize);

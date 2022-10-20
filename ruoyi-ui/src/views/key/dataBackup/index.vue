@@ -156,9 +156,9 @@ export default {
         label: "label",
       },
       ip: [
-        { ip: "127.0.0.1", value: "slave-db-dev" },
+        { ip: "192.168.8.167", value: "slave-db-dev" },
         { ip: "192.168.8.169", value: "master-db-dev" },
-        { ip: "192.168.159.124", value: "backup-db-dev" },
+        { ip: "192.168.8.168", value: "backup-db-dev" },
       ],
       database: [],
       datatable: [],
