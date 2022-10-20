@@ -4,21 +4,30 @@ spring:
         type: com.alibaba.druid.pool.DruidDataSource
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
-            # 主库数据源
-#            master:
-#                #                url: jdbc:mysql://localhost:3306/yuanzhe?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                #                username: root
-#                #                password: fcbarca1899
-#                url: jdbc:mysql://192.168.8.168:3307/yuanzhe?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
-#                username: vc
-#                password: 123456
-            # 从库数据源
+            # 主库数据源 在用库
             master:
-                # 从数据源开关/默认关闭
-                enabled: true
                 url: jdbc:mysql://192.168.8.169:3306/kmsdb?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
                 password: Vc65364223
+                #                url: jdbc:mysql://localhost:3306/yuanzhe?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                #                username: root
+                #                password: fcbarca1899
+            #                url: jdbc:mysql://192.168.8.168:3307/yuanzhe?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+            #                username: vc
+            #                password: 123456
+            # 从库数据源 历史库
+            slave:
+                #                # 从数据源开关/默认关闭
+                enabled: true
+                url: jdbc:mysql://192.168.8.167:3306/kmstest?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: vc
+                password: 123456
+            # 备用库
+            backup:
+                enabled: true
+                url: jdbc:mysql://192.168.8.168:3307/kmstest?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                username: vc
+                password: 123456
             # 初始连接数
             initialSize: 5
             # 最小连接池数量

@@ -2,7 +2,9 @@ package com.ruoyi.system.controller;
 
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.SecretKey;
 import com.ruoyi.system.domain.vo.ApplyKeyVo;
 import com.ruoyi.system.service.SecretKeyService;
@@ -36,6 +38,7 @@ public class SecretKeyController {
      * @return 返回生成的公私钥对
      * TODO 对前端传入的type进行判断，根据字段来进行SM2算法生成密钥或者使用RSA算法生成密钥
      */
+    @Log(title = "在用库密钥申请", businessType = BusinessType.EXPORT)
     @PostMapping("/applyKeyPair")
     public AjaxResult applyKeyPair(@RequestBody ApplyKeyVo keyVo) {
         Map<String, String> keyPair = secretKeyService.applyKeyPair(keyVo.getType(), keyVo.getKeyName());
@@ -48,6 +51,7 @@ public class SecretKeyController {
      * @param id 密钥的唯一标识
      * @return 注销成功返回success，失败返回error
      */
+    @Log(title = "在用库密钥注销", businessType = BusinessType.DELETE)
     @PostMapping("/revokeKeyPair")
     public AjaxResult revokeKeyPair(@RequestParam(value = "id") String id) {
 
@@ -66,6 +70,7 @@ public class SecretKeyController {
      * @param keyName 密钥名称
      * @return 查询到的密钥对应的公私钥
      */
+    @Log(title = "非对称密钥获取", businessType = BusinessType.EXPORT)
     @GetMapping("/getKeyPairName")
     public AjaxResult getKeyPairName(@RequestParam String type, @RequestParam String keyName) {
         SecretKey keyPair = secretKeyService.getKeyPairName(type, keyName);
@@ -78,6 +83,7 @@ public class SecretKeyController {
      * @param id 前端传入的密钥id
      * @return 返回查询到的密钥对信息
      */
+    @Log(title = "非对称密钥获取", businessType = BusinessType.EXPORT)
     @GetMapping("/getKeyPair")
     public AjaxResult getKeyPair(@RequestParam String id) {
         SecretKey keyPair = secretKeyService.getKeyPair(id);
@@ -90,6 +96,7 @@ public class SecretKeyController {
      * @param backName 备份名称
      * @return
      */
+    @Log(title = "密钥备份", businessType = BusinessType.INSERT)
     @PostMapping("/backupStart")
     public AjaxResult backupStart(@RequestParam String backName) {
         secretKeyService.backupStart(backName);
@@ -101,6 +108,7 @@ public class SecretKeyController {
      *
      * @return
      */
+    @Log(title = "密钥移除", businessType = BusinessType.DELETE)
     @PostMapping("/moveExpireKey")
     public AjaxResult moveExpireKey() {
         secretKeyService.moveExpireKey();
@@ -113,6 +121,7 @@ public class SecretKeyController {
      * @param pageSize 页面大小
      * @return
      */
+    @Log(title = "获取所有的在用密钥对", businessType = BusinessType.EXPORT)
     @GetMapping("/getAllUseKeyPair")
     public AjaxResult getAllUseKeyPair(@RequestParam Long currentPage, @RequestParam Long pageSize) {
         IPage<SecretKey> list = secretKeyService.getAllUseKeyPair(currentPage, pageSize);
@@ -126,6 +135,7 @@ public class SecretKeyController {
      * @param pageSize 页面大小
      * @return
      */
+    @Log(title = "获取所有的在用密钥对", businessType = BusinessType.EXPORT)
     @GetMapping("/getKeyPariByCondition")
     public AjaxResult getKeyPariByCondition(@RequestParam Map<String, String> map, @RequestParam Long currentPage, @RequestParam Long pageSize) {
         IPage<SecretKey> list = secretKeyService.getKeyPariByCondition(map, currentPage, pageSize);

@@ -3,7 +3,9 @@ package com.ruoyi.system.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.system.domain.DataBackup;
 import com.ruoyi.system.service.DataBackupService;
 import com.ruoyi.system.utils.DbUtil;
@@ -41,7 +43,6 @@ public class DataBackupController {
     @GetMapping("/getAllData")
     public AjaxResult getAllData() {
 
-
         return AjaxResult.success();
     }
 
@@ -51,6 +52,7 @@ public class DataBackupController {
      * @param ip 前端传入的ip，其是在db.setting中配置的master-db-dev格式
      * @return 数据库名称集合
      */
+    @Log(title = "根据IP地址查询数据库集合", businessType = BusinessType.EXPORT)
     @GetMapping("/getDatabaseByIp")
     public AjaxResult getDatabaseByIp(@RequestParam String ip) {
         List<String> database = DbUtil.getDatabase(ip);
@@ -65,6 +67,7 @@ public class DataBackupController {
      * @param database 数据库名称
      * @return 数据表集合
      */
+    @Log(title = "根据数据库查询数据表集合", businessType = BusinessType.EXPORT)
     @GetMapping("/getDatatableByBase")
     public AjaxResult getDatatableByBase(@RequestParam String ip, @RequestParam String database) {
         List<String> datatable = DbUtil.getDatatable(ip, database);
@@ -83,6 +86,7 @@ public class DataBackupController {
      * @param datatable 数据表名
      * @return
      */
+    @Log(title = "执行数据库备份", businessType = BusinessType.INSERT)
     @GetMapping("/doBackupData")
     public AjaxResult doBackupData(@RequestParam String ip, @RequestParam String database, @RequestParam String datatable) {
         dataBackupService.doBackupData(ip, database, datatable);
@@ -95,12 +99,14 @@ public class DataBackupController {
      * @param fileName 要下载的sql文件的名称
      * @param response 获得servletOutputStream对象，从而将文件内容写到前端
      */
+    @Log(title = "从服务器下载sql文件", businessType = BusinessType.EXPORT)
     @GetMapping("/downloadFile")
     public AjaxResult downloadFile(@RequestParam String fileDirectory,@RequestParam String fileName,HttpServletResponse response){
         dataBackupService.downloadFile(fileDirectory,fileName,response);
         return AjaxResult.success();
     }
 
+    @Log(title = "数据备份记录", businessType = BusinessType.EXPORT)
     @GetMapping("/getDataBackupRecords")
     public AjaxResult getDataBackupRecords(@RequestParam Long currentPage, @RequestParam Long pageSize) {
         IPage<DataBackup> page = dataBackupService.page(new Page<>(currentPage, pageSize));
@@ -114,6 +120,7 @@ public class DataBackupController {
      * @param file 用户上传的要执行恢复的sql文件
      * @return
      */
+    @Log(title = "数据库恢复操作", businessType = BusinessType.IMPORT)
     @PostMapping("/restoreData")
     public AjaxResult restoreData(@RequestParam String ip, @RequestParam("file") MultipartFile file) {
 //        DbUtil.readFileAsString(file);
@@ -132,6 +139,7 @@ public class DataBackupController {
      * @param id 对应备份数据表中的记录的id，唯一标识，可以查询出该次备份产生的文件目录和文件名称
      * @return
      */
+    @Log(title = "根据记录id执行备份", businessType = BusinessType.INSERT)
     @PostMapping("/restoreDataById")
     public AjaxResult restoreDataById(@RequestParam String id,@RequestParam String ip){
         dataBackupService.restoreDataById(id,ip);
