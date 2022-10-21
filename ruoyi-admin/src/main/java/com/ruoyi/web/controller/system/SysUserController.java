@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.system;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
@@ -137,6 +138,8 @@ public class SysUserController extends BaseController
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
 
+        Date date = new Date(System.currentTimeMillis());
+        user.setCreateTime(date);
 
 
         return toAjax(userService.insertUser(user));
