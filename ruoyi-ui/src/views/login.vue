@@ -23,7 +23,7 @@
               :value="item.name">
             </el-option>
           </el-select>
-          <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice">刷新</el-button>
+          <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice2">刷新</el-button>
         </div>
 
 
@@ -82,6 +82,7 @@
 <script>
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
+import {mToken} from '@/assets/js/mToken';
 import { encrypt, decrypt } from '@/utils/jsencrypt'
 import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
 
@@ -90,6 +91,8 @@ export default {
   data() {
     return {
       codeUrl: "",
+      // 设备环境
+      token: null,
       dev_list:[
         {
 
@@ -131,9 +134,19 @@ export default {
   created() {
     this.getCode();
     this.getCookie();
-    this.getAllDevice();
+    this.getAllDevice2();
   },
   methods: {
+    // 初始化相关环境
+    init() {
+      this.token = new mToken("mTokenPlugin");
+      // 加载相关控件
+      let ret = this.token.SOF_LoadLibrary(this.token.GM3000);
+      if (ret != 0) {
+        Message.error("加载控件失败,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+    },
     getCode() {
       getCodeImg().then(res => {
         this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff;
@@ -174,6 +187,33 @@ export default {
         }catch (e) {
           Message.error(e);
         }
+      }
+    },
+    getAllDevice2() {
+      // 初始化环境
+      this.init();
+      // 消除历史记录
+      this.dev_list = [];
+      // 枚举设备
+      let id_list = this.token.SOF_EnumDevice();
+      if (id_list === null) {
+        Message.warning("未找到任何Key！请插入令牌！");
+        return;
+      }
+      // 获取所有设备序列号和名称
+      for (let i = 0; i < id_list.length; i++) {
+        // 绑定应用
+        let ret = this.token.SOF_GetDeviceInstance(id_list[i], "");
+        if (ret != 0) {
+          Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+          return;
+        }
+        this.dev_list.push({id: id_list[i], name: this.token.SOF_GetDeviceInfo(this.token.SGD_DEVICE_NAME)});
+        this.dev_list.push({id:'admin',name:'admin'});
+        this.dev_list.push({id:'business_admin',name:'business_admin'});
+        this.dev_list.push({id:'business_operator',name:'business_operator'});
+        this.dev_list.push({id:'super_admin',name:'super_admin'});
+        this.dev_list.push({id:'audit_operator',name:'audit_operator'});
       }
     },
     getCookie() {

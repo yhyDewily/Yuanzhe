@@ -74,97 +74,72 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/kms/applyBackupKey',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/applyBackupKey/index'),
-        name: 'Index',
-        meta: { title: '备用密钥申请', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/applyKey',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/applyKey/index'),
-        name: 'Index',
-        meta: { title: '密钥申请', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/backup',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/backup/index'),
-        name: 'Index',
-        meta: { title: '密钥备份', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/backup/log',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/backup/log'),
-        name: 'Index',
-        meta: { title: '密钥备份日志', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/dataBackup',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/dataBackup/index'),
-        name: 'Index',
-        meta: { title: '数据备份', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/getUseKey',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/getUseKey/index'),
-        name: 'Index',
-        meta: { title: '密钥查询', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/kms/getUseKey/statistics',
-    component: Layout,
-    redirect: 'noRedirect',
-    children: [
-      {
-        path: '',
-        component: () => import('@/views/key/getUseKey/keyStatistics'),
-        name: 'Index',
-        meta: { title: '密钥统计', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
+  //
+  // {
+  //   path: '/kms/backup',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/key/backup/index'),
+  //       name: 'Index',
+  //       meta: { title: '密钥备份', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/kms/backup/log',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/key/backup/log'),
+  //       name: 'Index',
+  //       meta: { title: '密钥备份日志', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/kms/dataBackup',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/key/dataBackup/index'),
+  //       name: 'Index',
+  //       meta: { title: '数据备份', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/kms/getUseKey',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/key/getUseKey/index'),
+  //       name: 'Index',
+  //       meta: { title: '密钥查询', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
+  // {
+  //   path: '/kms/getUseKey/statistics',
+  //   component: Layout,
+  //   redirect: 'noRedirect',
+  //   children: [
+  //     {
+  //       path: '',
+  //       component: () => import('@/views/key/getUseKey/keyStatistics'),
+  //       name: 'Index',
+  //       meta: { title: '密钥统计', icon: 'dashboard', affix: true }
+  //     }
+  //   ]
+  // },
   {
     path: '/user',
     component: Layout,
