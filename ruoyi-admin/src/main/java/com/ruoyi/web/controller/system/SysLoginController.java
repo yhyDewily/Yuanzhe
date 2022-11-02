@@ -6,10 +6,7 @@ import java.util.Set;
 import com.ruoyi.framework.datasource.DynamicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.ruoyi.common.constant.Constants;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysMenu;
@@ -51,6 +48,23 @@ public class SysLoginController
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
+        ajax.put(Constants.TOKEN, token);
+        return ajax;
+    }
+
+    /**
+     * 内部登录方法
+     *
+     * @param loginBody 登录信息
+     * @return 结果
+     */
+    @PostMapping("/internalLogin")
+    public AjaxResult internalLogin(@RequestBody LoginBody loginBody)
+    {
+
+        AjaxResult ajax = AjaxResult.success();
+        // 生成令牌
+        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword());
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }
