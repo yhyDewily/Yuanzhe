@@ -91,6 +91,19 @@ public class SecretKeyController {
     }
 
     /**
+     * CA调用接口根据id获取非对称密钥
+     *
+     * @param id 前端传入的密钥id
+     * @return 返回查询到的密钥对信息
+     */
+    @Log(title = "非对称密钥获取", businessType = BusinessType.EXPORT)
+    @PostMapping("/getKeyPairToCa")
+    public AjaxResult getKeyPairToCa(@RequestBody String id) {
+        SecretKey keyPair = secretKeyService.getKeyPair(id);
+        return AjaxResult.success("查询成功", keyPair);
+    }
+
+    /**
      * 密钥备份启动，备份过去一小时-当前时间段产生的密钥
      * TODO 该接口功能待定，后续需要修改
      * @param backName 备份名称

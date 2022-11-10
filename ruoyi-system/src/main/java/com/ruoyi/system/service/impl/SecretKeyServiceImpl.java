@@ -86,8 +86,13 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
         } else {
             // 将密钥是否可用字段设置为false
             secretKey.setValid(false);
+            int i = this.baseMapper.updateById(secretKey);
+            // 将密钥从在用库移除，插入到历史库中
+            List<SecretKey> list = new ArrayList<>();
+            list.add(secretKey);
+            SpringUtils.getAopProxy(this).insertKeyPairsToSlave(list);
             // 根据id进行更新，返回受影响的行数
-            return this.baseMapper.updateById(secretKey);
+            return i;
         }
     }
 
