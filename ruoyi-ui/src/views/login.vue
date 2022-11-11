@@ -85,6 +85,7 @@ import Cookies from "js-cookie";
 import {mToken} from '@/assets/js/mToken';
 import { encrypt, decrypt } from '@/utils/jsencrypt'
 import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
+import { Message } from 'element-ui';
 
 export default {
   name: "Login",

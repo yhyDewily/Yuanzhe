@@ -232,6 +232,7 @@ export const dynamicRoutes = [
 
 export default new Router({
   mode: 'history', // 去掉url中的#
+  base: '/kms/',
   scrollBehavior: () => ({ y: 0 }),
   routes: constantRoutes
 })
