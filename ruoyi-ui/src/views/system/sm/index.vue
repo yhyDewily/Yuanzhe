@@ -7,13 +7,15 @@
           <div style="margin: 20px;"></div>
           <el-form label-position="top" label-width="80px" :model="dataFormSystem" style="width:50%">
             <el-form-item label="密钥（使用 SM4_CBC 算法时填写）">
-              <el-input v-model="dataFormSystem.key" :disabled="dataFormSystem.algorithm == 'SM3'? true: false"/>
+              <el-input v-model="dataFormSystem.key" placeholder="请输入十六位字符"
+                        :disabled="dataFormSystem.algorithm == 'SM3'? true: false"/>
             </el-form-item>
             <el-form-item label="IV（使用 SM4_CBC 算法时填写）">
-              <el-input v-model="dataFormSystem.iv" :disabled="dataFormSystem.algorithm == 'SM3'? true: false"/>
+              <el-input v-model="dataFormSystem.iv" placeholder="请输入十六位字符"
+                        :disabled="dataFormSystem.algorithm == 'SM3'? true: false"/>
             </el-form-item>
             <el-form-item label="待加密/解密/摘要内容">
-              <el-input v-model="dataFormSystem.text" type="textarea"
+              <el-input placeholder="请输入待加密/解密/摘要内容" v-model="dataFormSystem.text" type="textarea"
                         :autosize="{ minRows: 2, maxRows: 4}"/>
             </el-form-item>
             <el-form-item label="算法选择">
@@ -66,13 +68,14 @@
 
             </el-form-item>
             <el-form-item label="密钥（使用 SM4_CBC 算法时填写）">
-              <el-input v-model="dataFormUkey.key" :disabled="dataFormUkey.algorithm == 'SM3'"/>
+              <el-input v-model="dataFormUkey.key" placeholder="请输入十六位字符" :disabled="dataFormUkey.algorithm == 'SM3'"/>
             </el-form-item>
             <el-form-item label="IV（使用 SM4_CBC 算法时填写）">
-              <el-input v-model="dataFormUkey.iv" :disabled="dataFormUkey.algorithm == 'SM3'"/>
+              <el-input v-model="dataFormUkey.iv" placeholder="请输入十六位字符" :disabled="dataFormUkey.algorithm == 'SM3'"/>
             </el-form-item>
             <el-form-item label="待加密/解密/摘要内容">
-              <el-input v-model="dataFormUkey.text" type="textarea"
+              <el-input placeholder="请输入待加密/解密/摘要内容"
+                        v-model="dataFormUkey.text" type="textarea"
                         :autosize="{ minRows: 2, maxRows: 4}"/>
             </el-form-item>
             <el-form-item label="算法选择">
@@ -181,7 +184,6 @@ export default {
         this.dev_list.push({id: id_list[i], name: this.token.SOF_GetDeviceInfo(this.token.SGD_DEVICE_NAME)});
       }
     },
-    // 输入框校验
 
     /** 系统部分的加解密 */
     encryptOrAbstarctBySys() {
