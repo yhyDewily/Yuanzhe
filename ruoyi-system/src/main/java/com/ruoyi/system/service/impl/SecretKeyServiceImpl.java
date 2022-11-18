@@ -1,20 +1,14 @@
 package com.ruoyi.system.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.annotation.DataSource;
-import com.ruoyi.common.config.datasource.DynamicDataSourceContextHolder;
 import com.ruoyi.common.enums.DataSourceType;
-import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.system.domain.SecretKey;
-import com.ruoyi.system.domain.vo.KeyPairVo;
-import com.ruoyi.system.domain.vo.KeyTypePair;
 import com.ruoyi.system.mapper.SecretKeyMapper;
-//import com.ruoyi.system.service.ISecretKeyService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.service.SecretKeyService;
 import com.ruoyi.system.utils.SM2KeyPair;
 import com.ruoyi.system.utils.SM2Util;
@@ -22,11 +16,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <p>
@@ -68,7 +60,8 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
         secretKey.setPublicKey(publicKey);
         secretKey.setPrivateKey(privateKey);
 //        secretKey.setCreateTime(creatTime);
-        secretKey.setSerialNumber("123456789");
+        String serialNumber = new BigInteger(32,new Random()).toString(16);
+        secretKey.setSerialNumber(serialNumber);
         secretKey.setKeyType(type);
         this.save(secretKey);
         return keyMap;
@@ -93,8 +86,13 @@ public class SecretKeyServiceImpl extends ServiceImpl<SecretKeyMapper, SecretKey
         } else {
             // 将密钥是否可用字段设置为false
             secretKey.setValid(false);
+            int i = this.baseMapper.updateById(secretKey);
+            // 将密钥从在用库移除，插入到历史库中
+            List<SecretKey> list = new ArrayList<>();
+            list.add(secretKey);
+            SpringUtils.getAopProxy(this).insertKeyPairsToSlave(list);
             // 根据id进行更新，返回受影响的行数
-            return this.baseMapper.updateById(secretKey);
+            return i;
         }
     }
 

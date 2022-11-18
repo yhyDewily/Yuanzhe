@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * <p>
@@ -19,12 +20,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @TableName("kms_backup_secret_key")
+@Accessors(chain = true)
 public class BackupSecretKey implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    @TableId(value = "id")
+    private String id;
 
     /**
      * 密钥是否对称，1为对称密钥，0为非对称密钥
