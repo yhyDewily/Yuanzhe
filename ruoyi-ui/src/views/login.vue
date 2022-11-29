@@ -291,10 +291,11 @@ export default {
           if (this.dev_list == '' && this.loginForm.username != 'admin') {
             this.$message.error("请先插入设备");
           }
+
+          this.exportSignCert();
           if (this.loginForm.certData == '' && this.loginForm.username != 'admin') {
             this.$message.error("请先插入设备");
           }
-          this.exportSignCert();
           console.log("loginform");
           console.log(this.loginForm);
           this.$store.dispatch("Login", this.loginForm).then(() => {
