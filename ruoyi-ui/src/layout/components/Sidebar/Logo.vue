@@ -35,7 +35,7 @@ export default {
   },
   data() {
     return {
-      title: '证书管理系统',
+      title: '密钥管理系统',
       logo: logoImg
     }
   }
