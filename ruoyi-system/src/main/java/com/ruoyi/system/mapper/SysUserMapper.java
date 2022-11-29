@@ -119,4 +119,12 @@ public interface SysUserMapper
      * @return 结果
      */
     public SysUser checkEmailUnique(String email);
+
+    /**
+     * 校验ukeyId是否唯一
+     *
+     * @param ukeyId 用户ukeyId
+     * @return 结果
+     */
+    public int checkUkeyIdUnique(String ukeyId);
 }

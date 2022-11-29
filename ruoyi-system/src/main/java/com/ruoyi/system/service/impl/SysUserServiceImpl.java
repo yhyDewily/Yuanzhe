@@ -68,7 +68,7 @@ public class SysUserServiceImpl implements ISysUserService
      * @return 用户信息集合信息
      */
     @Override
-//    @DataScope(userAlias = "u")
+    @DataScope(userAlias = "u")
     public List<SysUser> selectUserList(SysUser user)
     {
         List<SysUser> sysUsers = userMapper.selectUserList(user);
@@ -186,6 +186,16 @@ public class SysUserServiceImpl implements ISysUserService
     public String checkUserNameUnique(String userName)
     {
         int count = userMapper.checkUserNameUnique(userName);
+        if (count > 0)
+        {
+            return UserConstants.NOT_UNIQUE;
+        }
+        return UserConstants.UNIQUE;
+    }
+
+    @Override
+    public String checkUkeyIdUnique(SysUser user) {
+        int count = userMapper.checkUkeyIdUnique(user.getUkeyId());
         if (count > 0)
         {
             return UserConstants.NOT_UNIQUE;

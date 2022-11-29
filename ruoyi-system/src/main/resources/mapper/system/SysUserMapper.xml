@@ -22,6 +22,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result property="updateBy"     column="update_by"    />
 		<result property="updateTime"   column="update_time"  />
 		<result property="remark"       column="remark"       />
+		<result property="certSn"       column="cert_sn"       />
+		<result property="effectiveTime"      column="effective_time"       />
+		<result property="expirationTime"      column="expiration_time"       />
 		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
 	</resultMap>
 
@@ -36,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 	
 	<sql id="selectUserVo">
-        select u.user_id, u.dept_id, u.ukey_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
+        select u.user_id, u.dept_id, u.ukey_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,u.effective_time,u.expiration_time,u.cert_sn,
         d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status,
         r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
         from sys_user u
@@ -46,7 +49,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
     
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.nick_name, u.ukey_id, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark from sys_user u
+		select u.user_id, u.nick_name, u.ukey_id, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark ,u.effective_time,u.expiration_time,u.cert_sn from sys_user u
 		where u.del_flag = '0'
 		<if test="userId != null and userId != 0">
 			AND u.user_id = #{userId}
@@ -74,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectAllocatedList" parameterType="SysUser" resultMap="SysUserResult">
-	    select distinct u.user_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
+	    select distinct u.user_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time,u.effective_time,u.expiration_time,u.cert_sn
 	    from sys_user u
 			 left join sys_user_role ur on u.user_id = ur.user_id
 			 left join sys_role r on r.role_id = ur.role_id
@@ -90,7 +93,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="selectUnallocatedList" parameterType="SysUser" resultMap="SysUserResult">
-	    select distinct u.user_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time
+	    select distinct u.user_id, u.user_name, u.nick_name, u.email, u.phonenumber, u.status, u.create_time,u.effective_time,u.expiration_time,u.cert_sn
 	    from sys_user u
 			 left join sys_user_role ur on u.user_id = ur.user_id
 			 left join sys_role r on r.role_id = ur.role_id
@@ -128,7 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select user_id, email from sys_user where email = #{email} limit 1
 	</select>
     <select id="selectSubUserListByRoleId" parameterType="Long" resultMap="SysUserResult">
-		select uo.user_id, uo.nick_name, uo.user_name, uo.email, uo.phonenumber, uo.password, uo.sex, uo.status, uo.del_flag, uo.login_ip, uo.login_date, uo.create_by, uo.create_time, uo.remark
+		select uo.user_id, uo.nick_name, uo.user_name, uo.email, uo.phonenumber, uo.password, uo.sex, uo.status, uo.del_flag, uo.login_ip, uo.login_date, uo.create_by, uo.create_time, uo.remark,uo.effective_time,uo.expiration_time,uo.cert_sn
 		from sys_user uo
 		left join sys_user_role uro on uo.user_id=uro.user_id
 # 		where role_id=
@@ -149,6 +152,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">status,</if>
  			<if test="createBy != null and createBy != ''">create_by,</if>
  			<if test="remark != null and remark != ''">remark,</if>
+			<if test="effectiveTime != null">effective_time,</if>
+			<if test="expirationTime != null">expiration_time,</if>
+			<if test="certSn != null and certSn != ''">cert_sn,</if>
  			create_time
  		)values(
  			<if test="userId != null and userId != ''">#{userId},</if>
@@ -163,6 +169,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="status != null and status != ''">#{status},</if>
  			<if test="createBy != null and createBy != ''">#{createBy},</if>
  			<if test="remark != null and remark != ''">#{remark},</if>
+			<if test="effectiveTime != null">#{effectiveTime},</if>
+			<if test="expirationTime != null">#{expirationTime},</if>
+			<if test="certSn != null and certSn != ''">#{certSn},</if>
  			#{createTime}
  		)
 	</insert>
@@ -182,6 +191,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="loginDate != null">login_date = #{loginDate},</if>
  			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
  			<if test="remark != null">remark = #{remark},</if>
+			<if test="certSn != null and certSn != ''">cert_sn = #{certSn},</if>
  			update_time = sysdate()
  		</set>
  		where user_id = #{userId}
@@ -205,5 +215,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			#{userId}
         </foreach> 
  	</delete>
+
+	<select id="checkUkeyIdUnique" parameterType="String" resultType="java.lang.Integer">
+		select count(1) from sys_user where ukey_id = #{ukeyId} and del_flag = '0' limit 1
+	</select>
 	
 </mapper> 
