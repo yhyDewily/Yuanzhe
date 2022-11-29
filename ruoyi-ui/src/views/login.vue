@@ -209,12 +209,13 @@ export default {
           return;
         }
         this.dev_list.push({id: id_list[i], name: this.token.SOF_GetDeviceInfo(this.token.SGD_DEVICE_NAME)});
-        this.dev_list.push({id:'admin',name:'admin'});
-        this.dev_list.push({id:'business_admin',name:'business_admin'});
-        this.dev_list.push({id:'business_operator',name:'business_operator'});
-        this.dev_list.push({id:'super_admin',name:'super_admin'});
-        this.dev_list.push({id:'audit_operator',name:'audit_operator'});
+
       }
+      this.dev_list.push({id:'admin',name:'admin'});
+      this.dev_list.push({id:'business_admin',name:'business_admin'});
+      this.dev_list.push({id:'business_operator',name:'business_operator'});
+      this.dev_list.push({id:'super_admin',name:'super_admin'});
+      this.dev_list.push({id:'audit_operator',name:'audit_operator'});
     },
     getCookie() {
       const username = Cookies.get("username");

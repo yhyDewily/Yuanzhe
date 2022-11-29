@@ -112,12 +112,21 @@
           <right-toolbar :showSearch.sync="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
         </el-row>
 
-        <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
+        <el-table v-loading="loading"
+                  :data="userList"
+                  :border="true"
+                  :stripe="true"
+                  @selection-change="handleSelectionChange">
 <!--          <el-table-column type="selection" width="50" align="center" />-->
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" sortable/>
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="ukeyID" align="center" key="ukeyId" prop="ukeyId" v-if="columns[2].visible" width="200px"/>
+<!--          <el-table-column label="用户昵称" align="center" key="nickName" prop="nickName" v-if="columns[2].visible" :show-overflow-tooltip="true" />-->
+          <el-table-column label="设备编号" align="center" key="ukeyId" prop="ukeyId" v-if="columns[2].visible" width="200px"/>
+          <el-table-column label="角色" align="center" key="roleId" prop="roleId">
+            <template slot-scope="scope">
+              <dict-tag :options="dict.type.role" :value="scope.row.roleId"/>
+            </template>
+          </el-table-column>
 <!--          <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />-->
           <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
 <!--            <template slot-scope="scope">-->
@@ -146,6 +155,16 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
+          <el-table-column label="生效时间" align="center" prop="effectiveTime"  width="160">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.effectiveTime) }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="失效时间" align="center" prop="expirationTime"  width="160">
+            <template slot-scope="scope">
+              <span>{{ parseTime(scope.row.expirationTime) }}</span>
+            </template>
+          </el-table-column>
         <el-table-column
           label="操作"
           align="center"
@@ -206,28 +225,73 @@
 <!--        </el-row>-->
 <!--      -->
         <el-row>
+          <el-col :span="20">
+            <el-form-item label="令牌" class="selectForm" prop="ukeyId"  v-if="form.userId == undefined">
 
-            <el-form-item v-if="form.userId == undefined" label="设备名称" prop="userName">
-              <div class="selectForm">
-                <el-select v-model="form.userName" placeholder="请选择" :required="true">
-                  <el-option
-                    v-for="item in dev_list"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.name">
-                  </el-option>
-                </el-select>
-                <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice">刷新</el-button>
-              </div>
-<!--              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />-->
-            </el-form-item>
 
-            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
+
+
+              <el-select v-model="form.ukeyId" placeholder="请选择设备编号" :required="true" @change="getname">
+                <el-option
+                  v-for="item in dev_list"
+                  :key="item.id"
+                  :label="item.id"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+
+
+
+              <el-button size="mini" type="success" style="margin-left:10px;height:40%" @click="getAllDevice2">刷新</el-button>
+
+
+              <!--                          </div>-->
+
             </el-form-item>
+          </el-col>
+          <el-col :span="12">
+
+          </el-col>
 
         </el-row>
+
         <el-row>
+          <el-col :span="12">
+            <!--            <el-form-item label="用户昵称" prop="nickName">-->
+            <!--              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />-->
+            <!--            </el-form-item>-->
+          </el-col>
+          <!--          <el-col :span="12">-->
+          <!--            <el-form-item label="归属部门" prop="deptId">-->
+          <!--              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
+          <!--        </el-row>-->
+          <!--        <el-row>-->
+          <!--          <el-col :span="12">-->
+          <!--            <el-form-item label="手机号码" prop="phonenumber">-->
+          <!--              <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
+          <!--          <el-col :span="12">-->
+          <!--            <el-form-item label="邮箱" prop="email">-->
+          <!--              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />-->
+          <!--            </el-form-item>-->
+          <!--          </el-col>-->
+          <!--        </el-row>-->
+          <!--        <el-row>-->
+          <el-col :span="12">
+
+            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password autocomplete="new-password"/>
+            </el-form-item>
+          </el-col>
+
 
           <el-col :span="12">
             <el-form-item label="状态">
@@ -236,21 +300,22 @@
                   v-for="dict in dict.type.sys_normal_disable"
                   :key="dict.value"
                   :label="dict.value"
-                >{{ dict.label }}</el-radio>
+                >{{dict.label}}</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
+
           <el-col :span="12">
-            <el-form-item label="角色" prop="role">
-              <el-select v-model="roleIds" multiple placeholder="请选择" multiple-limit="1">
+            <el-form-item label="角色" v-if="form.userId == undefined">
+              <el-select v-model="form.roleIds" multiple placeholder="请选择角色" multiple-limit="1">
                 <el-option
                   v-for="item in roleOptions"
                   :key="item.roleId"
                   :label="item.roleName"
                   :value="item.roleId"
-                  :disabled="item.status === 1"
+                  :disabled="item.status == 1"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -263,6 +328,33 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+
+          <el-form-item v-if="form.userId == undefined" label="生效时间" prop="effectiveTime">
+            <el-date-picker clearable
+                            v-model="form.effectiveTime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="请选择生效时间">
+            </el-date-picker>
+          </el-form-item>
+        </el-row>
+        <el-row>
+
+          <el-form-item v-if="form.userId == undefined" label="失效时间" prop="expirationTime">
+            <el-date-picker clearable
+                            v-model="form.expirationTime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="请选择失效时间">
+            </el-date-picker>
+
+          </el-form-item>
+
+        </el-row>
+        <div>
+          **新增操作员必须已经由外部CA签发过证书**
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -311,7 +403,7 @@ import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
 
 export default {
   name: "User",
-  dicts: ['sys_normal_disable', 'sys_user_sex'],
+  dicts: ['sys_normal_disable', 'sys_user_sex','role'],
   components: { Treeselect },
   data() {
     return {
@@ -323,6 +415,9 @@ export default {
       // 选中数组
       ids: [],
       dev_list:[],
+      outputCertData:[],
+      dev_id:'',
+      dev_name:'',
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -390,7 +485,16 @@ export default {
         //   { required: true, message: "用户名称不能为空", trigger: "blur" },
         //   { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
         // ],
-
+        userName: [
+          { required: true, message: "用户名称不能为空", trigger: "blur" },
+          { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
+        ],
+        effectiveTime: [
+          { required: true, message: "生效时间不能为空", trigger: "blur" }
+        ],
+        expirationTime: [
+          { required: true, message: "失效时间不能为空", trigger: "blur" }
+        ],
         password: [
           { required: true, message: "用户密码不能为空", trigger: "blur" },
           { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' }
@@ -430,9 +534,9 @@ export default {
       // console.log(userName)
       this.getList();
       this.getConfigKey("sys.user.initPassword").then(response => {
-        this.initPassword = response.msg;
+        this.initPassword = '';
       });
-      this.getAllDevice();
+      this.getAllDevice2();
 
 
 
@@ -506,6 +610,102 @@ export default {
         }catch (e) {
           Message.error(e);
         }
+      }
+    },
+    /**获得选中ukeyneme**/
+    getname: function(val) {
+      for (let i = 0; i < this.dev_list.length; i++) {
+        if (this.dev_list[i].id == val) {
+
+          // this.form.userName = this.dev_list[i].name;
+
+          this.dev_id = this.dev_list[i].id
+          this.dev_name = this.dev_list[i].name
+
+          console.log("dev_id："+this.dev_id)
+          console.log("dev_name："+this.dev_name)
+          break;
+        }
+      }
+    },
+    getAllDevice2() {
+      // 初始化环境
+      this.init();
+      // 消除历史记录
+      this.dev_list = [];
+      // 枚举设备
+      let id_list = this.token.SOF_EnumDevice();
+      if (id_list === null) {
+        Message.warning("未找到任何Key！请插入令牌！");
+        return;
+      }
+      // 获取所有设备序列号和名称
+      for (let i = 0; i < id_list.length; i++) {
+        // 绑定应用
+        let ret = this.token.SOF_GetDeviceInstance(id_list[i], "");
+        if (ret != 0) {
+          Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+          return;
+        }
+        this.dev_list.push({id: id_list[i], name: this.token.SOF_GetDeviceInfo(this.token.SGD_DEVICE_NAME)});
+
+      }
+    },
+    // 初始化相关环境
+    init() {
+      this.token = new mToken("mTokenPlugin");
+      // 加载相关控件
+      let ret = this.token.SOF_LoadLibrary(this.token.GM3000);
+      if (ret != 0) {
+        Message.error("加载控件失败,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+    },
+    // 获取签名证书（Base64 字符串）
+    exportSignCert(){
+      // if(this.container === ''){
+      //   Message.warning("请选择容器！");
+      //   return;
+      // }
+      // 绑定应用
+      let ret = this.token.SOF_GetDeviceInstance(this.form.ukeyId, "");
+      console.log("绑定应用")
+      if (ret != 0) {
+        Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+      // 容器名称
+      let container = 'test'
+      //  签名证书为 1 , 加密证书为 0
+      let certType = 1
+      this.outputCertData = this.token.SOF_ExportUserCert(container, certType);
+      console.log("证书base64")
+      console.log(this.outputCertData)
+      this.form.certSn = this.outputCertData
+      if(this.outputCertData === ''){
+        Message.error("获取证书信息失败,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+    },
+    // 修改设备名称
+    editDevName() {
+      if (this.dev_id == '') {
+        Message.warning('请选择设备！');
+        return;
+      }
+      // 绑定实例
+      let ret = this.token.SOF_GetDeviceInstance(this.dev_id, "");
+      if (ret != 0) {
+        Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+      // 修改设备名称
+      let ret1 = this.token.SOF_SetLabel(this.dev_name);
+      if (ret1 != 0) {
+        // Message.error("设置mToken名称失败,错误码：" + this.token.SOF_GetLastError());
+        return;
+      } else {
+        // Message.success("设置mToken名称成功！");
       }
     },
     menuShowMethod(row) {
