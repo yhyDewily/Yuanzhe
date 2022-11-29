@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import javax.validation.constraints.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -85,6 +86,23 @@ public class SysUser extends BaseEntity
 
     /** 角色ID */
     private Long roleId;
+
+    /** 最后登录时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "生效时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date effectiveTime;
+
+    /** 最后登录时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Excel(name = "失效时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
+    private Date expirationTime;
+
+    /**
+     * 证书序列号
+     */
+    private String certSn;
+
+
 
     public SysUser()
     {

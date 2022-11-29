@@ -81,6 +81,14 @@ public interface ISysUserService
     public String checkUserNameUnique(String userName);
 
     /**
+     * 校验ukeyId是否唯一
+     *
+     * @param user 用户信息
+     * @return 结果
+     */
+    public String checkUkeyIdUnique(SysUser user);
+
+    /**
      * 校验手机号码是否唯一
      *
      * @param user 用户信息

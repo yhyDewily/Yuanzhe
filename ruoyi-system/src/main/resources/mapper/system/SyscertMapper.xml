@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SyscertMapper">
+
+    <resultMap type="Syscert" id="SyscertResult">
+        <result property="certSn"    column="CERT_SN"    />
+        <result property="certName"    column="CERT_NAME"    />
+        <result property="certDn"    column="CERT_DN"    />
+        <result property="certEntity"    column="CERT_ENTITY"    />
+        <result property="certType"    column="CERT_TYPE"    />
+        <result property="certStatus"    column="CERT_STATUS"    />
+        <result property="keyAlg"    column="KEY_ALG"    />
+        <result property="keyLen"    column="KEY_LEN"    />
+        <result property="notbefore"    column="NOTBEFORE"    />
+        <result property="notafter"    column="NOTAFTER"    />
+        <result property="validity"    column="VALIDITY"    />
+        <result property="deviceId"    column="DEVICE_ID"    />
+        <result property="hardkeyId"    column="HARDKEY_ID"    />
+        <result property="importTime"    column="IMPORT_TIME"    />
+        <result property="revokeTime"    column="REVOKE_TIME"    />
+        <result property="remark"    column="REMARK"    />
+        <result property="reason"    column="REASON"    />
+        <result property="reasonDesc"    column="REASON_DESC"    />
+    </resultMap>
+
+    <sql id="selectSyscertVo">
+        select CERT_SN, CERT_NAME, CERT_DN, CERT_ENTITY, CERT_TYPE, CERT_STATUS, KEY_ALG, KEY_LEN, NOTBEFORE, NOTAFTER, VALIDITY, DEVICE_ID, HARDKEY_ID, IMPORT_TIME, REVOKE_TIME, REMARK, REASON, REASON_DESC from syscert
+    </sql>
+
+    <select id="selectSyscertList" parameterType="Syscert" resultMap="SyscertResult">
+        <include refid="selectSyscertVo"/>
+        <where>
+            <if test="certSn != null  and certSn != ''"> and CERT_SN = #{certSn}</if>
+            <if test="certName != null  and certName != ''"> and CERT_NAME like concat('%', #{certName}, '%')</if>
+            <if test="certDn != null  and certDn != ''"> and CERT_DN = #{certDn}</if>
+            <if test="certEntity != null  and certEntity != ''"> and CERT_ENTITY = #{certEntity}</if>
+            <if test="certType != null  and certType != ''"> and CERT_TYPE = #{certType}</if>
+            <if test="certStatus != null  and certStatus != ''"> and CERT_STATUS = #{certStatus}</if>
+            <if test="keyAlg != null  and keyAlg != ''"> and KEY_ALG = #{keyAlg}</if>
+            <if test="keyLen != null "> and KEY_LEN = #{keyLen}</if>
+            <if test="notbefore != null "> and NOTBEFORE = #{notbefore}</if>
+            <if test="notafter != null "> and NOTAFTER = #{notafter}</if>
+            <if test="validity != null "> and VALIDITY = #{validity}</if>
+            <if test="deviceId != null  and deviceId != ''"> and DEVICE_ID = #{deviceId}</if>
+            <if test="hardkeyId != null "> and HARDKEY_ID = #{hardkeyId}</if>
+            <if test="importTime != null "> and IMPORT_TIME = #{importTime}</if>
+            <if test="revokeTime != null "> and REVOKE_TIME = #{revokeTime}</if>
+            <if test="remark != null  and remark != ''"> and REMARK = #{remark}</if>
+            <if test="reason != null  and reason != ''"> and REASON = #{reason}</if>
+            <if test="reasonDesc != null  and reasonDesc != ''"> and REASON_DESC = #{reasonDesc}</if>
+        </where>
+    </select>
+
+    <select id="selectSyscertByCertSn" parameterType="String" resultMap="SyscertResult">
+        <include refid="selectSyscertVo"/>
+        where CERT_SN = #{certSn}
+    </select>
+
+    <select id="checkCertSnUnique" parameterType="String" resultType="int">
+		select count(1) from syscert where CERT_SN = #{certSn} and CERT_STATUS = 'INUSE' limit 1
+	</select>
+
+    <select id="checkUkeyIdUnique" parameterType="String" resultType="java.lang.Integer">
+        select count(1) from syscert where DEVICE_ID = #{ukeyId} and CERT_STATUS = 'INUSE' limit 1
+    </select>
+
+    <insert id="insertSyscert" parameterType="Syscert">
+        insert into syscert
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="certSn != null and certSn != ''">CERT_SN,</if>
+            <if test="certName != null">CERT_NAME,</if>
+            <if test="certDn != null">CERT_DN,</if>
+            <if test="certEntity != null">CERT_ENTITY,</if>
+            <if test="certType != null">CERT_TYPE,</if>
+            <if test="certStatus != null">CERT_STATUS,</if>
+            <if test="keyAlg != null">KEY_ALG,</if>
+            <if test="keyLen != null">KEY_LEN,</if>
+            <if test="notbefore != null">NOTBEFORE,</if>
+            <if test="notafter != null">NOTAFTER,</if>
+            <if test="validity != null">VALIDITY,</if>
+            <if test="deviceId != null">DEVICE_ID,</if>
+            <if test="hardkeyId != null">HARDKEY_ID,</if>
+            <if test="importTime != null">IMPORT_TIME,</if>
+            <if test="revokeTime != null">REVOKE_TIME,</if>
+            <if test="remark != null">REMARK,</if>
+            <if test="reason != null">REASON,</if>
+            <if test="reasonDesc != null">REASON_DESC,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="certSn != null and certSn != ''">#{certSn},</if>
+            <if test="certName != null">#{certName},</if>
+            <if test="certDn != null">#{certDn},</if>
+            <if test="certEntity != null">#{certEntity},</if>
+            <if test="certType != null">#{certType},</if>
+            <if test="certStatus != null">#{certStatus},</if>
+            <if test="keyAlg != null">#{keyAlg},</if>
+            <if test="keyLen != null">#{keyLen},</if>
+            <if test="notbefore != null">#{notbefore},</if>
+            <if test="notafter != null">#{notafter},</if>
+            <if test="validity != null">#{validity},</if>
+            <if test="deviceId != null">#{deviceId},</if>
+            <if test="hardkeyId != null">#{hardkeyId},</if>
+            <if test="importTime != null">#{importTime},</if>
+            <if test="revokeTime != null">#{revokeTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="reason != null">#{reason},</if>
+            <if test="reasonDesc != null">#{reasonDesc},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSyscert" parameterType="Syscert">
+        update syscert
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="certName != null">CERT_NAME = #{certName},</if>
+            <if test="certDn != null">CERT_DN = #{certDn},</if>
+            <if test="certEntity != null">CERT_ENTITY = #{certEntity},</if>
+            <if test="certType != null">CERT_TYPE = #{certType},</if>
+            <if test="certStatus != null">CERT_STATUS = #{certStatus},</if>
+            <if test="keyAlg != null">KEY_ALG = #{keyAlg},</if>
+            <if test="keyLen != null">KEY_LEN = #{keyLen},</if>
+            <if test="notbefore != null">NOTBEFORE = #{notbefore},</if>
+            <if test="notafter != null">NOTAFTER = #{notafter},</if>
+            <if test="validity != null">VALIDITY = #{validity},</if>
+            <if test="deviceId != null">DEVICE_ID = #{deviceId},</if>
+            <if test="hardkeyId != null">HARDKEY_ID = #{hardkeyId},</if>
+            <if test="importTime != null">IMPORT_TIME = #{importTime},</if>
+            <if test="revokeTime != null">REVOKE_TIME = #{revokeTime},</if>
+            <if test="remark != null">REMARK = #{remark},</if>
+            <if test="reason != null">REASON = #{reason},</if>
+            <if test="reasonDesc != null">REASON_DESC = #{reasonDesc},</if>
+        </trim>
+        where CERT_SN = #{certSn}
+    </update>
+
+    <delete id="deleteSyscertByCertSn" parameterType="String">
+        delete from syscert where CERT_SN = #{certSn}
+    </delete>
+
+    <delete id="deleteSyscertByCertSns" parameterType="String">
+        delete from syscert where CERT_SN in
+        <foreach item="certSn" collection="array" open="(" separator="," close=")">
+            #{certSn}
+        </foreach>
+    </delete>
+</mapper>

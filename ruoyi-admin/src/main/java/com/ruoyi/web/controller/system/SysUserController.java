@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
+import com.ruoyi.system.service.ISyscertService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -51,6 +52,9 @@ public class SysUserController extends BaseController
 
     @Autowired
     private ISysPostService postService;
+
+    @Autowired
+    private ISyscertService syscertService;
 
     /**
      * 获取用户列表
@@ -140,6 +144,7 @@ public class SysUserController extends BaseController
 
         Date date = new Date(System.currentTimeMillis());
         user.setCreateTime(date);
+
 
 
         return toAjax(userService.insertUser(user));
