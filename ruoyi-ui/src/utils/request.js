@@ -88,7 +88,7 @@ service.interceptors.response.use(res => {
         store.dispatch('LogOut').then(() => {
           // 如果是登录页面不需要重新加载
           if (window.location.hash.indexOf("#/login") != 0) {
-            location.href = '/index';
+            location.href = '/kms/index';
           }
         })
       }).catch(() => {
