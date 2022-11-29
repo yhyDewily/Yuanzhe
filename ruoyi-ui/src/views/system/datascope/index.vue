@@ -64,8 +64,18 @@
 
     <el-table v-loading="loading" :data="datascopeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="角色" align="center" prop="roleIdLabel" />
-      <el-table-column label="拥有下属角色" align="center" prop="subRoleIdLabel" />
+<!--      <el-table-column label="角色" align="center" prop="roleId" />-->
+      <el-table-column label="角色" align="center" prop="roleId">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_role_enum" :value="scope.row.roleId"/>
+        </template>
+      </el-table-column>
+<!--      <el-table-column label="拥有下属角色" align="center" prop="subRoleId" />-->
+      <el-table-column label="拥有下属角色" align="center" prop="subRoleId">
+        <template slot-scope="scope">
+          <dict-tag :options="dict.type.sys_role_enum" :value="scope.row.subRoleId"/>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -180,23 +190,23 @@ export default {
         console.log(this.datascopeList)
         console.log(this.dict.type.sys_role_enum)
         const role_dict = this.dict.type.sys_role_enum
-        for (let i=0;i<this.datascopeList.length;i++) {
-          if (this.datascopeList[i].roleId === '12') {
-            this.datascopeList[i].roleIdLabel = "司法专员"
-          }
-          else {
-            this.datascopeList[i].roleIdLabel = role_dict[this.datascopeList[i].roleId-2].label
-          }
-          if (this.datascopeList[i].subRoleId === 12) {
-            this.datascopeList[i].subRoleIdLabel = "司法专员"
-          }
-          else{
-
-            this.datascopeList[i].subRoleIdLabel = role_dict[this.datascopeList[i].subRoleId-2].label
-          }
-
-
-        }
+        // for (let i=0;i<this.datascopeList.length;i++) {
+        //   if (this.datascopeList[i].roleId === '12') {
+        //     this.datascopeList[i].roleIdLabel = "司法专员"
+        //   }
+        //   else {
+        //     this.datascopeList[i].roleIdLabel = role_dict[this.datascopeList[i].roleId-2].label
+        //   }
+        //   if (this.datascopeList[i].subRoleId === 12) {
+        //     this.datascopeList[i].subRoleIdLabel = "司法专员"
+        //   }
+        //   else{
+        //
+        //     this.datascopeList[i].subRoleIdLabel = role_dict[this.datascopeList[i].subRoleId-2].label
+        //   }
+        //
+        //
+        // }
         this.total = response.total;
         this.loading = false;
       });
