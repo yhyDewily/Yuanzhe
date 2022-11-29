@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
+import com.ruoyi.system.domain.Syscert;
 import com.ruoyi.system.domain.to.CertDataTO;
 import com.ruoyi.system.service.ISyscertService;
 import com.ruoyi.system.utils.GetCertInfo;
@@ -197,6 +198,16 @@ public class SysUserController extends BaseController
         {
             return error("当前用户不能删除");
         }
+        for (Long userId : userIds) {
+            SysUser sysUser = userService.selectUserById(userId);
+            String certSn = sysUser.getCertSn();
+
+            // 删除用户的同时把证书改为注销。
+            Syscert syscert = syscertService.selectSyscertByCertSn(certSn);
+            syscert.setCertStatus("REVOKED");
+            syscertService.updateSyscert(syscert);
+        }
+
         return toAjax(userService.deleteUserByIds(userIds));
     }
 
