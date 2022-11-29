@@ -14,6 +14,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -123,6 +124,7 @@ public class SysUserController extends BaseController
     /**
      * 新增用户
      */
+    @Transactional
     @PreAuthorize("@ss.hasPermi('system:user:add')")
     @Log(title = "用户管理", businessType = BusinessType.INSERT)
     @PostMapping
@@ -158,8 +160,12 @@ public class SysUserController extends BaseController
         {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，设备已被使用");
         }
-
-        return toAjax(userService.insertUser(user));
+        user.setCertSn(certSnByUser);
+        int i = userService.insertUser(user);
+        if (i==0) {
+            syscertService.deleteSyscertByCertSn(certSnByUser);
+        }
+        return toAjax(i);
     }
 
     /**

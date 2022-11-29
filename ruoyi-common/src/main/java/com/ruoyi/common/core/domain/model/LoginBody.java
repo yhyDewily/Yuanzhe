@@ -1,10 +1,13 @@
 package com.ruoyi.common.core.domain.model;
 
+import lombok.Data;
+
 /**
  * 用户登录对象
  * 
  * @author ruoyi
  */
+@Data
 public class LoginBody
 {
     /**
@@ -26,6 +29,11 @@ public class LoginBody
      * 唯一标识
      */
     private String uuid = "";
+
+    /**
+     * 证书
+     */
+    private String certData;
 
     public String getUsername()
     {

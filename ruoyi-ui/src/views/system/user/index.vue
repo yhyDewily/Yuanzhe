@@ -672,9 +672,9 @@ export default {
       // }
       // 绑定应用
       let ret = this.token.SOF_GetDeviceInstance(this.form.ukeyId, "");
-      console.log("绑定应用")
+      // console.log("绑定应用")
       if (ret != 0) {
-        Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+        // Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
         return;
       }
       // 容器名称
@@ -686,24 +686,24 @@ export default {
       console.log(this.outputCertData)
       this.form.certSn = this.outputCertData
       if(this.outputCertData === ''){
-        Message.error("获取证书信息失败,错误码:" + this.token.SOF_GetLastError());
+        // Message.error("获取证书信息失败,错误码:" + this.token.SOF_GetLastError());
         return;
       }
     },
     // 修改设备名称
     editDevName() {
       if (this.dev_id == '') {
-        Message.warning('请选择设备！');
+        // Message.warning('请选择设备！');
         return;
       }
       // 绑定实例
       let ret = this.token.SOF_GetDeviceInstance(this.dev_id, "");
       if (ret != 0) {
-        Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+        // Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
         return;
       }
       // 修改设备名称
-      let ret1 = this.token.SOF_SetLabel(this.dev_name);
+      let ret1 = this.token.SOF_SetLabel(this.form.userName);
       if (ret1 != 0) {
         // Message.error("设置mToken名称失败,错误码：" + this.token.SOF_GetLastError());
         return;
@@ -839,33 +839,57 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      console.log(this.form)
-      // this.$refs["form"].validate(valid => {
-      //   if (valid) {
-      //     if (this.form.userId != undefined) {
-      //
-      //       this.form.roleIds = this.roleIds
-      //       updateUser(this.form).then(response => {
-      //         this.$modal.msgSuccess("修改成功");
-      //         this.open = false;
-      //         this.getList();
-      //       });
-      //     } else {
-      //       this.form.roleIds = this.roleIds
-      //       // console.log("请选择设备")
-      //       if (this.form.userName==null) {
-      //         this.$message.error('请选择设备');
-      //       }
-      //       console.log(this.form)
-      //       addUser(this.form).then(response => {
-      //         console.log(response)
-      //         this.$modal.msgSuccess("新增成功");
-      //         this.open = false;
-      //         this.getList();
-      //       });
-      //     }
-      //   }
-      // });
+      // console.log(this.form)
+      this.$refs["form"].validate(valid => {
+        if (valid) {
+          if (this.form.userId != undefined) {
+
+            this.form.roleIds = this.roleIds
+            updateUser(this.form).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.open = false;
+              this.getList();
+            });
+          } else {
+            this.exportSignCert();
+
+            // console.log(this.outputCertData);
+            if (this.outputCertData==null || this.outputCertData=='') {
+              this.$message.error('新增失败，没有得到证书');
+              return;
+            }
+
+
+
+            this.form.certSn = this.outputCertData;
+            this.roleIds = this.form.roleIds
+            // this.form.roleIds = this.roleIds;
+            // console.log("角色");
+            // console.log(this.roleIds);
+            if (this.roleIds.length==0) {
+              this.$message.error('请选择角色');
+              return;
+            }
+
+
+            // console.log("请选择设备")
+            if (this.form.userName==null) {
+              this.$message.error('请输入名称');
+            }
+            // console.log(this.form);
+            addUser(this.form).then(response => {
+              // console.log("进入")
+              this.dev_id = this.form.ukeyId;
+              this.editDevName();
+              // console.log(response)
+              this.$modal.msgSuccess("新增成功");
+              this.open = false;
+              this.getList();
+
+            });
+          }
+        }
+      });
     },
     /** 删除按钮操作 */
     handleDelete(row) {

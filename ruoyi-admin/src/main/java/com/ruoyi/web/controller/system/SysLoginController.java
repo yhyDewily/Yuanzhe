@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.ruoyi.framework.datasource.DynamicDataSource;
+import com.ruoyi.system.utils.GetCertInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +46,11 @@ public class SysLoginController
     {
 
         AjaxResult ajax = AjaxResult.success();
+
+
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-                loginBody.getUuid());
+                loginBody.getUuid(), loginBody.getCertData());
         ajax.put(Constants.TOKEN, token);
         return ajax;
     }

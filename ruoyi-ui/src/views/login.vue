@@ -15,7 +15,7 @@
       <el-form-item prop="secretKey" style="width: 350px" >
         令牌
         <div class="selectForm">
-          <el-select v-model="loginForm.username" placeholder="请选择" :required="true">
+          <el-select v-model="loginForm.username" placeholder="请选择" :required="true" @change="selectChange">
             <el-option
               v-for="item in dev_list"
               :key="item.id"
@@ -94,6 +94,9 @@ export default {
       codeUrl: "",
       // 设备环境
       token: null,
+      outputCertData:'',
+      dev_id:'',
+      dev_name:'',
       dev_list:[
         {
 
@@ -101,9 +104,10 @@ export default {
       ],
       secretKey:'',
       loginForm: {
-        username: "admin",
-        password: "admin123",
+        username: "",
+        password: "",
         rememberMe: false,
+        certData:'',
         code: "",
         uuid: ""
       },
@@ -134,7 +138,7 @@ export default {
   },
   created() {
     this.getCode();
-    this.getCookie();
+    // this.getCookie();
     this.getAllDevice2();
   },
   methods: {
@@ -145,6 +149,49 @@ export default {
       let ret = this.token.SOF_LoadLibrary(this.token.GM3000);
       if (ret != 0) {
         Message.error("加载控件失败,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+    },
+    //选择改变
+    selectChange: function(val) {
+
+      for (let i = 0; i < this.dev_list.length; i++) {
+        if (this.dev_list[i].name == val) {
+
+          // this.form.userName = this.dev_list[i].name;
+
+          this.dev_id = this.dev_list[i].id
+          this.dev_name = this.dev_list[i].name
+
+          console.log("dev_id："+this.dev_id)
+          console.log("dev_name："+this.dev_name)
+          this.loginForm.ukeyId = this.dev_id;
+          break;
+        }
+      }
+    },
+    // 获取签名证书（Base64 字符串）
+    exportSignCert(){
+      // if(this.container === ''){
+      //   Message.warning("请选择容器！");
+      //   return;
+      // }
+      // 绑定应用
+      let ret = this.token.SOF_GetDeviceInstance(this.dev_id, "");
+      console.log("绑定应用")
+      if (ret != 0) {
+        // Message.error("绑定应用失败，确定是否初始化Key,错误码:" + this.token.SOF_GetLastError());
+        return;
+      }
+      // 容器名称
+      let container = 'test'
+      //  签名证书为 1 , 加密证书为 0
+      let certType = 1
+      this.outputCertData = this.token.SOF_ExportUserCert(container, certType);
+
+      this.loginForm.certData = this.outputCertData
+      if(this.outputCertData === ''){
+        // Message.error("获取证书信息失败,错误码:" + this.token.SOF_GetLastError());
         return;
       }
     },
@@ -212,11 +259,11 @@ export default {
         this.dev_list.push({id: id_list[i], name: this.token.SOF_GetDeviceInfo(this.token.SGD_DEVICE_NAME)});
 
       }
-      this.dev_list.push({id:'admin',name:'admin'});
-      this.dev_list.push({id:'business_admin',name:'business_admin'});
-      this.dev_list.push({id:'business_operator',name:'business_operator'});
-      this.dev_list.push({id:'super_admin',name:'super_admin'});
-      this.dev_list.push({id:'audit_operator',name:'audit_operator'});
+      // this.dev_list.push({id:'admin',name:'admin'});
+      // this.dev_list.push({id:'business_admin',name:'business_admin'});
+      // this.dev_list.push({id:'business_operator',name:'business_operator'});
+      // this.dev_list.push({id:'super_admin',name:'super_admin'});
+      // this.dev_list.push({id:'audit_operator',name:'audit_operator'});
     },
     getCookie() {
       const username = Cookies.get("username");
@@ -241,6 +288,15 @@ export default {
             Cookies.remove("password");
             Cookies.remove('rememberMe');
           }
+          if (this.dev_list == '' && this.loginForm.username != 'admin') {
+            this.$message.error("请先插入设备");
+          }
+          if (this.loginForm.certData == '' && this.loginForm.username != 'admin') {
+            this.$message.error("请先插入设备");
+          }
+          this.exportSignCert();
+          console.log("loginform");
+          console.log(this.loginForm);
           this.$store.dispatch("Login", this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
           }).catch(() => {
