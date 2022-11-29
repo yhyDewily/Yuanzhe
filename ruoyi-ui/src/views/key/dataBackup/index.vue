@@ -65,7 +65,8 @@
           action="#"
           :on-change="uploadFile"
           :auto-upload="false"
-          :show-file-list="false"
+          :show-file-list="true"
+          :file-list="fileList"
         >
           <el-button type="primary">选取文件</el-button>
         </el-upload>
@@ -73,8 +74,10 @@
           style="margin-left: 10px"
           type="success"
           @click="submitUpload"
-          >数据恢复</el-button
-        ></el-form-item
+        >数据恢复
+        </el-button
+        >
+      </el-form-item
       >
     </el-form>
 
@@ -86,7 +89,7 @@
       fit
       highlight-current-row
     >
-      <el-table-column align="center" label="id" prop="id"> </el-table-column>
+      <el-table-column align="center" label="id" prop="id"></el-table-column>
       <el-table-column label="操作员" align="center" prop="operater">
       </el-table-column>
       <el-table-column label="主机地址" align="center" prop="ip">
@@ -97,9 +100,16 @@
       </el-table-column>
       <el-table-column label="时间" align="center" prop="opTime">
       </el-table-column>
-      <el-table-column label="下载链接" align="center" prop="href">
+      <el-table-column label="下载链接" align="center" prop="sqlEntity">
         <template slot-scope="scope">
-          <a :href="scope.row.href" target="_blank">下载</a>
+          <el-button
+            @click="downloadSql(scope.row.sqlEntity)"
+            target="_blank"
+            type="primary"
+            icon="el-icon-folder"
+          >下载
+          </el-button
+          >
         </template>
       </el-table-column>
       <el-table-column label="恢复" align="center" prop="id">
@@ -109,12 +119,13 @@
             target="_blank"
             type="primary"
             icon="el-icon-folder"
-            >恢复</el-button
+          >恢复
+          </el-button
           >
         </template>
       </el-table-column>
     </el-table>
-    <el-table-column label="备注" align="center" prop="note"> </el-table-column>
+    <el-table-column label="备注" align="center" prop="note"></el-table-column>
     <el-dialog title="选择ip" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="主机地址" :label-width="formLabelWidth">
@@ -147,7 +158,16 @@
 </template>
 
 <script>
-import {doBackupData,getDatabaseByIp,getDatatableByBase,getAllData,getDataBackupRecords,restoreData,restoreDataById} from "@/api/system/sercetKey/dataBackupApi"
+import {
+  doBackupData,
+  getDatabaseByIp,
+  getDatatableByBase,
+  getAllData,
+  getDataBackupRecords,
+  restoreData,
+  restoreDataById
+} from "@/api/system/sercetKey/dataBackupApi"
+
 export default {
   data() {
     return {
@@ -156,9 +176,9 @@ export default {
         label: "label",
       },
       ip: [
-        { ip: "192.168.8.167", value: "slave-db-dev" },
-        { ip: "192.168.8.169", value: "master-db-dev" },
-        { ip: "192.168.8.168", value: "backup-db-dev" },
+        {ip: "192.168.8.167", value: "slave-db-dev"},
+        {ip: "192.168.8.169", value: "master-db-dev"},
+        {ip: "192.168.8.168", value: "backup-db-dev"},
       ],
       database: [],
       datatable: [],
@@ -182,6 +202,7 @@ export default {
       file: null,
       dialogFormVisible: false,
       dataId: 0,
+      fileList:[]
     };
   },
   created() {
@@ -228,7 +249,7 @@ export default {
               type: "success",
             });
             // 刷新页面
-            this.$router.go(0);
+            this.getDataBackupRecords(this.currentPage);
           })
           .catch((err) => {
             this.$message({
@@ -353,6 +374,7 @@ export default {
                 console.log(res);
               })
               .catch((err) => {
+                loading.close();
                 console.error(err);
               });
           })
@@ -416,6 +438,7 @@ export default {
               })
               .catch((err) => {
                 console.error(err);
+                loading.close();
               });
           })
           .catch(() => {
@@ -426,6 +449,14 @@ export default {
           });
       }
     },
+    downloadSql(content) {
+      var aTag = document.createElement('a');
+      var blob = new Blob([content]);
+      aTag.download = "sql.sql";
+      aTag.href = URL.createObjectURL(blob);
+      aTag.click();
+      URL.revokeObjectURL(blob);
+    }
   },
 };
 </script>

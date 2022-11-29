@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.exception.yuanzhe.SqlTamperException;
 import com.ruoyi.system.domain.DataBackup;
 import com.ruoyi.system.service.DataBackupService;
 import com.ruoyi.system.utils.DbUtil;
@@ -95,14 +96,15 @@ public class DataBackupController {
 
     /**
      * 从远程服务器下载sql文件
+     *
      * @param fileDirectory 要下载的sql文件的目录
-     * @param fileName 要下载的sql文件的名称
-     * @param response 获得servletOutputStream对象，从而将文件内容写到前端
+     * @param fileName      要下载的sql文件的名称
+     * @param response      获得servletOutputStream对象，从而将文件内容写到前端
      */
     @Log(title = "从服务器下载sql文件", businessType = BusinessType.EXPORT)
     @GetMapping("/downloadFile")
-    public AjaxResult downloadFile(@RequestParam String fileDirectory,@RequestParam String fileName,HttpServletResponse response){
-        dataBackupService.downloadFile(fileDirectory,fileName,response);
+    public AjaxResult downloadFile(@RequestParam String fileDirectory, @RequestParam String fileName, HttpServletResponse response) {
+        dataBackupService.downloadFile(fileDirectory, fileName, response);
         return AjaxResult.success();
     }
 
@@ -116,7 +118,8 @@ public class DataBackupController {
 
     /**
      * 该方法是用户选择sql文件和MySQL服务器ip地址，将sql文件进行执行
-     * @param ip 用户传入的ip地址对应db.setting文件中的名称
+     *
+     * @param ip   用户传入的ip地址对应db.setting文件中的名称
      * @param file 用户上传的要执行恢复的sql文件
      * @return
      */
@@ -130,19 +133,24 @@ public class DataBackupController {
         if (file.isEmpty()) {
             return AjaxResult.error("请选择要恢复的文件！");
         }
-       dataBackupService.restoreData(ip,file);
+        try{
+            dataBackupService.restoreData(ip, file);
+        }catch (SqlTamperException e){
+            return AjaxResult.error(e.getDefaultMessage());
+        }
         return AjaxResult.success();
     }
 
     /**
      * 前端页面点击每一条备份记录选择要执行的备份记录
+     *
      * @param id 对应备份数据表中的记录的id，唯一标识，可以查询出该次备份产生的文件目录和文件名称
      * @return
      */
     @Log(title = "根据记录id执行备份", businessType = BusinessType.INSERT)
     @PostMapping("/restoreDataById")
-    public AjaxResult restoreDataById(@RequestParam String id,@RequestParam String ip){
-        dataBackupService.restoreDataById(id,ip);
+    public AjaxResult restoreDataById(@RequestParam String id, @RequestParam String ip) {
+        dataBackupService.restoreDataById(id, ip);
         return AjaxResult.success();
     }
 

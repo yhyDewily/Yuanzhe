@@ -2,7 +2,10 @@ package com.ruoyi.system.utils;
 
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 
 public class SM3Util {
@@ -16,5 +19,17 @@ public class SM3Util {
         byte[] ret = new byte[sm3Digest.getDigestSize()];
         sm3Digest.doFinal(ret, 0);
         return ret;
+    }
+
+    public static String dataDigest(byte[] dataByte){
+        MessageDigest digest = null;
+        BouncyCastleProvider provider = new BouncyCastleProvider();
+        try {
+            digest = MessageDigest.getInstance("SM3", provider);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Hex.toHexString(digest.digest(dataByte));
     }
 }

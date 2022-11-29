@@ -57,8 +57,8 @@ export function restoreData(keyData) {
 // 根据id数据恢复操作
 export function restoreDataById(keyData) {
   return request({
-    url: '/kms/api/database/restoreData',
+    url: '/kms/api/database/restoreDataById',
     method: 'post',
-    data: restoreDataById,
+    data: keyData,
   })
 }
