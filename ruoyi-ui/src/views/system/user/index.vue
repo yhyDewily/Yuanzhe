@@ -399,7 +399,8 @@ import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUs
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
+import {mToken} from '@/assets/js/mToken';
+// import {FISECKEY,SKFKEY} from '@/assets/js/fiseckey'
 
 export default {
   name: "User",
@@ -407,6 +408,8 @@ export default {
   components: { Treeselect },
   data() {
     return {
+      // 加载 U 盾设备所依赖的环境
+      token: null,
       //下属
       subRoleId:null,
       menuShow:true,
@@ -836,33 +839,33 @@ export default {
     },
     /** 提交按钮 */
     submitForm: function() {
-      // console.log(this.form)
-      this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.userId != undefined) {
-
-            this.form.roleIds = this.roleIds
-            updateUser(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            this.form.roleIds = this.roleIds
-            // console.log("请选择设备")
-            if (this.form.userName==null) {
-              this.$message.error('请选择设备');
-            }
-            console.log(this.form)
-            addUser(this.form).then(response => {
-              console.log(response)
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
-          }
-        }
-      });
+      console.log(this.form)
+      // this.$refs["form"].validate(valid => {
+      //   if (valid) {
+      //     if (this.form.userId != undefined) {
+      //
+      //       this.form.roleIds = this.roleIds
+      //       updateUser(this.form).then(response => {
+      //         this.$modal.msgSuccess("修改成功");
+      //         this.open = false;
+      //         this.getList();
+      //       });
+      //     } else {
+      //       this.form.roleIds = this.roleIds
+      //       // console.log("请选择设备")
+      //       if (this.form.userName==null) {
+      //         this.$message.error('请选择设备');
+      //       }
+      //       console.log(this.form)
+      //       addUser(this.form).then(response => {
+      //         console.log(response)
+      //         this.$modal.msgSuccess("新增成功");
+      //         this.open = false;
+      //         this.getList();
+      //       });
+      //     }
+      //   }
+      // });
     },
     /** 删除按钮操作 */
     handleDelete(row) {
