@@ -3,6 +3,8 @@ package com.ruoyi.framework.web.service;
 import javax.annotation.Resource;
 
 import com.ruoyi.framework.security.context.AuthenticationContextHolder;
+import com.ruoyi.system.domain.to.CertDataTO;
+import com.ruoyi.system.utils.GetCertInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -58,7 +60,7 @@ public class SysLoginService
      * @param uuid 唯一标识
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid)
+    public String login(String username, String password, String code, String uuid, String certData)
     {
         boolean captchaOnOff = configService.selectCaptchaOnOff();
         // 验证码开关
@@ -87,6 +89,19 @@ public class SysLoginService
                 throw new ServiceException(e.getMessage());
             }
         }
+        //非admin需要校验
+        if (!"admin".equals(username)) {
+            SysUser sysUser = userService.selectUserByUserName(username);
+            String certSn = sysUser.getCertSn();
+            CertDataTO certSnFromCert = GetCertInfo.getCertSnFromCert(certData);
+            if (certSnFromCert.getCertSn() == null) {
+                throw new RuntimeException("u盾里没有证书");
+            }
+            if (!certSnFromCert.getCertSn().equals(certSn)) {
+                throw new RuntimeException("该u盾证书不可用");
+            }
+        }
+
         AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_SUCCESS, MessageUtils.message("user.login.success")));
         LoginUser loginUser = (LoginUser) authentication.getPrincipal();
         recordLoginInfo(loginUser.getUserId());

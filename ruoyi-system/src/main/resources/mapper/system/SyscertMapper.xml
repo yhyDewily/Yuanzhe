@@ -55,7 +55,7 @@
 
     <select id="selectSyscertByCertSn" parameterType="String" resultMap="SyscertResult">
         <include refid="selectSyscertVo"/>
-        where CERT_SN = #{certSn}
+        where CERT_SN = #{certSn} and CERT_STATUS = 'INUSE'
     </select>
 
     <select id="checkCertSnUnique" parameterType="String" resultType="int">
