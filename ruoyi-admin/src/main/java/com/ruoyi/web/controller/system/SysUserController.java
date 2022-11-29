@@ -6,7 +6,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
+import com.ruoyi.system.domain.to.CertDataTO;
 import com.ruoyi.system.service.ISyscertService;
+import com.ruoyi.system.utils.GetCertInfo;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -125,6 +127,9 @@ public class SysUserController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysUser user)
     {
+
+
+
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName())))
         {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
@@ -145,7 +150,13 @@ public class SysUserController extends BaseController
         Date date = new Date(System.currentTimeMillis());
         user.setCreateTime(date);
 
-
+        syscertService.insertSyscertByUser(user);
+        CertDataTO certGetByUser = GetCertInfo.getCertSnFromCert(user.getCertSn());
+        String certSnByUser = certGetByUser.getCertSn();
+        if (UserConstants.NOT_UNIQUE.equals(userService.checkUkeyIdUnique(user)))
+        {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，设备已被使用");
+        }
 
         return toAjax(userService.insertUser(user));
     }
