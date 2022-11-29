@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.framework.datasource.DynamicDataSourceContextHolder;
 import org.apache.commons.lang3.ArrayUtils;
+import org.aspectj.weaver.loadtime.Aj;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -64,7 +65,6 @@ public class SysUserController extends BaseController
         return getDataTable(list);
     }
 
-    @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:user:export')")
     @PostMapping("/export")
     public void export(HttpServletResponse response, SysUser user)

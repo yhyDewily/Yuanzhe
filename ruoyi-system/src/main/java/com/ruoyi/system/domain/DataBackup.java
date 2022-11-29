@@ -88,5 +88,17 @@ public class DataBackup implements Serializable {
     @TableField("ip")
     private String ip;
 
+    /**
+     * sql文件内容对应的hash，用于判断hash是否被篡改
+     */
+    @TableField("sql_hash")
+    private String sqlHash;
+
+    /**
+     * sql文件被加密后的内容
+     */
+    @TableField("sql_entity")
+    private String sqlEntity;
+
 
 }

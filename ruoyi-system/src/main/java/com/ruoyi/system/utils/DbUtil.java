@@ -6,10 +6,15 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.db.Db;
 import cn.hutool.db.Entity;
 import cn.hutool.db.ds.DSFactory;
+import cn.hutool.db.ds.simple.SimpleDataSource;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.system.domain.DbConfig;
+import com.ruoyi.system.service.DbConfigService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.jdbc.ScriptRunner;
 import org.junit.Test;
 
+import javax.sql.DataSource;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -42,7 +47,8 @@ public class DbUtil {
      * @return 数据库名称集合
      */
     public static List<String> getDatabase(String dbSetting) {
-        Db db = cn.hutool.db.DbUtil.use(DSFactory.get(dbSetting));
+        DataSource dataSource = getDataSourceByIp(dbSetting);
+        Db db = cn.hutool.db.DbUtil.use(dataSource);
         String sql = "SHOW DATABASES;";
         List<String> data = getData(db, sql);
         data.remove("information_schema");
@@ -58,7 +64,8 @@ public class DbUtil {
      * @return 当前数据库下的所有数据表集合
      */
     public static List<String> getDatatable(String dbSetting, String dataBase) {
-        Db db = cn.hutool.db.DbUtil.use(DSFactory.get(dbSetting));
+        DataSource dataSource = getDataSourceByIp(dbSetting);
+        Db db = cn.hutool.db.DbUtil.use(dataSource);
         String sql = "select table_name from information_schema.tables where table_schema='" + dataBase + "'";
         return getData(db, sql);
     }
@@ -136,12 +143,30 @@ public class DbUtil {
     public static String generateSql(String dbSetting, String dbName, String tableName,
                                      Boolean create, Boolean insert, List<String> filedIgnoreList) {
         // 在之前要先把dbsetting中的配置数据库转换
-        Db db = cn.hutool.db.DbUtil.use(DSFactory.get(dbSetting));
-        try {
-            db.execute("USE " + dbName + ";");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        // TODO 从配置中抽取，将数据源配置写道数据表中，使用
+        //  DataSource ds = new SimpleDataSource(
+        //  "jdbc:mysql://localhost:3306/lux?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai"
+        //  , "root", "123456");
+        //  方式来实现加载数据源
+
+//        Db db = cn.hutool.db.DbUtil.use(DSFactory.get(dbSetting));
+        // 获取操作dbConfig的service接口
+
+        DbConfigService dbConfigService = BeanUtil.getBean(DbConfigService.class);
+        QueryWrapper<DbConfig> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ip", dbSetting);
+        DbConfig dbConfig = dbConfigService.getOne(queryWrapper);
+        String dbUrl = "jdbc:mysql://" + dbSetting + ":" + dbConfig.getPort() + "/" + dbName + "?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai";
+        DataSource dataSource = new SimpleDataSource(dbUrl, dbConfig.getUser(), dbConfig.getPassword());
+        Db db = cn.hutool.db.DbUtil.use(dataSource);
+//        try {
+//            int execute = db.execute("USE " + dbName + ";");
+//            System.out.println(execute);
+//
+//            System.out.println(dbName);
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
         List<String> tables = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder();
@@ -246,7 +271,8 @@ public class DbUtil {
      */
     public static void executeSql(String dbSetting, String sql) {
         try {
-            Db db = cn.hutool.db.DbUtil.use(DSFactory.get(dbSetting));
+            DataSource dataSource = getDataSourceByIp(dbSetting);
+            Db db = cn.hutool.db.DbUtil.use(dataSource);
             // 建立连接
             Connection conn = db.getConnection();
             // 创建ScriptRunner，用于执行SQL脚本
@@ -271,6 +297,16 @@ public class DbUtil {
         }
     }
 
+    public static DataSource getDataSourceByIp(String ip) {
+        DbConfigService dbConfigService = BeanUtil.getBean(DbConfigService.class);
+        QueryWrapper<DbConfig> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("ip", ip);
+        DbConfig dbConfig = dbConfigService.getOne(queryWrapper);
+        String dbUrl = "jdbc:mysql://" + ip + ":" + dbConfig.getPort() + "/" + dbConfig.getDb() + "?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai";
+        DataSource dataSource = new SimpleDataSource(dbUrl, dbConfig.getUser(), dbConfig.getPassword());
+        return dataSource;
+    }
+
     public static String readFileAsString(File file) {
         String str = "";
         try {
@@ -291,20 +327,19 @@ public class DbUtil {
 
     @Test
     public void testdemo() {
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")));
-        Path path = Paths.get("src/main/resources/static/sql/", "bansys-t_log" + ".sql"); // 保存sql文件到src/main/resources/sql目录下
-        try (FileOutputStream fos = new FileOutputStream(path.toFile());
-             FileChannel channel = fos.getChannel();) {
-            // 把字节数组写进缓冲区
-            ByteBuffer buffer = ByteBuffer.wrap("bytes".getBytes());
-            // 通过通道来传输缓冲区内容到指定位置
-            channel.write(buffer);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss")));
+//        Path path = Paths.get("src/main/resources/static/sql/", "bansys-t_log" + ".sql"); // 保存sql文件到src/main/resources/sql目录下
+//        try (FileOutputStream fos = new FileOutputStream(path.toFile());
+//             FileChannel channel = fos.getChannel();) {
+//            // 把字节数组写进缓冲区
+//            ByteBuffer buffer = ByteBuffer.wrap("bytes".getBytes());
+//            // 通过通道来传输缓冲区内容到指定位置
+//            channel.write(buffer);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
-
 
 
 }

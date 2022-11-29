@@ -1,19 +1,29 @@
 package com.ruoyi.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ruoyi.common.exception.yuanzhe.SqlTamperException;
 import com.ruoyi.system.domain.DataBackup;
 import com.ruoyi.system.mapper.DataBackupMapper;
 import com.ruoyi.system.service.DataBackupService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.system.utils.DbUtil;
 import com.ruoyi.system.utils.SFTPUtil;
+import com.ruoyi.system.utils.SM3Util;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -33,10 +43,11 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
 
     @Override
     public void doBackupData(String ip, String database, String datatable) {
+
         // 先根据前端传入的ip对应的配置名、数据库名、数据表名称和是否需要建表语句，是否需要数据，以及要忽略哪一些列来生成SQL语句，此时的SQL语句是已经加密了的
         String sql = DbUtil.generateSql(ip, database, datatable, true, true, null);
-        // 拿到sql文件的字节数组
-//        byte[] bytes = sql.getBytes();
+        // 对生成的sql进行一个hash操作，然后将得到的hash值存放到数据表中，在执行sql恢复的时候，如果文件内容进行hash不存在于表中，说明内容被篡改，不允许用户执行
+        String sqlHash = SM3Util.dataDigest(sql.getBytes());
 
         // 文件名称
         String fileName = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
@@ -45,6 +56,8 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
         dataBackup.setDatabaseName(database);
         dataBackup.setOperater("操作员");
         dataBackup.setIp(ip);
+        dataBackup.setSqlEntity(sql);
+        dataBackup.setSqlHash(sqlHash);
         // 文件名根据前端是否选择是单表备份还是全表备份，如果是全表备份，则将数据表名替换为all
         if (datatable == null || "".equals(datatable)) {
             // 前端没有选择备份哪张表，说明对库全备份
@@ -57,7 +70,7 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
         // 保存文件到远程服务器
         SFTPUtil.remoteUpload(sql, DIRECTORY + fileName);
         // 设置下载地址，带上目录和文件名
-        String href = HREF+ fileName;
+        String href = HREF + fileName;
         dataBackup.setHref(href);
         dataBackup.setFileDirectory(DIRECTORY);
         dataBackup.setFileName(fileName);
@@ -85,15 +98,10 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
 
     @Override
     public void restoreDataById(String id, String ip) {
-        // 先根据id查询出对应我们需要的文件目录和文件名称
+        // 先根据id查询出对应的记录
         DataBackup backup = this.getById(id);
-        String fileDirectory = backup.getFileDirectory();
-        String fileName = backup.getFileName();
-        OutputStream outputStream = new ByteArrayOutputStream();
-        // 将文件内容保存到outputStream输出流中
-        SFTPUtil.download(fileDirectory, fileName, outputStream);
-        // 得到sql语句，此时是密文
-        String sql = outputStream.toString();
+        // 从记录中获取sql实体
+        String sql = backup.getSqlEntity();
         // 执行sql语句，其中会进行解密操作
         DbUtil.executeSql(ip, sql);
 
@@ -112,7 +120,16 @@ public class DataBackupServiceImpl extends ServiceImpl<DataBackupMapper, DataBac
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        DbUtil.executeSql(ip, sql);
+        // 对sql做一次消息摘要拿到hash，判断其是否存在于数据表中，从而实现防止被篡改
+        String sqlHash = SM3Util.dataDigest(sql.getBytes());
+        QueryWrapper<DataBackup> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("sql_hash", sqlHash);
+        DataBackup dataBackup = this.baseMapper.selectOne(queryWrapper);
+        if (dataBackup == null) {
+            // 此时说明数据表中没有当前sql文件对应的hash，说明文件已经被篡改了，不执行数据恢复操作，并且返回错误提示给前端
+            throw new SqlTamperException();
+        } else {
+            DbUtil.executeSql(ip, sql);
+        }
     }
 }

@@ -1,24 +1,13 @@
 package com.ruoyi.common.utils.poi;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
@@ -451,7 +440,17 @@ public class ExcelUtil<T>
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         response.setCharacterEncoding("utf-8");
         this.init(list, sheetName, title, Type.EXPORT);
-        exportExcel(response);
+        byte[] s = exportExcelBytes();
+        String encodeToString = Base64.getEncoder().encodeToString(s);
+        // TODO 将encodeToString这个Base64串存到数据表中，这个就是excel文件对应的base64字符串，下次可以直接使用这个串使得再次下载
+        byte[] decode = Base64.getDecoder().decode(encodeToString);
+        ServletOutputStream outputStream = null;
+        try {
+            outputStream = response.getOutputStream();
+            outputStream.write(decode);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -524,6 +523,30 @@ public class ExcelUtil<T>
         {
             IOUtils.closeQuietly(wb);
         }
+    }
+
+    /**
+     * 对list数据源将其里面的数据导入到excel表单
+     * 返回excel文件内容对应的byte数组
+     * @return excel对应的byte数组
+     */
+    public byte[] exportExcelBytes(){
+        try
+        {
+            writeSheet();
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            wb.write(outputStream);
+            return outputStream.toByteArray();
+        }
+        catch (Exception e)
+        {
+            log.error("导出Excel异常{}", e.getMessage());
+        }
+        finally
+        {
+            IOUtils.closeQuietly(wb);
+        }
+        return null;
     }
 
     /**
