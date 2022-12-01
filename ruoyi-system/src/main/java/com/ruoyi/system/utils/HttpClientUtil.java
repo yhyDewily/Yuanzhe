@@ -1,16 +1,7 @@
 package com.ruoyi.system.utils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.common.core.domain.model.LoginBody;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -28,19 +19,23 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
-/**
- * HTTP请求工具类
- */
+import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.Map.Entry;
+
 @Slf4j
 public class HttpClientUtil {
 
     /**
-     * 发送Get请求
-     *
-     * @param url
-     * @return
+     * 发送get请求
+     * @param baseUrl 服务器地址加端口号 结尾不带/
+     * @param lastUrl 具体接口地址，以/开头
+     * @param param 因为get请求参数是拼接在地址后面的，因此需要用户发起请求时主动进行拼接，以？开始
+     * @return json格式的返回数据
      */
-    public static String doGet(String url) {
+    public static String doGet(String baseUrl,String lastUrl,String param) {
 
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
@@ -49,10 +44,10 @@ public class HttpClientUtil {
             // 通过址默认配置创建一个httpClient实例
             httpClient = HttpClients.createDefault();
             // 创建httpGet远程连接实例
-            HttpGet httpGet = new HttpGet(url);
+            HttpGet httpGet = new HttpGet(baseUrl+lastUrl+param);
             // 设置请求头信息，鉴权
-            String token = login();
-            httpGet.setHeader("Authorization", "Bearer " + token);            // 设置配置请求参数
+            String token = login(baseUrl);
+            httpGet.setHeader("Authorization", "Bearer "+token);            // 设置配置请求参数
             RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(35000)// 连接主机服务超时时间
                     .setConnectionRequestTimeout(35000)// 请求超时时间
                     .setSocketTimeout(60000)// 数据读取超时时间
@@ -65,8 +60,6 @@ public class HttpClientUtil {
             HttpEntity entity = response.getEntity();
             // 通过EntityUtils中的toString方法将结果转换为字符串
             result = EntityUtils.toString(entity);
-        } catch (ClientProtocolException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -90,20 +83,21 @@ public class HttpClientUtil {
     }
 
     /**
-     * post请求（用于请求key-value格式的参数）
+     * post请求（用于请求json格式的参数）
      *
-     * @param url      请求路径
-     * @param paramMap key-value对应的map
-     * @return 返回结果，json格式，需要自行反序列化
+     * @param baseUrl 请求的服务器地址加端口号，最后不带/
+     * @param lastUrl 请求的具体接口地址，以/开头
+     * @param paramMap 填写key-value格式的参数，远程接口参数为@RequestParam
+     * @return 返回值为json格式数据
      */
-    public static String doPost(String url, Map<String, Object> paramMap) {
+    public static String doPost(String baseUrl,String lastUrl, Map<String, Object> paramMap) {
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse httpResponse = null;
         String result = "";
         // 创建httpClient实例
         httpClient = HttpClients.createDefault();
         // 创建httpPost远程连接实例
-        HttpPost httpPost = new HttpPost(url);
+        HttpPost httpPost = new HttpPost(baseUrl+lastUrl);
         // 配置请求参数实例
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(35000)// 设置连接主机服务超时时间
                 .setConnectionRequestTimeout(35000)// 设置连接请求超时时间
@@ -113,8 +107,8 @@ public class HttpClientUtil {
         httpPost.setConfig(requestConfig);
         // 设置请求头
         httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded");
-        String token = login();
-        httpPost.setHeader("Authorization", "Bearer " + token);
+        String token = login(baseUrl);
+        httpPost.setHeader("Authorization", "Bearer "+token);
         // 封装post请求参数
         if (null != paramMap && paramMap.size() > 0) {
             List<NameValuePair> nvps = new ArrayList<NameValuePair>();
@@ -166,28 +160,26 @@ public class HttpClientUtil {
     /**
      * post请求（用于请求json格式的参数）
      *
-     * @param url    请求路径
-     * @param params json格式的参数字符串
-     * @return 返回结果，json格式，需要自行反序列化
+     * @param baseUrl 请求的服务器地址加端口号，最后不带/
+     * @param lastUrl 请求的具体接口地址，以/开头
+     * @param params 填写json格式的参数，远程接口参数为@Requestbody
+     * @return 返回值为json格式数据
      */
-    public static String doPost(String url, String params) {
-        // 创建一个http客户端
+    public static String doPost(String baseUrl,String lastUrl, String params) {
+
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        // 创建httpPost
-        HttpPost httpPost = new HttpPost(url);
-        // 设置请求头，参数为json格式
+        HttpPost httpPost = new HttpPost(baseUrl+lastUrl);// 创建httpPost
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-Type", "application/json");
-        // 设置token，鉴权
-        String token = login();
-        httpPost.setHeader("Authorization", "Bearer " + token);
-        // 设置字符格式
+        String token = login(baseUrl);
+        httpPost.setHeader("Authorization", "Bearer "+token);
         String charSet = "UTF-8";
         StringEntity entity = new StringEntity(params, charSet);
         httpPost.setEntity(entity);
         CloseableHttpResponse response = null;
+
         try {
-            // 发送请求，拿到返回结果
+
             response = httpclient.execute(httpPost);
             StatusLine status = response.getStatusLine();
             int state = status.getStatusCode();
@@ -196,8 +188,10 @@ public class HttpClientUtil {
                 String jsonString = EntityUtils.toString(responseEntity);
                 return jsonString;
             } else {
-                log.error("请求返回:" + state + "(" + url + ")");
+                log.error("请求返回:" + state + "(" + baseUrl+lastUrl + ")");
             }
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -217,18 +211,13 @@ public class HttpClientUtil {
         return null;
     }
 
-    /**
-     * 内部登录请求
-     *
-     * @return
-     */
-    public static String login() {
+    public static String login(String baseUrl) {
         LoginBody user = new LoginBody();
         user.setUsername("admin");
         user.setPassword("admin123");
         String jsonString = JSONObject.toJSONString(user);
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost("http://localhost:8080/internalLogin");// 创建httpPost
+        HttpPost httpPost = new HttpPost(baseUrl+"/internalLogin");// 创建httpPost
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-Type", "application/json");
         String charSet = "UTF-8";
@@ -262,8 +251,18 @@ public class HttpClientUtil {
                 e.printStackTrace();
             }
         }
-        Result ajaxResult = JSONObject.parseObject(result, Result.class);
+
+        LoginResult ajaxResult = JSONObject.parseObject(result, LoginResult.class);
         return ajaxResult.getToken();
+    }
+
+    @Data
+    static class LoginResult implements Serializable {
+
+        String msg;
+        String code;
+        String token;
+
     }
 
 } 

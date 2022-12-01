@@ -2,10 +2,16 @@ package com.ruoyi.framework.web.service;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.common.core.domain.model.LoginBody;
 import com.ruoyi.framework.security.context.AuthenticationContextHolder;
 import com.ruoyi.system.domain.to.CertDataTO;
+import com.ruoyi.system.utils.DataResult;
 import com.ruoyi.system.utils.GetCertInfo;
+import com.ruoyi.system.utils.HttpClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,17 +57,25 @@ public class SysLoginService
     @Autowired
     private ISysConfigService configService;
 
+    @Value("${yuanzhe.http.caUrl}")
+    private String caUrl;
+
     /**
      * 登录验证
      * 
-     * @param username 用户名
-     * @param password 密码
-     * @param code 验证码
-     * @param uuid 唯一标识
+     *
      * @return 结果
      */
-    public String login(String username, String password, String code, String uuid, String certData)
+    public String login(LoginBody loginBody)
     {
+        String username = loginBody.getUsername();
+        String password = loginBody.getPassword();
+        String uuid = loginBody.getUuid();
+        String certData = loginBody.getCertData();
+        String code = loginBody.getCode();
+        String ukeyId = loginBody.getUkeyId();
+
+
         boolean captchaOnOff = configService.selectCaptchaOnOff();
         // 验证码开关
         if (captchaOnOff)
@@ -99,6 +113,18 @@ public class SysLoginService
             }
             if (!certSnFromCert.getCertSn().equals(certSn)) {
                 throw new RuntimeException("该u盾证书不可用");
+            }
+
+            String loginJson = JSON.toJSONString(loginBody);
+
+            String res = HttpClientUtil.doPost(caUrl, "/SysCert/checkSysCertStatus", loginJson);
+
+            DataResult dataResult = JSONObject.parseObject(res, DataResult.class);
+
+//            Integer allow = JSON.parseObject(dataResult.getData(), Integer.class);
+            if (!"200".equals(dataResult.getCode())) {
+                AsyncManager.me().execute(AsyncFactory.recordLogininfor(username, Constants.LOGIN_FAIL, "CA已把证书注销"));
+                throw new RuntimeException("CA已把证书注销");
             }
         }
 
