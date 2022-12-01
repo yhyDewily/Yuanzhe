@@ -35,6 +35,8 @@ public class LoginBody
      */
     private String certData;
 
+    private String ukeyId;
+
     public String getUsername()
     {
         return username;

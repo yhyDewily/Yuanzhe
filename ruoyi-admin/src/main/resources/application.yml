@@ -153,3 +153,10 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+# 自定义相关配置
+yuanzhe:
+  # 访问kms和ca子系统的路径前缀
+  http:
+    raUrl: http://192.168.8.170:8082
+    caUrl: http://192.168.8.170:8081
