@@ -11,6 +11,7 @@ import com.ruoyi.system.domain.DataBackup;
 import com.ruoyi.system.service.DataBackupService;
 import com.ruoyi.system.utils.DbUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +37,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/kms/api/database")
+@PreAuthorize("@ss.hasRole('business_operator')")
 public class DataBackupController {
 
     @Autowired

@@ -9,6 +9,7 @@ import com.ruoyi.system.domain.BackupSecretKey;
 import com.ruoyi.system.domain.SecretKey;
 import com.ruoyi.system.service.BackupSecretKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.List;
  * @since 2022-08-31
  */
 @RestController
+@PreAuthorize("@ss.hasRole('business_operator')")
 @RequestMapping("/kms/api/backup")
 public class BackupSecretKeyController {
 
