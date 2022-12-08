@@ -9,6 +9,7 @@ import com.ruoyi.system.domain.BackupLog;
 import com.ruoyi.system.domain.BackupSecretKey;
 import com.ruoyi.system.service.BackupLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -28,6 +29,7 @@ import java.util.Date;
  * @since 2022-08-31
  */
 @RestController
+@PreAuthorize("@ss.hasRole('business_operator')")
 @RequestMapping("/kms/api/log")
 public class BackupLogController {
 

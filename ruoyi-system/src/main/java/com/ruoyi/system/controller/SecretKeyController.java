@@ -9,6 +9,7 @@ import com.ruoyi.system.domain.SecretKey;
 import com.ruoyi.system.domain.vo.ApplyKeyVo;
 import com.ruoyi.system.service.SecretKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @since 2022-08-20
  */
 @RestController
+@PreAuthorize("@ss.hasRole('bussiness_operator')")
 @RequestMapping("/kms/api")
 @CrossOrigin
 public class SecretKeyController {
